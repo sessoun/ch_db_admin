@@ -1,4 +1,5 @@
 import 'package:ch_db_admin/src/theme/apptheme.dart';
+import 'package:ch_db_admin/src/ui/home.dart';
 import 'package:ch_db_admin/src/ui/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,8 +31,9 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           theme: themeProvider.theme,
           darkTheme: themeProvider.theme,
-          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          // home: const LoginScreen(),
+          themeMode:
+              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const HomeView(),
         );
       },
     );

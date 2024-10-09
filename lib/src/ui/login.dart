@@ -15,14 +15,20 @@ class LoginScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Logo or Title
-              Text(
-                'Church Admin',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.theme.primaryColor, // Use primary color from theme
+              Image.asset(
+                'images/lil.jpg',
+              ),
+              Center(
+                child: Text(
+                  'Church Admin',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: themeProvider
+                        .theme.primaryColor, // Use primary color from theme
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
@@ -33,12 +39,12 @@ class LoginScreen extends StatelessWidget {
                   labelText: 'Email',
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: themeProvider.theme.primaryColor),
+                    borderSide:
+                        BorderSide(color: themeProvider.theme.primaryColor),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-
               // Password Field
               TextField(
                 obscureText: true,
@@ -46,7 +52,8 @@ class LoginScreen extends StatelessWidget {
                   labelText: 'Password',
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: themeProvider.theme.primaryColor),
+                    borderSide:
+                        BorderSide(color: themeProvider.theme.primaryColor),
                   ),
                 ),
               ),
@@ -58,7 +65,6 @@ class LoginScreen extends StatelessWidget {
                   // Add your login logic here
                 },
                 child: const Text('Login'),
-               
               ),
               const SizedBox(height: 16),
 
