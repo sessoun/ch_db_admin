@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -12,7 +14,8 @@ class _HomeViewState extends State<HomeView>
     with SingleTickerProviderStateMixin {
   bool isMenuOpened = false;
   late AnimationController animationController;
-  late Animation animation;
+  late Animation<double> animation;
+  late Animation<double> scaleAnimation;
 
   @override
   void initState() {
@@ -24,7 +27,13 @@ class _HomeViewState extends State<HomeView>
         },
       );
     animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
-        parent: animationController, curve: Curves.fastOutSlowIn));
+      parent: animationController,
+      curve: Curves.fastOutSlowIn,
+    ));
+    scaleAnimation = Tween<double>(begin: 1, end: .8).animate(CurvedAnimation(
+      parent: animationController,
+      curve: Curves.fastOutSlowIn,
+    ));
     super.initState();
   }
 
@@ -42,13 +51,20 @@ class _HomeViewState extends State<HomeView>
               width: 288,
               left: isMenuOpened ? 0 : -288,
               child: const SideMenuView()),
-          Transform.translate(
-            offset: Offset(animation.value * 288, 0),
-            child: Transform.scale(
-                scale: isMenuOpened ? .9 : 1,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: const HomeBodyView())),
+          Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              //rotate 30 degress
+              ..rotateY(animation.value - 30 * animation.value * pi / 180),
+            child: Transform.translate(
+              offset: Offset(animation.value * 265, 0),
+              child: Transform.scale(
+                  scale: scaleAnimation.value,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: const HomeBodyView())),
+            ),
           ),
           AnimatedPositioned(
               left: isMenuOpened ? screenWidth * .8 : 20,
