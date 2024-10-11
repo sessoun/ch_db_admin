@@ -24,6 +24,7 @@ class MainViewController extends ChangeNotifier {
           setState();
         },
       );
+
     _animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
       parent: animationController,
       curve: Curves.fastOutSlowIn,

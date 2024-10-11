@@ -1,7 +1,12 @@
 import 'dart:math';
 
+import 'package:ch_db_admin/src/Dashboard/dash_borad_view.dart';
+import 'package:ch_db_admin/src/Members/presentation/members_view.dart';
+import 'package:ch_db_admin/src/attendance/presentation/attendance_view.dart';
+import 'package:ch_db_admin/src/events/presentation/ui/events_view.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/side_menu_view.dart';
+import 'package:ch_db_admin/src/notifications/presentation/ui/notifications_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -52,13 +57,15 @@ class _HomeViewState extends State<HomeView>
                 child: Transform.scale(
                     scale: controller.scaleAnimation.value,
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: controller.isMenuOpened
+                            ? BorderRadius.circular(15)
+                            : BorderRadius.zero,
                         child: const HomeBodyView())),
               ),
             ),
             AnimatedPositioned(
                 left: watchController.isMenuOpened ? screenWidth * .8 : 20,
-                top: 20,
+                top: 8,
                 duration: const Duration(milliseconds: 250),
                 child: GestureDetector(
                   onTap: () {
@@ -95,15 +102,19 @@ class _HomeBodyViewState extends State<HomeBodyView> {
     context.read<MainViewController>().initIt(setState: update);
   }
 
+  var views = const [
+    DashboardView(),
+    MembersView(),
+    AttendanceView(),
+    EventsView(),
+    NotificationsView()
+  ];
   @override
   Widget build(BuildContext context) {
     var controller = context.read<MainViewController>();
-    return Scaffold(
-        body: PageView.builder(
-      controller: controller.pageController,
-      itemBuilder: (context, index) => Center(
-        child: Text('This is a page build with $index index.'),
-      ),
-    ));
+    return PageView.builder(
+        itemCount: views.length,
+        controller: controller.pageController,
+        itemBuilder: (context, index) => views[index]);
   }
 }
