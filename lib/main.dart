@@ -1,6 +1,6 @@
+import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/theme/apptheme.dart';
-import 'package:ch_db_admin/src/ui/home.dart';
-import 'package:ch_db_admin/src/ui/login.dart';
+import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +23,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => ThemeProvider(isDarkMode, primaryColor),
         ),
+        ChangeNotifierProvider(
+          create: (context) => MainViewController(),
+        )
       ],
       builder: (context, _) {
         // Access the ThemeProvider instance
