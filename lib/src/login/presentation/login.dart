@@ -92,7 +92,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               const SizedBox(height: 24),
-
               // Sign Up Link
               TextButton(
                 onPressed: () {

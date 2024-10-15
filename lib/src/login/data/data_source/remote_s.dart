@@ -4,15 +4,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 class LoginRemoteS {
   final auth = FirebaseAuth.instance;
 
-  Future login(UserLoginCredentialsModel data) async {
+  Future<String> login(UserLoginCredentialsModel credentials) async {
     try {
-      await auth.signInWithEmailAndPassword(
-        email: data.email,
-        password: data.password,
+      var userCredentials = await auth.signInWithEmailAndPassword(
+        email: credentials.email,
+        password: credentials.password,
       );
-      print(auth.currentUser?.uid);
-    } on FirebaseAuthException catch (e) {
-      print(e.message);
+      return userCredentials.user?.uid ?? '';
+    } catch (e) {
+      print(e);
+      throw Exception('Failed to register: ${e.toString()}');
+    }
+  }
+
+  Future<String> logOut() async {
+    try {
+      await auth.signOut();
+      return 'Signed out successfully';
+    } catch (e) {
+      print(e);
+      throw Exception('Failed to logout: ${e.toString()}');
     }
   }
 }
