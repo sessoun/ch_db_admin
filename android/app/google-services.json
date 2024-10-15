@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "945463211572",
+    "project_id": "church-data-storage",
+    "storage_bucket": "church-data-storage.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945463211572:android:a89922ef88ca8c75a77c61",
+        "android_client_info": {
+          "package_name": "com.c"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7K_k46Ll1bF3bOCAsD0w1MzYWjPeW1_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945463211572:android:1972e8267ff2719ba77c61",
+        "android_client_info": {
+          "package_name": "com.example.ch_db_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7K_k46Ll1bF3bOCAsD0w1MzYWjPeW1_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

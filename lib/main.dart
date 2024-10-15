@@ -1,6 +1,8 @@
+import 'package:ch_db_admin/firebase_options.dart';
+import 'package:ch_db_admin/src/login/presentation/login.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/theme/apptheme.dart';
-import 'package:ch_db_admin/src/main_view/presentation/home.dart';
+ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +10,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await loadPreferences();
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
+    await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +41,7 @@ class MyApp extends StatelessWidget {
           darkTheme: themeProvider.theme,
           themeMode:
               themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: const HomeView(),
+          home: const LoginView(),
         );
       },
     );

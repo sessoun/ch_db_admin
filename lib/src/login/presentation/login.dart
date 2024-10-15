@@ -1,15 +1,26 @@
+import 'package:ch_db_admin/src/login/data/data_source/remote_s.dart';
+import 'package:ch_db_admin/src/login/data/models/user_login_credentials.dart';
 import 'package:ch_db_admin/src/theme/apptheme.dart';
+import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
 
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -34,35 +45,37 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 40),
 
               // Email Field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: const OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: themeProvider.theme.primaryColor),
-                  ),
-                ),
+              CustomTextFormField(
+                controller: emailController,
+                labelText: 'Email',
+                hintText: '',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               // Password Field
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: const OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: themeProvider.theme.primaryColor),
-                  ),
-                ),
+              CustomTextFormField(
+                controller: passwordController,
+                labelText: 'Password',
+                hintText: '',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
 
               // Login Button
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // Add your login logic here
+                 await LoginRemoteS().login(UserLoginCredentialsModel(email: emailController.text, password: passwordController.text));
                 },
                 child: const Text('Login'),
               ),
