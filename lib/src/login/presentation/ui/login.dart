@@ -1,5 +1,7 @@
+import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/src/login/data/data_source/remote_s.dart';
 import 'package:ch_db_admin/src/login/data/models/user_login_credentials.dart';
+import 'package:ch_db_admin/src/login/presentation/controller/auth_controller.dart';
 import 'package:ch_db_admin/src/theme/apptheme.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +28,7 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.stretch, 
             children: [
               Image.asset(
                 'images/lil.jpg',
@@ -75,7 +77,15 @@ class _LoginViewState extends State<LoginView> {
               ElevatedButton(
                 onPressed: () async {
                   // Add your login logic here
-                 await LoginRemoteS().login(UserLoginCredentialsModel(email: emailController.text, password: passwordController.text));
+                  final result = await context.read<AuthController>().signIn(
+                      UserLoginCredentialsModel(
+                          email: emailController.text,
+                          password: passwordController.text));
+                  result.fold(
+                      (failure) =>
+                          NotificationUtil.showError(context, failure.message),
+                      (success) => NotificationUtil.showSuccess(
+                          context, 'Signed in successfully'));
                 },
                 child: const Text('Login'),
               ),
@@ -93,15 +103,6 @@ class _LoginViewState extends State<LoginView> {
               ),
               const SizedBox(height: 24),
               // Sign Up Link
-              TextButton(
-                onPressed: () {
-                  // Navigate to Sign Up screen
-                },
-                child: Text(
-                  'Create an account',
-                  style: TextStyle(color: themeProvider.theme.primaryColor),
-                ),
-              ),
             ],
           ),
         ),
