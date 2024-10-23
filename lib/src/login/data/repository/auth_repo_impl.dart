@@ -26,14 +26,24 @@ class AuthRepoImpl implements AuthRepo {
         return Left(Failure(
           'No user found for that email.',
         ));
-      } else if (e.code!.contains('credential is incorrect')) {
-        return Left(Failure('Incorrect credentials provided.'));
+      } else if (e.code == 'invalid-credential') {
+        return Left(Failure('The supplied credential is incorrect.'));
+      } else if (e.code == 'too-many-requests') {
+        return Left(Failure('Too many requests. Try again later'));
+      } else if (e.code == 'network-request-failed') {
+        return Left(Failure(
+            'A network error has occurred. Check your internet settings'));
       } else {
+        print(e.code);
         return Left(Failure(e.message));
       }
-    } on NetworkException {
-      return Left(Failure(
-          'No internet connection. Please check your network settings.'));
+    } on NetworkException catch (e) {
+      if (e.message.contains('network-request-failed')) {
+        return Left(
+            Failure('A network error. Please check your network settings.'));
+      } else {
+        return Left(Failure('Internet connection error'));
+      }
     } on AppException catch (e) {
       print(e);
       return Left(Failure('An unknown error occurred: ${e.toString()}'));

@@ -2,7 +2,7 @@ import 'package:ch_db_admin/firebase_options.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/login/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
-import 'package:ch_db_admin/src/theme/apptheme.dart';
+import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

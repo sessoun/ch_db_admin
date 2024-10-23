@@ -1,4 +1,4 @@
-import 'package:ch_db_admin/src/theme/apptheme.dart';
+import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,5 +1,5 @@
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
-import 'package:ch_db_admin/src/theme/apptheme.dart';
+import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/src/main_view/presentation/menu_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

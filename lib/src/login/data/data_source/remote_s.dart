@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:ch_db_admin/shared/exceptions/app_exception.dart';
@@ -19,24 +20,16 @@ class LoginRemoteS {
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       // Catch specific Firebase authentication errors and throw a custom exception
-      if (e.code == 'user-not-found') {
-        throw custom.FirebaseAuthException('No user found for that email.',
-            code: e.code);
-      } else if (e.code == 'wrong-password') {
-        throw custom.FirebaseAuthException('Wrong password provided.',
-            code: e.code);
-      } else {
-        throw custom.FirebaseAuthException(
-            'Authentication failed: ${e.message}',
-            code: e.code);
-      }
+      log('here: $e');
+
+      log(e.code);
+
+      throw custom.FirebaseAuthException(e.message ?? 'Authentication error',
+          code: e.code);
     } on SocketException catch (e) {
       // If another type of exception occurs, it might be a network issue or something unexpected.
-      if (e.toString().contains('network')) {
-        throw NetworkException('Network connection failed.');
-      } else {
-        throw AppException('An unknown error occurred: ${e.toString()}');
-      }
+      log('here: $e');
+      throw NetworkException(e.message);
     } on Exception catch (e) {
       throw AppException(e.toString());
     }
