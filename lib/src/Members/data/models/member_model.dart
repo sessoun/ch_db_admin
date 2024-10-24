@@ -1,6 +1,7 @@
 // lib/data/models/member_model.dart
 
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MemberModel extends Member {
   MemberModel({
@@ -17,24 +18,24 @@ class MemberModel extends Member {
   });
 
   // Factory method for creating a MemberModel from JSON
-  factory MemberModel.fromJson(Map<String, dynamic> json) {
-    return MemberModel(
-      fullName: json['fullName'],
-      location: json['location'],
-      contact: json['contact'],
-      marriageStatus: json['marriageStatus'],
-      spouseName: json['spouseName'],
-      children:
-          json['children'] != null ? List<String>.from(json['children']) : null,
-      relativeContact: json['relativeContact'],
-      additionalImage: json['additionalImageUrl'],
-      profilePic: json['profilePicUrl'],
-      dateOfBirth: DateTime.parse(json['dateOfBirth']),
+  factory MemberModel.fromFirebase(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return  MemberModel(
+      fullName: data['fullName'] ?? '',
+      location: data['location'] ?? '',
+      contact: data['contact'] ?? '',
+      marriageStatus: data['marriageStatus'] ?? '',
+      spouseName: data['spouseName'],
+      children: data['children'] != null ? List<String>.from(data['children']) : null,
+      relativeContact: data['relativeContact'],
+      additionalImage: data['additionalImageUrl'],
+      profilePic: data['profilePicUrl'],
+      dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
     );
   }
 
   // Method for converting a MemberModel to JSON
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toFirebase() {
     return {
       'fullName': fullName,
       'location': location,
@@ -45,7 +46,7 @@ class MemberModel extends Member {
       'relativeContact': relativeContact,
       'additionalImageUrl': additionalImage,
       'profilePicUrl': profilePic,
-      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'dateOfBirth': Timestamp.fromDate(dateOfBirth),
     };
   }
 }
