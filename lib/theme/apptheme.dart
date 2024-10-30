@@ -31,8 +31,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-        ),
+            backgroundColor: primaryColor, foregroundColor: Colors.white),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: const OutlineInputBorder(),
@@ -68,12 +67,12 @@ class AppTheme {
       ),
       buttonTheme: ButtonThemeData(
         buttonColor: primaryColor,
-        textTheme: ButtonTextTheme.primary,
+        textTheme: ButtonTextTheme.normal,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-        ),
+            backgroundColor: primaryColor,
+            textStyle: TextStyle(color: Colors.white)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: const OutlineInputBorder(),

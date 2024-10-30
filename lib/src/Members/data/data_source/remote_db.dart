@@ -9,7 +9,7 @@ import '../../../../shared/exceptions/network_exception.dart';
 class MembersRemoteDb {
   final db = FirebaseFirestore.instance
       .collection('organisation')
-      .doc('organisation_name') // Replace with actual organisation ID or name
+      .doc()
       .collection('members');
 
   // Create a member in the Firestore database

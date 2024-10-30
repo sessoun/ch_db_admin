@@ -1,5 +1,5 @@
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
-import 'package:ch_db_admin/src/Members/presentation/add_member_view.dart';
+import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
 import 'package:flutter/material.dart';
 
 class MembersView extends StatefulWidget {

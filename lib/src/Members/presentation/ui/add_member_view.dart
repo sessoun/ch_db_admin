@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
+import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddMemberView extends StatefulWidget {
   const AddMemberView({super.key});
@@ -49,6 +52,7 @@ class _AddMemberViewState extends State<AddMemberView> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.read<MemberController>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Member'),
@@ -206,7 +210,7 @@ class _AddMemberViewState extends State<AddMemberView> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     // Create a new member object and do something with it
@@ -223,9 +227,23 @@ class _AddMemberViewState extends State<AddMemberView> {
                       dateOfBirth: dateOfBirth,
                     );
 
+                    await context
+                        .read<MemberController>()
+                        .addMember(newMember)
+                        .then(
+                      (result) {
+                        if (provider.statusMessage.contains('Error')) {
+                          NotificationUtil.showError(
+                              context, provider.statusMessage);
+                        } else {
+                          Navigator.pop(context);
+                          NotificationUtil.showSuccess(
+                              context, provider.statusMessage);
+                        }
+                      },
+                    );
                     // Perform your logic here (e.g., add member to the list or database)
-                    Navigator.pop(
-                        context); // Close the form after adding member
+                    // Close the form after adding member
                   }
                 },
                 child: const Text('Add Member'),

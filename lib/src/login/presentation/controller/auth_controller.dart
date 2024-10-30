@@ -6,6 +6,7 @@ import 'package:ch_db_admin/src/login/domain/usecase/sign_in.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends ChangeNotifier {
   final SignIn _signIn;
@@ -21,7 +22,9 @@ class AuthController extends ChangeNotifier {
     final result = await _signIn(Params(data));
     return result.fold((failure) {
       return left(Failure(failure.message));
-    }, (success) {
+    }, (success) async {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('organisation_id',success!.uid);
       return right(success);
     });
   }

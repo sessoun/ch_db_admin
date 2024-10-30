@@ -19,7 +19,6 @@ class LoginRemoteS {
       );
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
-      // Catch specific Firebase authentication errors and throw a custom exception
       log('here: $e');
 
       log(e.code);
@@ -27,7 +26,6 @@ class LoginRemoteS {
       throw custom.FirebaseAuthException(e.message ?? 'Authentication error',
           code: e.code);
     } on SocketException catch (e) {
-      // If another type of exception occurs, it might be a network issue or something unexpected.
       log('here: $e');
       throw NetworkException(e.message);
     } on Exception catch (e) {
