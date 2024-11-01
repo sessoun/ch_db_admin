@@ -7,10 +7,17 @@ import '../../../../shared/exceptions/app_exception.dart';
 import '../../../../shared/exceptions/network_exception.dart';
 
 class MembersRemoteDb {
-  final db = FirebaseFirestore.instance
+  late CollectionReference<Map<String, dynamic>> db ;
+  String? orgName;
+//this 
+      void initDb(){
+
+
+        db = FirebaseFirestore.instance
       .collection('organisation')
-      .doc()
+      .doc(orgName)
       .collection('members');
+      }
 
   // Create a member in the Firestore database
   Future<String> addUser(MemberModel data) async {
