@@ -1,5 +1,6 @@
 // lib/src/Members/presentation/controllers/member_controller.dart
 
+import 'package:ch_db_admin/src/Members/data/data_source/remote_db.dart';
 import 'package:ch_db_admin/src/Members/presentation/usecases/add_member.dart';
 import 'package:ch_db_admin/src/Members/presentation/usecases/delete_member.dart';
 import 'package:ch_db_admin/src/Members/presentation/usecases/get_all_members.dart';
@@ -59,6 +60,7 @@ class MemberController extends ChangeNotifier {
 
   // Add a new member
   Future<void> addMember(Member member) async {
+    await MembersRemoteDb().initDb('CAAC');
     _setLoading(true);
     final result = await _addMember(Params(member));
 

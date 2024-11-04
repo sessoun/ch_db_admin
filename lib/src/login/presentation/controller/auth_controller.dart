@@ -18,8 +18,17 @@ class AuthController extends ChangeNotifier {
   })  : _signIn = signIn,
         _signOut = signOut;
 
+        bool _isLoading = false;
+        get isLoading => _isLoading;
+
+        
+
   Future<Either<Failure, User?>> signIn(UserLoginCredentials data) async {
+    _isLoading = true;
+    notifyListeners();
     final result = await _signIn(Params(data));
+     _isLoading = false;
+    notifyListeners();
     return result.fold((failure) {
       return left(Failure(failure.message));
     }, (success) async {
