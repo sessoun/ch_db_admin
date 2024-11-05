@@ -4,7 +4,9 @@ import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/dependencies/member.dart';
 import 'package:ch_db_admin/src/login/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
+import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,11 +22,10 @@ void main() async {
   locator.registerLazySingleton<SharedPreferences>(
     () => prefs,
   );
-await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -59,9 +60,27 @@ class MyApp extends StatelessWidget {
           darkTheme: themeProvider.theme,
           themeMode:
               themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: const LoginView(),
+          home: const AuthState(),
         );
       },
     );
+  }
+}
+
+class AuthState extends StatefulWidget {
+  const AuthState({super.key});
+
+  @override
+  State<AuthState> createState() => _AuthStateState();
+}
+
+class _AuthStateState extends State<AuthState> {
+  User? currentUser = FirebaseAuth.instance.currentUser;
+  @override
+  Widget build(BuildContext context) {
+    if (currentUser == null) {
+      return const LoginView();
+    }
+    return const HomeView();
   }
 }

@@ -82,7 +82,6 @@ class _LoginViewState extends State<LoginView> {
               // Login Button
               ElevatedButton(
                 onPressed: () async {
-                  // Add your login logic here
                   final result = await context.read<AuthController>().signIn(
                         UserLoginCredentialsModel(
                           email: emailController.text,
@@ -100,7 +99,7 @@ class _LoginViewState extends State<LoginView> {
                       await checkOnOrgName(context);
 
                       // Navigate to HomeView
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => const HomeView(),
                       ));
                     },
@@ -122,7 +121,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Sign Up Link
             ],
           ),
         ),
