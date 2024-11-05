@@ -11,6 +11,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 class LoginRemoteS {
   final auth = FirebaseAuth.instance;
 
+  
+
   Future<User?> signIn(UserLoginCredentialsModel data) async {
     try {
       final userCredential = await auth.signInWithEmailAndPassword(

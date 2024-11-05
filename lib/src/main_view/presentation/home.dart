@@ -28,6 +28,7 @@ class _HomeViewState extends State<HomeView>
   @override
   void initState() {
     context.read<MainViewController>().init(setState: update, vsync: this);
+    // checkPrefs();
     super.initState();
   }
 
@@ -57,11 +58,10 @@ class _HomeViewState extends State<HomeView>
       // If not saved, show theme dialog to let the user choose
       _showThemeDialog(context);
     } else {
-      Navigator.of(context).pushAndRemoveUntil(
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const HomeView(),
         ),
-        (route) => false,
       );
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ch_db_admin/shared/notification_util.dart';
+import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/shared/utils/upload_and_download.dart';
 import 'package:ch_db_admin/src/Members/data/data_source/remote_db.dart';
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
@@ -63,6 +64,7 @@ class _AddMemberViewState extends State<AddMemberView> {
       String otherImage = additionalImage?.path ?? '';
 
       try {
+        provider.setLoading(true);
         if (profilePic != null || additionalImage != null) {
           profileImage = await imageStore(
             context,
@@ -79,6 +81,7 @@ class _AddMemberViewState extends State<AddMemberView> {
           );
         }
       } on FirebaseException catch (_) {
+        provider.setLoading(false);
         if (mounted) {
           NotificationUtil.showError(
               context, 'Failed to upload image. Please try again.');
@@ -103,6 +106,7 @@ class _AddMemberViewState extends State<AddMemberView> {
 
       await provider.addMember(newMember).then(
         (result) {
+          print(provider.statusMessage);
           if (provider.statusMessage.contains('Error')) {
             NotificationUtil.showError(context, provider.statusMessage);
           } else {
@@ -270,7 +274,7 @@ class _AddMemberViewState extends State<AddMemberView> {
                   submitForm();
                 },
                 child: const Text('Add Member'),
-              ),
+              ).loadingIndicator(context,context.watch<MemberController>().isLoading),
             ],
           ),
         ),

@@ -1,7 +1,10 @@
 import 'package:ch_db_admin/shared/notification_util.dart';
+import 'package:ch_db_admin/shared/utils/extensions.dart';
+import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/login/data/data_source/remote_s.dart';
 import 'package:ch_db_admin/src/login/data/models/user_login_credentials.dart';
 import 'package:ch_db_admin/src/login/presentation/controller/auth_controller.dart';
+import 'package:ch_db_admin/src/login/presentation/ui/orgname_dialog.dart';
 import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
@@ -81,22 +84,31 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () async {
                   // Add your login logic here
                   final result = await context.read<AuthController>().signIn(
-                      UserLoginCredentialsModel(
+                        UserLoginCredentialsModel(
                           email: emailController.text,
-                          password: passwordController.text));
+                          password: passwordController.text,
+                        ),
+                      );
+
                   result.fold(
-                      (failure) =>
-                          NotificationUtil.showError(context, failure.message),
-                      (success) async {
-                    NotificationUtil.showSuccess(
-                        context, 'Signed in successfully');
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => HomeView(),
-                    ));
-                  });
+                    (failure) =>
+                        NotificationUtil.showError(context, failure.message),
+                    (success) async {
+                      NotificationUtil.showSuccess(
+                          context, 'Signed in successfully');
+
+                      await checkOnOrgName(context);
+
+                      // Navigate to HomeView
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const HomeView(),
+                      ));
+                    },
+                  );
                 },
                 child: const Text('Login'),
-              ),
+              ).loadingIndicator(
+                  context, context.watch<AuthController>().isLoading),
               const SizedBox(height: 16),
 
               // Forgot Password Link

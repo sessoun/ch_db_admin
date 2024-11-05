@@ -8,6 +8,7 @@ import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +16,15 @@ void main() async {
   //initialize dependencies
   initAuthDep();
   initMemberDep();
-  
-  runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
-  await Firebase.initializeApp(
+  final prefs = await SharedPreferences.getInstance();
+  locator.registerLazySingleton<SharedPreferences>(
+    () => prefs,
+  );
+await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
+  
 }
 
 class MyApp extends StatelessWidget {
@@ -41,7 +46,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => authController,
         ),
-        ChangeNotifierProvider(create: (context) => locator.get<MemberController>(),)
+        ChangeNotifierProvider(
+          create: (context) => locator.get<MemberController>(),
+        )
       ],
       builder: (context, _) {
         // Access the ThemeProvider instance

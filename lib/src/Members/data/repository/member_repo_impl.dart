@@ -45,15 +45,16 @@ class MemberRepositoryImpl implements MemberRepository {
         profilePic: member.profilePic,
         dateOfBirth: member.dateOfBirth,
       );
-      final result = await remoteDb.addUser(memberModel);
-      return Right(result);  // Success case
+      final result = await remoteDb.addMember(memberModel);
+      return Right(result); // Success case
     } on FirebaseException catch (e) {
-      return Left(Failure(e.message ?? 'Error adding member', code: e.code));  // Firebase failure
+      return Left(Failure(e.message ?? 'Error adding member',
+          code: e.code)); // Firebase failure
     } on SocketException catch (e) {
       log('here: $e');
-      return Left(Failure('No internet connection'));  // Network failure
+      return Left(Failure('No internet connection')); // Network failure
     } catch (e) {
-      return Left(Failure('Unknown error: $e'));  // Generic failure
+      return Left(Failure('Unknown error: $e')); // Generic failure
     }
   }
 
@@ -64,7 +65,8 @@ class MemberRepositoryImpl implements MemberRepository {
       if (memberModel == null) {
         return Left(Failure('Member with ID $memberId not found'));
       }
-      return Right(_convertMemberModelToMember(memberModel));  // Convert MemberModel to Member
+      return Right(_convertMemberModelToMember(
+          memberModel)); // Convert MemberModel to Member
     } on FirebaseException catch (e) {
       return Left(Failure(e.message ?? 'Error fetching member', code: e.code));
     } on SocketException catch (e) {
@@ -92,7 +94,8 @@ class MemberRepositoryImpl implements MemberRepository {
   }
 
   @override
-  Future<Either<Failure, String>> updateMember(String memberId, Member member) async {
+  Future<Either<Failure, String>> updateMember(
+      String memberId, Member member) async {
     try {
       final memberModel = MemberModel(
         fullName: member.fullName,
@@ -140,7 +143,8 @@ class MemberRepositoryImpl implements MemberRepository {
       // Convert each MemberModel to Member before returning
       return Right(members.map(_convertMemberModelToMember).toList());
     } on FirebaseException catch (e) {
-      return Left(Failure(e.message ?? 'Error fetching members by name', code: e.code));
+      return Left(
+          Failure(e.message ?? 'Error fetching members by name', code: e.code));
     } on SocketException catch (e) {
       log('here: $e');
       return Left(Failure('No internet connection'));
