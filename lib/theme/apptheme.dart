@@ -72,7 +72,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
-            textStyle: TextStyle(color: Colors.white)),
+            textStyle: const TextStyle(color: Colors.white)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: const OutlineInputBorder(),

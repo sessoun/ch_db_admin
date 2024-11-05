@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/shared/utils/upload_and_download.dart';
-import 'package:ch_db_admin/src/Members/data/data_source/remote_db.dart';
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
@@ -131,7 +130,7 @@ class _AddMemberViewState extends State<AddMemberView> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.read<MemberController>();
+    // final provider = context.read<MemberController>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Member'),

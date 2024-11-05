@@ -11,7 +11,7 @@ class _AttendanceViewState extends State<AttendanceView> {
   // Sample attendance data
   final List<AttendanceModel> attendanceRecords = [
     AttendanceModel(memberId: '1', date: DateTime.now(), isPresent: true, notes: 'Attended service'),
-    AttendanceModel(memberId: '2', date: DateTime.now().subtract(Duration(days: 1)), isPresent: false, notes: 'Absent'),
+    AttendanceModel(memberId: '2', date: DateTime.now().subtract(const Duration(days: 1)), isPresent: false, notes: 'Absent'),
     // Add more attendance records as needed
   ];
 
@@ -46,7 +46,7 @@ class _AttendanceViewState extends State<AttendanceView> {
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search by Member ID...',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

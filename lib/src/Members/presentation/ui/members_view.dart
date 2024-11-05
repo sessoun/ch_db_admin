@@ -1,6 +1,9 @@
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
+import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
+import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MembersView extends StatefulWidget {
   const MembersView({super.key});
@@ -10,6 +13,20 @@ class MembersView extends StatefulWidget {
 }
 
 class _MembersViewState extends State<MembersView> {
+  @override
+  void initState() {
+    super.initState();
+    getMembers();
+  }
+
+  void getMembers() async {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        await context.read<MemberController>().fetchAllMembers();
+      },
+    );
+  }
+
   // Sample member data with more features
   final List<MemberModel> members = [
     MemberModel(
@@ -67,6 +84,8 @@ class _MembersViewState extends State<MembersView> {
 
   @override
   Widget build(BuildContext context) {
+    final members = context.watch<MemberController>().members;
+
     final theme = Theme.of(context);
     final filteredMembers = members
         .where((member) =>
@@ -122,12 +141,12 @@ class _MembersViewState extends State<MembersView> {
             MaterialPageRoute(builder: (context) => const AddMemberView()),
           );
         },
-        child: Icon(Icons.person_add),
+        child: const Icon(Icons.person_add),
       ),
     );
   }
 
-  Widget _buildGridView(List<MemberModel> members) {
+  Widget _buildGridView(List<Member> members) {
     final theme = Theme.of(context);
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -152,7 +171,7 @@ class _MembersViewState extends State<MembersView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 30,
                     // backgroundImage: AssetImage(member.profilePicUrl!),
                   ),
@@ -171,7 +190,7 @@ class _MembersViewState extends State<MembersView> {
     );
   }
 
-  Widget _buildListView(List<MemberModel> members) {
+  Widget _buildListView(List<Member> members) {
     final theme = Theme.of(context);
     return ListView.builder(
       itemCount: members.length,
@@ -190,7 +209,7 @@ class _MembersViewState extends State<MembersView> {
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 30,
                     // backgroundImage: AssetImage(member.profilePicUrl!),
                   ),

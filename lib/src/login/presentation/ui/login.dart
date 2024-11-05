@@ -1,7 +1,5 @@
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
-import 'package:ch_db_admin/src/dependencies/auth.dart';
-import 'package:ch_db_admin/src/login/data/data_source/remote_s.dart';
 import 'package:ch_db_admin/src/login/data/models/user_login_credentials.dart';
 import 'package:ch_db_admin/src/login/presentation/controller/auth_controller.dart';
 import 'package:ch_db_admin/src/login/presentation/ui/orgname_dialog.dart';
@@ -10,7 +8,6 @@ import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -45,8 +42,7 @@ class _LoginViewState extends State<LoginView> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: themeProvider
-                        .theme.primaryColor, // Use primary color from theme
+                    color: themeProvider.theme.primaryColor,
                   ),
                 ),
               ),

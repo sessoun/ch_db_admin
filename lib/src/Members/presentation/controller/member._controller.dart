@@ -1,6 +1,5 @@
 // lib/src/Members/presentation/controllers/member_controller.dart
 
-import 'package:ch_db_admin/src/Members/data/data_source/remote_db.dart';
 import 'package:ch_db_admin/src/Members/presentation/usecases/add_member.dart';
 import 'package:ch_db_admin/src/Members/presentation/usecases/delete_member.dart';
 import 'package:ch_db_admin/src/Members/presentation/usecases/get_all_members.dart';
@@ -49,7 +48,6 @@ class MemberController extends ChangeNotifier {
     result.fold(
       (failure) => _handleFailure(failure),
       (fetchedMembers) {
-        _clearError();
         _members = fetchedMembers;
         _statusMessage = 'Members fetched successfully';
       },
