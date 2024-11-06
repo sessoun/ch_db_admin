@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ch_db_admin/shared/chached_network_image.dart';
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class MembersView extends StatefulWidget {
@@ -84,10 +87,10 @@ class _MembersViewState extends State<MembersView> {
 
   @override
   Widget build(BuildContext context) {
-    final members = context.watch<MemberController>().members;
+    final membersController = context.watch<MemberController>();
 
     final theme = Theme.of(context);
-    final filteredMembers = members
+    final filteredMembers = membersController.members
         .where((member) =>
             member.fullName.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
@@ -127,9 +130,15 @@ class _MembersViewState extends State<MembersView> {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: isGridView
-                  ? _buildGridView(filteredMembers)
-                  : _buildListView(filteredMembers),
+              child: membersController.isLoading
+                  ? Center(
+                      child: SpinKitChasingDots(
+                        color: theme.primaryColor,
+                      ),
+                    )
+                  : isGridView
+                      ? _buildGridView(filteredMembers)
+                      : _buildListView(filteredMembers),
             ),
           ],
         ),
@@ -171,10 +180,7 @@ class _MembersViewState extends State<MembersView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const CircleAvatar(
-                    radius: 30,
-                    // backgroundImage: AssetImage(member.profilePicUrl!),
-                  ),
+                  networkImage(member.profilePic!),
                   const SizedBox(height: 10),
                   Text(
                     member.fullName,
@@ -209,11 +215,8 @@ class _MembersViewState extends State<MembersView> {
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 30,
-                    // backgroundImage: AssetImage(member.profilePicUrl!),
-                  ),
-                  const SizedBox(width: 16),
+                  networkImage(member.profilePic!),
+                    const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
