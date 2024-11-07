@@ -1,4 +1,5 @@
 class Member {
+  String? id;
   final String fullName;
   final String location;
   final String contact;
@@ -9,8 +10,11 @@ class Member {
   final String? additionalImage;
   final String? profilePic;
   final DateTime dateOfBirth;
+  final List<String>? groupAffiliate;
+  String? role;
 
   Member({
+    this.id,
     required this.fullName,
     required this.location,
     required this.contact,
@@ -21,5 +25,7 @@ class Member {
     this.additionalImage,
     this.profilePic,
     required this.dateOfBirth,
+    this.groupAffiliate,
+    this.role,
   });
 }

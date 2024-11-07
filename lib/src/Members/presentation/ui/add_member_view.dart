@@ -4,6 +4,7 @@ import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/shared/utils/upload_and_download.dart';
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
+import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -55,6 +56,25 @@ class _AddMemberViewState extends State<AddMemberView> {
     }
   }
 
+  final List<String> groupAffiliations = [
+    'Choir',
+    'Youth Ministry',
+    'Women Ministry',
+    'Men Ministry',
+  ];
+  final List<String> selectedAffiliations = [];
+  String selectedRole = 'None';
+
+  void toggleAffiliation(String affiliation) {
+    setState(() {
+      if (selectedAffiliations.contains(affiliation)) {
+        selectedAffiliations.remove(affiliation);
+      } else {
+        selectedAffiliations.add(affiliation);
+      }
+    });
+  }
+
   Future<void> submitForm() async {
     final provider = context.read<MemberController>();
 
@@ -87,7 +107,7 @@ class _AddMemberViewState extends State<AddMemberView> {
         }
       }
 
-      MemberModel newMember = MemberModel(
+      Member newMember = Member(
         profilePic: profileImage,
         fullName: fullNameController.text,
         location: locationController.text,
@@ -100,12 +120,13 @@ class _AddMemberViewState extends State<AddMemberView> {
             .toList(),
         relativeContact: relativeContactController.text,
         additionalImage: otherImage,
+        groupAffiliate: selectedAffiliations,
+        role: selectedRole,
         dateOfBirth: DateTime.parse(dateOfBirthController.text),
       );
-
+      print(newMember.role);
       await provider.addMember(newMember).then(
         (result) {
-          print(provider.statusMessage);
           if (provider.statusMessage.contains('Error')) {
             NotificationUtil.showError(context, provider.statusMessage);
           } else {
@@ -113,6 +134,7 @@ class _AddMemberViewState extends State<AddMemberView> {
           }
         },
       );
+      print(newMember.role);
     }
   }
 
@@ -206,6 +228,12 @@ class _AddMemberViewState extends State<AddMemberView> {
                 controller: locationController,
                 labelText: 'Location',
                 hintText: 'Enter location',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter location';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               CustomTextFormField(
@@ -266,6 +294,52 @@ class _AddMemberViewState extends State<AddMemberView> {
                 controller: dateOfBirthController,
                 labelText: 'Date of Birth (YYYY-MM-DD)',
                 hintText: 'Enter date of birth',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter date of birth';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              const Text('Group Affiliations'),
+              Column(
+                children: groupAffiliations.map((affiliation) {
+                  return CheckboxListTile(
+                    title: Text(affiliation),
+                    value: selectedAffiliations.contains(affiliation),
+                    onChanged: (_) {
+                      toggleAffiliation(affiliation);
+                      print(selectedAffiliations);
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedRole,
+                items: [
+                  'None',
+                  'Elder',
+                  'Deacon',
+                  'Deaconess',
+                  'Teacher',
+                ].map((role) {
+                  return DropdownMenuItem(
+                    value: role,
+                    child: Text(role),
+                  );
+                }).toList(),
+                decoration: const InputDecoration(
+                  labelText: 'Role',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    selectedRole = value!;
+                  });
+                  print(selectedRole);
+                },
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -273,7 +347,8 @@ class _AddMemberViewState extends State<AddMemberView> {
                   submitForm();
                 },
                 child: const Text('Add Member'),
-              ).loadingIndicator(context,context.watch<MemberController>().isLoading),
+              ).loadingIndicator(
+                  context, context.watch<MemberController>().isLoading),
             ],
           ),
         ),

@@ -216,7 +216,7 @@ class _MembersViewState extends State<MembersView> {
               child: Row(
                 children: [
                   networkImage(member.profilePic!),
-                    const SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +228,7 @@ class _MembersViewState extends State<MembersView> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          member.location,
+                          member.location + member.role!,
                           style: theme.textTheme.bodyMedium,
                         ),
                       ],

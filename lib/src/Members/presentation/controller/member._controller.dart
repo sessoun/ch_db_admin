@@ -60,7 +60,7 @@ class MemberController extends ChangeNotifier {
   Future<void> addMember(Member member) async {
     setLoading(true);
     final result = await _addMember(Params(member));
-
+    print(member.groupAffiliate);
     result.fold(
       (failure) => _handleFailure(failure),
       (successMessage) {

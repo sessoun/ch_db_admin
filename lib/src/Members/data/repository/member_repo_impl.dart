@@ -17,34 +17,38 @@ class MemberRepositoryImpl implements MemberRepository {
   // Convert MemberModel to Member
   Member _convertMemberModelToMember(MemberModel memberModel) {
     return Member(
-      fullName: memberModel.fullName,
-      location: memberModel.location,
-      contact: memberModel.contact,
-      marriageStatus: memberModel.marriageStatus,
-      spouseName: memberModel.spouseName,
-      children: memberModel.children,
-      relativeContact: memberModel.relativeContact,
-      additionalImage: memberModel.additionalImage,
-      profilePic: memberModel.profilePic,
-      dateOfBirth: memberModel.dateOfBirth,
-    );
+        id: memberModel.id,
+        fullName: memberModel.fullName,
+        location: memberModel.location,
+        contact: memberModel.contact,
+        marriageStatus: memberModel.marriageStatus,
+        spouseName: memberModel.spouseName,
+        children: memberModel.children,
+        relativeContact: memberModel.relativeContact,
+        additionalImage: memberModel.additionalImage,
+        profilePic: memberModel.profilePic,
+        dateOfBirth: memberModel.dateOfBirth,
+        role: memberModel.role,
+        groupAffiliate: memberModel.groupAffiliate);
   }
 
   @override
   Future<Either<Failure, String>> addMember(Member member) async {
+    print(member.role);
     try {
       final memberModel = MemberModel(
-        fullName: member.fullName,
-        location: member.location,
-        contact: member.contact,
-        marriageStatus: member.marriageStatus,
-        spouseName: member.spouseName,
-        children: member.children,
-        relativeContact: member.relativeContact,
-        additionalImage: member.additionalImage,
-        profilePic: member.profilePic,
-        dateOfBirth: member.dateOfBirth,
-      );
+          fullName: member.fullName,
+          location: member.location,
+          contact: member.contact,
+          marriageStatus: member.marriageStatus,
+          spouseName: member.spouseName,
+          children: member.children,
+          relativeContact: member.relativeContact,
+          additionalImage: member.additionalImage,
+          profilePic: member.profilePic,
+          groupAffiliate: member.groupAffiliate,
+          dateOfBirth: member.dateOfBirth,
+          role: member.role,);
       final result = await remoteDb.addMember(memberModel);
       return Right(result); // Success case
     } on FirebaseException catch (e) {
