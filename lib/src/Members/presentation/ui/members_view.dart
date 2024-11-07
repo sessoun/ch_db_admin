@@ -4,6 +4,7 @@ import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
+import 'package:ch_db_admin/src/Members/presentation/ui/detailed_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -169,7 +170,9 @@ class _MembersViewState extends State<MembersView> {
         final member = members[index];
         return GestureDetector(
           onTap: () {
-            // Navigate to member details page or perform any action
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MemberDetailView(member: member),
+            ));
           },
           child: Card(
             elevation: 2,
@@ -204,7 +207,9 @@ class _MembersViewState extends State<MembersView> {
         final member = members[index];
         return GestureDetector(
           onTap: () {
-            // Navigate to member details page or perform any action
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MemberDetailView(member: member),
+            ));
           },
           child: Card(
             elevation: 2,
@@ -227,9 +232,22 @@ class _MembersViewState extends State<MembersView> {
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          member.location + member.role!,
-                          style: theme.textTheme.bodyMedium,
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                member.location,
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                              Text(
+                                member.role == 'None' ? '' : member.role!,
+                                style: theme.textTheme.bodyMedium!
+                                    .copyWith(color: theme.primaryColor),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

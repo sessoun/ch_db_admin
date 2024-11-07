@@ -35,7 +35,7 @@ class MemberModel extends Member {
       relativeContact: data['relativeContact'],
       additionalImage: data['additionalImageUrl'],
       profilePic: data['profilePicUrl'],
-      role: data['role'] ?? '',
+      role: data['role'] ?? 'None',
       groupAffiliate: data['groupAffiliate'] != null
           ? List<String>.from(data['groupAffiliate'])
           : null,
