@@ -25,27 +25,28 @@ class MemberModel extends Member {
     final data = doc.data() as Map<String, dynamic>;
     return MemberModel(
       id: id,
-      fullName: data['fullName'] ?? '',
-      location: data['location'] ?? '',
-      contact: data['contact'] ?? '',
+      fullName: data['fullName'] == '' ? 'N/A' : data['fullName'],
+      location: data['location'] == '' ? 'N/A' : data['location'],
+      contact: data['contact'] == '' ? 'N/A' : data['contact'],
       marriageStatus: data['marriageStatus'] ?? '',
-      spouseName: data['spouseName'],
-      children:
-          data['children'] != null ? List<String>.from(data['children']) : null,
-      relativeContact: data['relativeContact'],
+      spouseName: data['spouseName'] == '' ? 'N/A' : data['spouseName'],
+      children: data['children'] != null && data['children'] == []
+          ? List<String>.from(data['children'])
+          : ['N/A'],
+      relativeContact:
+          data['relativeContact'] == '' ? 'N/A' : data['relativeContact'],
       additionalImage: data['additionalImageUrl'],
       profilePic: data['profilePicUrl'],
       role: data['role'] ?? 'None',
       groupAffiliate: data['groupAffiliate'] != null
           ? List<String>.from(data['groupAffiliate'])
-          : null,
+          : ['N/A'],
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
     );
   }
 
   // Method for converting a MemberModel to JSON
   Map<String, dynamic> toFirebase() {
-    print('from model $role');
     return {
       'fullName': fullName,
       'location': location,

@@ -156,6 +156,63 @@ class _MembersViewState extends State<MembersView> {
     );
   }
 
+  Widget _buildListView(List<Member> members) {
+    final theme = Theme.of(context);
+    return ListView.builder(
+      itemCount: members.length,
+      itemBuilder: (context, index) {
+        final member = members[index];
+        return Card(
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ExpansionTile(
+            shape: const RoundedRectangleBorder(),
+            leading: networkImage(member.profilePic!),
+            title: Text(
+              member.fullName,
+              style: theme.textTheme.bodyLarge!
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              member.role == 'None' ? '' : member.role!,
+            ),
+            children: [
+              ListTile(
+                title: Text("Location: ${member.location}"),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Marriage Status: ${member.marriageStatus}"),
+                    Text("Spouse: ${member.spouseName}"),
+                    Text("Children: ${member.children!.join(', ')}"),
+                    Text("Relative Contact: ${member.relativeContact}"),
+                    Text(
+                        "Date of Birth: ${member.dateOfBirth.toLocal().toIso8601String().split('T')[0]}"),
+                  ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => AddMemberView(member: member),
+                    //   ),
+                    // );
+                  },
+                  child: const Text("Edit"),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildGridView(List<Member> members) {
     final theme = Theme.of(context);
     return GridView.builder(
@@ -170,9 +227,55 @@ class _MembersViewState extends State<MembersView> {
         final member = members[index];
         return GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => MemberDetailView(member: member),
-            ));
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder: (context) => Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        networkImage(member.profilePic!),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            member.fullName,
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text("Location: ${member.location}"),
+                    Text("Marriage Status: ${member.marriageStatus}"),
+                    Text("Spouse: ${member.spouseName}"),
+                    Text("Children: ${member.children!.join(', ')}"),
+                    Text("Relative Contact: ${member.relativeContact}"),
+                    Text(
+                        "Date of Birth: ${member.dateOfBirth.toLocal().toIso8601String().split('T')[0]}"),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          // Navigator.of(context).push(
+                          //   MaterialPageRoute(
+                          //     builder: (context) => AddMemberView(member: member),
+                          //   ),
+                          // );
+                        },
+                        child: const Text("Edit"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           },
           child: Card(
             elevation: 2,
@@ -199,65 +302,108 @@ class _MembersViewState extends State<MembersView> {
     );
   }
 
-  Widget _buildListView(List<Member> members) {
-    final theme = Theme.of(context);
-    return ListView.builder(
-      itemCount: members.length,
-      itemBuilder: (context, index) {
-        final member = members[index];
-        return GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => MemberDetailView(member: member),
-            ));
-          },
-          child: Card(
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  networkImage(member.profilePic!),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          member.fullName,
-                          style: theme.textTheme.bodyLarge!
-                              .copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 4),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                member.location,
-                                style: theme.textTheme.bodyMedium,
-                              ),
-                              Text(
-                                member.role == 'None' ? '' : member.role!,
-                                style: theme.textTheme.bodyMedium!
-                                    .copyWith(color: theme.primaryColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // Widget _buildGridView(List<Member> members) {
+  //   final theme = Theme.of(context);
+  //   return GridView.builder(
+  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: 2,
+  //       crossAxisSpacing: 16,
+  //       mainAxisSpacing: 16,
+  //       childAspectRatio: 3 / 2,
+  //     ),
+  //     itemCount: members.length,
+  //     itemBuilder: (context, index) {
+  //       final member = members[index];
+  //       return GestureDetector(
+  //         onTap: () {
+  //           Navigator.of(context).push(MaterialPageRoute(
+  //             builder: (context) => MemberDetailView(member: member),
+  //           ));
+  //         },
+  //         child: Card(
+  //           elevation: 2,
+  //           shape:
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(12.0),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 networkImage(member.profilePic!),
+  //                 const SizedBox(height: 10),
+  //                 Text(
+  //                   member.fullName,
+  //                   style: theme.textTheme.bodyLarge,
+  //                   textAlign: TextAlign.center,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Widget _buildListView(List<Member> members) {
+  //   final theme = Theme.of(context);
+  //   return ListView.builder(
+  //     itemCount: members.length,
+  //     itemBuilder: (context, index) {
+  //       final member = members[index];
+  //       return GestureDetector(
+  //         onTap: () {
+  //           Navigator.of(context).push(MaterialPageRoute(
+  //             builder: (context) => MemberDetailView(member: member),
+  //           ));
+  //         },
+  //         child: Card(
+  //           elevation: 2,
+  //           shape:
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //           margin: const EdgeInsets.symmetric(vertical: 8.0),
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(10.0),
+  //             child: Row(
+  //               children: [
+  //                 networkImage(member.profilePic!),
+  //                 const SizedBox(width: 16),
+  //                 Expanded(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Text(
+  //                         member.fullName,
+  //                         style: theme.textTheme.bodyLarge!
+  //                             .copyWith(fontWeight: FontWeight.bold),
+  //                       ),
+  //                       const SizedBox(height: 4),
+  //                       Padding(
+  //                         padding: const EdgeInsets.only(right: 8.0),
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                           children: [
+  //                             Text(
+  //                               member.location,
+  //                               style: theme.textTheme.bodyMedium,
+  //                             ),
+  //                             Text(
+  //                               member.role == 'None' ? '' : member.role!,
+  //                               style: theme.textTheme.bodyMedium!
+  //                                   .copyWith(color: theme.primaryColor),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
