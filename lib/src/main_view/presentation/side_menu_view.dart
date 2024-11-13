@@ -1,8 +1,13 @@
+import 'package:ch_db_admin/shared/notification_util.dart';
+import 'package:ch_db_admin/src/dependencies/auth.dart';
+import 'package:ch_db_admin/src/login/presentation/controller/auth_controller.dart';
+import 'package:ch_db_admin/src/login/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/src/main_view/presentation/menu_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SideMenuView extends StatefulWidget {
   const SideMenuView({super.key});
@@ -26,12 +31,15 @@ class _SideMenuViewState extends State<SideMenuView> {
           // ignore: prefer_const_constructors
           SizedBox(
             height: 100,
-            child: const Center(
+            child: Center(
               child: ListTile(
-                title: Text('Church Admin', style: TextStyle(fontSize: 25)),
-                leading: CircleAvatar(
-                  child: Icon(Icons.person),
-                ),
+                title: Text(
+                    locator.get<SharedPreferences>().getString('orgName') ??
+                        'Admin',
+                    style: const TextStyle(fontSize: 25)),
+                // leading: const CircleAvatar(
+                //   child: Icon(Icons.person),
+                // ),
               ),
             ),
           ),
@@ -40,7 +48,7 @@ class _SideMenuViewState extends State<SideMenuView> {
               (index) => MenuTile(
                     title: navItems[index]['title'],
                     icon: navItems[index]['icon'],
-                    onTap: () {
+                    onTap: () async {
                       controller.updatePage(index);
                     },
                   )),
@@ -58,12 +66,26 @@ class _SideMenuViewState extends State<SideMenuView> {
               themeProvider.toggleTheme();
             },
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 20.0),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
             child: MenuTile(
               title: 'Logout',
               icon: Icons.logout,
               showTrailingIcon: false,
+              onTap: () async {
+                await context.read<AuthController>().signOut().then(
+                      (result) => result.fold(
+                        (l) => NotificationUtil.showError(context, l.message),
+                        (r) {
+                          NotificationUtil.showSuccess(context, r);
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => const LoginView(),
+                          ));
+                        },
+                      ),
+                    );
+              },
             ),
           ),
         ],

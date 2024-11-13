@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 
 class MemberDetailView extends StatefulWidget {

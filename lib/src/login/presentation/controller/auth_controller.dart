@@ -42,6 +42,7 @@ class AuthController extends ChangeNotifier {
 
       // Check if the document exists and retrieve the `orgName` field
       if (snapshot.exists) {
+        print('orgName exits');
         return snapshot.data()?['orgName'] as String?;
       } else {
         print('No organization found for ID: $orgId');
@@ -53,28 +54,28 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-   // Function to set or update the orgName in Firestore
+  // Function to set or update the orgName in Firestore
   Future<void> setOrgName(String orgName) async {
     // Retrieve the stored organization ID from SharedPreferences
     final orgId = locator.get<SharedPreferences>().getString('org_id');
-    
+
     if (orgId == null) {
       print('Organization ID is not set');
       return;
     }
 
     // Reference to the Firestore document for the organization
-    final db = FirebaseFirestore.instance.collection('organisations').doc(orgId);
+    final db =
+        FirebaseFirestore.instance.collection('organisations').doc(orgId);
 
     try {
       // Set or update the `orgName` field in Firestore
-      await db.update({'orgName': orgName});
+      await db.set({'orgName': orgName});
       print('Organization name updated successfully');
     } catch (e) {
       print('Error updating organization name: $e');
     }
   }
-
 
   Future<Either<Failure, User?>> signIn(UserLoginCredentials data) async {
     _isLoading = true;

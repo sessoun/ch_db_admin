@@ -22,6 +22,7 @@ class MemberModel extends Member {
   // Factory method for creating a MemberModel from JSON
   factory MemberModel.fromFirebase(DocumentSnapshot doc) {
     final id = doc.id;
+    print('id: $id');
     final data = doc.data() as Map<String, dynamic>;
     return MemberModel(
       id: id,
@@ -30,7 +31,7 @@ class MemberModel extends Member {
       contact: data['contact'] == '' ? 'N/A' : data['contact'],
       marriageStatus: data['marriageStatus'] ?? '',
       spouseName: data['spouseName'] == '' ? 'N/A' : data['spouseName'],
-      children: data['children'] != null && data['children'] == []
+      children: data['children'] != null
           ? List<String>.from(data['children'])
           : ['N/A'],
       relativeContact:
@@ -40,7 +41,7 @@ class MemberModel extends Member {
       role: data['role'] ?? 'None',
       groupAffiliate: data['groupAffiliate'] != null
           ? List<String>.from(data['groupAffiliate'])
-          : ['N/A'],
+          : [],
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
     );
   }

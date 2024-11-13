@@ -16,6 +16,7 @@ class MemberRepositoryImpl implements MemberRepository {
 
   // Convert MemberModel to Member
   Member _convertMemberModelToMember(MemberModel memberModel) {
+    print('mId: ${memberModel.id}');
     return Member(
         id: memberModel.id,
         fullName: memberModel.fullName,
@@ -37,18 +38,19 @@ class MemberRepositoryImpl implements MemberRepository {
     print(member.role);
     try {
       final memberModel = MemberModel(
-          fullName: member.fullName,
-          location: member.location,
-          contact: member.contact,
-          marriageStatus: member.marriageStatus,
-          spouseName: member.spouseName,
-          children: member.children,
-          relativeContact: member.relativeContact,
-          additionalImage: member.additionalImage,
-          profilePic: member.profilePic,
-          groupAffiliate: member.groupAffiliate,
-          dateOfBirth: member.dateOfBirth,
-          role: member.role,);
+        fullName: member.fullName,
+        location: member.location,
+        contact: member.contact,
+        marriageStatus: member.marriageStatus,
+        spouseName: member.spouseName,
+        children: member.children,
+        relativeContact: member.relativeContact,
+        additionalImage: member.additionalImage,
+        profilePic: member.profilePic,
+        groupAffiliate: member.groupAffiliate,
+        dateOfBirth: member.dateOfBirth,
+        role: member.role,
+      );
       final result = await remoteDb.addMember(memberModel);
       return Right(result); // Success case
     } on FirebaseException catch (e) {

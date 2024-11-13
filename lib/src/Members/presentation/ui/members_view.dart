@@ -1,10 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/shared/chached_network_image.dart';
-import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
-import 'package:ch_db_admin/src/Members/presentation/ui/detailed_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +13,8 @@ class MembersView extends StatefulWidget {
   State<MembersView> createState() => _MembersViewState();
 }
 
-class _MembersViewState extends State<MembersView> {
+class _MembersViewState extends State<MembersView>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
@@ -31,67 +29,27 @@ class _MembersViewState extends State<MembersView> {
     );
   }
 
-  // Sample member data with more features
-  final List<MemberModel> members = [
-    MemberModel(
-      profilePic: 'assets/images/john_doe.jpg',
-      fullName: 'John Doe',
-      location: 'Accra',
-      contact: '0123456789',
-      marriageStatus: 'Married',
-      spouseName: 'Jane Doe',
-      children: ['Child 1', 'Child 2'],
-      relativeContact: '0987654321',
-      additionalImage: 'assets/images/john_doe_additional.jpg',
-      dateOfBirth: DateTime(1990, 1, 1),
-    ),
-    MemberModel(
-      profilePic: 'assets/images/jane_smith.jpg',
-      fullName: 'Jane Smith',
-      location: 'Tema',
-      contact: '0234567890',
-      marriageStatus: 'Single',
-      spouseName: '',
-      children: [],
-      relativeContact: '0123456789',
-      additionalImage: 'assets/images/jane_smith_additional.jpg',
-      dateOfBirth: DateTime(1995, 5, 15),
-    ),
-    MemberModel(
-      profilePic: 'assets/images/michael_johnson.jpg',
-      fullName: 'Michael Johnson',
-      location: 'Kumasi',
-      contact: '0345678901',
-      marriageStatus: 'Married',
-      spouseName: 'Alice Johnson',
-      children: ['Child A'],
-      relativeContact: '0234567890',
-      additionalImage: 'assets/images/michael_johnson_additional.jpg',
-      dateOfBirth: DateTime(1988, 3, 22),
-    ),
-    MemberModel(
-      profilePic: 'assets/images/emily_brown.jpg',
-      fullName: 'Emily Brown',
-      location: 'Tamale',
-      contact: '0456789012',
-      marriageStatus: 'Widowed',
-      spouseName: 'Late Robert Brown',
-      children: ['Child X', 'Child Y', 'Child Z'],
-      relativeContact: '0345678901',
-      additionalImage: 'assets/images/emily_brown_additional.jpg',
-      dateOfBirth: DateTime(1985, 8, 30),
-    ),
-  ];
+  void debugImageCache() {
+    final cache = PaintingBinding.instance.imageCache;
+    print('Current cache size: ${cache.currentSizeBytes} bytes');
+    print('Cache currentSize count: ${cache.currentSize}');
+    print('Cache liveImageCount count: ${cache.liveImageCount}');
+  }
 
   String searchText = '';
   bool isGridView = false;
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    //from automatic keep alive
+    super.build(context);
     final membersController = context.watch<MemberController>();
 
     final theme = Theme.of(context);
-    final filteredMembers = membersController.members
+    final members = membersController.members;
+    final filteredMembers = members
         .where((member) =>
             member.fullName.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
@@ -137,9 +95,13 @@ class _MembersViewState extends State<MembersView> {
                         color: theme.primaryColor,
                       ),
                     )
-                  : isGridView
-                      ? _buildGridView(filteredMembers)
-                      : _buildListView(filteredMembers),
+                  : membersController.members.isEmpty
+                      ? const Center(
+                          child: Text('No member added yet'),
+                        )
+                      : isGridView
+                          ? _buildGridView(filteredMembers)
+                          : _buildListView(filteredMembers),
             ),
           ],
         ),
@@ -161,8 +123,11 @@ class _MembersViewState extends State<MembersView> {
     return ListView.builder(
       itemCount: members.length,
       itemBuilder: (context, index) {
+        debugImageCache();
+
         final member = members[index];
         return Card(
+          key: ValueKey(index),
           elevation: 2,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -189,6 +154,8 @@ class _MembersViewState extends State<MembersView> {
                     Text("Children: ${member.children!.join(', ')}"),
                     Text("Relative Contact: ${member.relativeContact}"),
                     Text(
+                        "Afiliated Groups: ${member.groupAffiliate!.join(', ')}"),
+                    Text(
                         "Date of Birth: ${member.dateOfBirth.toLocal().toIso8601String().split('T')[0]}"),
                   ],
                 ),
@@ -197,11 +164,11 @@ class _MembersViewState extends State<MembersView> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => AddMemberView(member: member),
-                    //   ),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AddMemberView(member: member),
+                      ),
+                    );
                   },
                   child: const Text("Edit"),
                 ),
@@ -226,6 +193,7 @@ class _MembersViewState extends State<MembersView> {
       itemBuilder: (context, index) {
         final member = members[index];
         return GestureDetector(
+          key: ValueKey(index),
           onTap: () {
             showModalBottomSheet(
               context: context,
@@ -238,15 +206,14 @@ class _MembersViewState extends State<MembersView> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Column(
                       children: [
                         networkImage(member.profilePic!),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            member.fullName,
-                            style: theme.textTheme.headlineSmall,
-                          ),
+                        // const SizedBox(width: 16),
+                        Text(
+                          member.fullName,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.headlineSmall,
                         ),
                       ],
                     ),
@@ -263,11 +230,12 @@ class _MembersViewState extends State<MembersView> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          // Navigator.of(context).push(
-                          //   MaterialPageRoute(
-                          //     builder: (context) => AddMemberView(member: member),
-                          //   ),
-                          // );
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  AddMemberView(member: member),
+                            ),
+                          );
                         },
                         child: const Text("Edit"),
                       ),

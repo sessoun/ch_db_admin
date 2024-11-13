@@ -6,7 +6,6 @@ import 'package:ch_db_admin/src/login/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,13 +25,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  //persist firestore data
-  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
-  
+  //increase cache memory size
+  configureCache();
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
 }
 
 
+void configureCache() {
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 300 * 1024 * 1024; // 300 MB
+}
 
 class MyApp extends StatelessWidget {
   final bool isDarkMode;

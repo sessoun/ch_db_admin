@@ -3,15 +3,12 @@ import 'dart:math';
 import 'package:ch_db_admin/src/Dashboard/dash_borad_view.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/members_view.dart';
 import 'package:ch_db_admin/src/attendance/presentation/attendance_view.dart';
-import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/events/presentation/ui/events_view.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/side_menu_view.dart';
 import 'package:ch_db_admin/src/notifications/presentation/ui/notifications_view.dart';
-import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
