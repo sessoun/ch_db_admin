@@ -1,7 +1,7 @@
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
-import 'package:ch_db_admin/src/login/presentation/controller/auth_controller.dart';
-import 'package:ch_db_admin/src/login/presentation/ui/login.dart';
+import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
+import 'package:ch_db_admin/src/auth/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/src/main_view/presentation/menu_tile.dart';
@@ -76,12 +76,13 @@ class _SideMenuViewState extends State<SideMenuView> {
                 await context.read<AuthController>().signOut().then(
                       (result) => result.fold(
                         (l) => NotificationUtil.showError(context, l.message),
-                        (r) {
+                        (r) { controller.toggleMenuOpened();
                           NotificationUtil.showSuccess(context, r);
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
                             builder: (context) => const LoginView(),
                           ));
+                         
                         },
                       ),
                     );

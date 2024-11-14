@@ -5,8 +5,10 @@ import 'package:ch_db_admin/shared/exceptions/app_exception.dart';
 import 'package:ch_db_admin/shared/exceptions/firebase_exception.dart'
     as custom;
 import 'package:ch_db_admin/shared/exceptions/network_exception.dart';
-import 'package:ch_db_admin/src/login/data/models/user_login_credentials.dart';
+import 'package:ch_db_admin/src/auth/data/models/user_login_credentials.dart';
+import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginRemoteS {
   final auth = FirebaseAuth.instance;
@@ -38,6 +40,7 @@ class LoginRemoteS {
   Future<String> logOut() async {
     try {
       await auth.signOut();
+      await locator.get<SharedPreferences>().clear();
       return 'Signed out successfully';
     } catch (e) {
       print(e);

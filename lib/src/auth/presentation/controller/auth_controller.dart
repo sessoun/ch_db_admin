@@ -1,9 +1,9 @@
 import 'package:ch_db_admin/shared/failure.dart';
 import 'package:ch_db_admin/shared/usecase.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
-import 'package:ch_db_admin/src/login/domain/entities/user_credentials.dart';
-import 'package:ch_db_admin/src/login/domain/usecase/log_out.dart';
-import 'package:ch_db_admin/src/login/domain/usecase/sign_in.dart';
+import 'package:ch_db_admin/src/auth/domain/entities/user_credentials.dart';
+import 'package:ch_db_admin/src/auth/domain/usecase/log_out.dart';
+import 'package:ch_db_admin/src/auth/domain/usecase/sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -93,10 +93,16 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<Either<Failure, String>> signOut() async {
+     _isLoading = true;
+    notifyListeners();
     final result = await _signOut(NoParams());
     return result.fold((failure) {
+       _isLoading = false;
+    notifyListeners();
       return left(Failure(failure.message));
     }, (success) {
+       _isLoading = false;
+    notifyListeners();
       return right(success);
     });
   }

@@ -1,9 +1,9 @@
-import 'package:ch_db_admin/src/login/data/data_source/remote_s.dart';
-import 'package:ch_db_admin/src/login/data/repository/auth_repo_impl.dart';
-import 'package:ch_db_admin/src/login/domain/repository/auth_repo.dart';
-import 'package:ch_db_admin/src/login/domain/usecase/log_out.dart';
-import 'package:ch_db_admin/src/login/domain/usecase/sign_in.dart';
-import 'package:ch_db_admin/src/login/presentation/controller/auth_controller.dart';
+import 'package:ch_db_admin/src/auth/data/data_source/remote_s.dart';
+import 'package:ch_db_admin/src/auth/data/repository/auth_repo_impl.dart';
+import 'package:ch_db_admin/src/auth/domain/repository/auth_repo.dart';
+import 'package:ch_db_admin/src/auth/domain/usecase/log_out.dart';
+import 'package:ch_db_admin/src/auth/domain/usecase/sign_in.dart';
+import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
 import 'package:get_it/get_it.dart';
 
 void initAuthDep() {

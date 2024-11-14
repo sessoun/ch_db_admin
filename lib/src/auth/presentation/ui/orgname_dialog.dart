@@ -1,5 +1,5 @@
 import 'package:ch_db_admin/src/dependencies/auth.dart';
-import 'package:ch_db_admin/src/login/presentation/controller/auth_controller.dart';
+import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

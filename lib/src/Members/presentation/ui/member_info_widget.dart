@@ -9,7 +9,7 @@ class MemberInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    print(member.children);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,7 +30,9 @@ class MemberInfoWidget extends StatelessWidget {
         ),
         _buildLabelValue(
           "Group Affiliates:",
-          member.groupAffiliate!.join(', '),
+          member.groupAffiliate!.isNotEmpty
+              ? member.groupAffiliate!.join(', ')
+              : 'N/A',
           theme,
         ),
         _buildLabelValue("Role:", member.role!, theme),

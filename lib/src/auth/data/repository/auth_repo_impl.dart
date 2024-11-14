@@ -5,9 +5,9 @@ import 'package:ch_db_admin/shared/exceptions/firebase_exception.dart'
     as custom;
 import 'package:ch_db_admin/shared/exceptions/network_exception.dart';
 import 'package:ch_db_admin/shared/failure.dart';
-import 'package:ch_db_admin/src/login/data/data_source/remote_s.dart';
-import 'package:ch_db_admin/src/login/data/models/user_login_credentials.dart';
-import 'package:ch_db_admin/src/login/domain/repository/auth_repo.dart';
+import 'package:ch_db_admin/src/auth/data/data_source/remote_s.dart';
+import 'package:ch_db_admin/src/auth/data/models/user_login_credentials.dart';
+import 'package:ch_db_admin/src/auth/domain/repository/auth_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
