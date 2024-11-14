@@ -31,9 +31,8 @@ class MemberModel extends Member {
       contact: data['contact'] == '' ? 'N/A' : data['contact'],
       marriageStatus: data['marriageStatus'] ?? '',
       spouseName: data['spouseName'] == '' ? 'N/A' : data['spouseName'],
-      children: data['children'] != null
-          ? List<String>.from(data['children'])
-          : ['N/A'],
+      children:
+          data['children'] != null ? List<String>.from(data['children']) : [],
       relativeContact:
           data['relativeContact'] == '' ? 'N/A' : data['relativeContact'],
       additionalImage: data['additionalImageUrl'],
