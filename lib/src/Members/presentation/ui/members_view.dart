@@ -217,6 +217,7 @@ class _MembersViewState extends State<MembersView>
                         alignment: Alignment.bottomRight,
                         child: TextButton(
                           onPressed: () {
+                            Navigator.of(context).pop();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>

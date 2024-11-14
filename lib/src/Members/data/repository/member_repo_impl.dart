@@ -113,7 +113,9 @@ class MemberRepositoryImpl implements MemberRepository {
         relativeContact: member.relativeContact,
         additionalImage: member.additionalImage,
         profilePic: member.profilePic,
+        groupAffiliate: member.groupAffiliate,
         dateOfBirth: member.dateOfBirth,
+        role: member.role,
       );
       final result = await remoteDb.updateMember(memberId, memberModel);
       return Right(result);
