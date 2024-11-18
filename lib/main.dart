@@ -15,14 +15,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await loadPreferences();
-  //initialize dependencies
+  //initialize dependencies 
   initAuthDep();
   initMemberDep();
   final prefs = await SharedPreferences.getInstance();
   locator.registerLazySingleton<SharedPreferences>(
-    () => prefs,
-  );
-  await Firebase.initializeApp(
+    () => prefs,  
+  ); 
+  await Firebase.initializeApp( 
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
