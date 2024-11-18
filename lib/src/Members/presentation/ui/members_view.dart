@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/shared/chached_network_image.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
@@ -188,46 +189,50 @@ class _MembersViewState extends State<MembersView>
             showModalBottomSheet(
               context: context,
               showDragHandle: true,
+              useSafeArea: true,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               builder: (context) => Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    // mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: networkImage(member.profilePic!),
-                      ),
-                      const SizedBox(height: 10),
-                      Center(
-                        child: Text(
-                          member.fullName,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.headlineSmall,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * .9 ,
+                    child: Column(
+                      // mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: networkImage(member.profilePic!),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      MemberInfoWidget(member: member),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AddMemberView(member: member),
-                              ),
-                            );
-                          },
-                          child: const Text("Edit"),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Text(
+                            member.fullName,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.headlineSmall,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        MemberInfoWidget(member: member),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddMemberView(member: member),
+                                ),
+                              );
+                            },
+                            child: const Text("Edit"),
+                          ),
+                        ),
+                      ],
+                    ),
                   )),
             );
           },

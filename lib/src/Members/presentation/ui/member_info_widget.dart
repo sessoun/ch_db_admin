@@ -11,6 +11,7 @@ class MemberInfoWidget extends StatelessWidget {
     final theme = Theme.of(context);
     print(member.children);
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabelValue("Location:", member.location, theme),
