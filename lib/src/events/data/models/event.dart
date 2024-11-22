@@ -1,4 +1,5 @@
 import 'package:ch_db_admin/src/events/domain/entities/event.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventModel extends Event {
   EventModel({
@@ -11,28 +12,26 @@ class EventModel extends Event {
     required super.imageUrl,
   });
 
-  // Example of method to convert EventModel to JSON
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toFirebase() {
     return {
       'id': id,
       'title': title,
       'description': description,
-      'date': date.toIso8601String(),
+      'date': Timestamp.fromDate(date),
       'location': location,
       'organizerId': organizerId,
     };
   }
 
-  // Example of method to create EventModel from JSON
-  factory EventModel.fromJson(Map<String, dynamic> json) {
+  factory EventModel.fromFirebase(DocumentSnapshot doc) {
     return EventModel(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      date: DateTime.parse(json['date']),
-      location: json['location'],
-      organizerId: json['organizerId'],
-      imageUrl: json['imageUrl'],
+      id: doc['id'],
+      title: doc['title'],
+      description: doc['description'],
+      date:  (doc['date'] as Timestamp).toDate(),
+      location: doc['location'],
+      organizerId: doc['organizerId'],
+      imageUrl: doc['imageUrl'],
     );
   }
 }

@@ -1,11 +1,11 @@
 // lib/src/Members/presentation/controllers/member_controller.dart
 
-import 'package:ch_db_admin/src/Members/presentation/usecases/add_member.dart';
-import 'package:ch_db_admin/src/Members/presentation/usecases/delete_member.dart';
-import 'package:ch_db_admin/src/Members/presentation/usecases/get_all_members.dart';
-import 'package:ch_db_admin/src/Members/presentation/usecases/get_member_by_id.dart';
-import 'package:ch_db_admin/src/Members/presentation/usecases/get_members_by_name.dart';
-import 'package:ch_db_admin/src/Members/presentation/usecases/update_member.dart';
+import 'package:ch_db_admin/src/Members/domain/usecases/add_member.dart';
+import 'package:ch_db_admin/src/Members/domain/usecases/delete_member.dart';
+import 'package:ch_db_admin/src/Members/domain/usecases/get_all_members.dart';
+import 'package:ch_db_admin/src/Members/domain/usecases/get_member_by_id.dart';
+import 'package:ch_db_admin/src/Members/domain/usecases/get_members_by_name.dart';
+import 'package:ch_db_admin/src/Members/domain/usecases/update_member.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/shared/failure.dart';

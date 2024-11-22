@@ -1,8 +1,10 @@
 import 'package:ch_db_admin/firebase_options.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
+import 'package:ch_db_admin/src/dependencies/events.dart';
 import 'package:ch_db_admin/src/dependencies/member.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/login.dart';
+import 'package:ch_db_admin/src/events/presentation/controller/event_controller.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
@@ -15,14 +17,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await loadPreferences();
-  //initialize dependencies 
+  //initialize dependencies
   initAuthDep();
   initMemberDep();
+  initEventDep();
   final prefs = await SharedPreferences.getInstance();
   locator.registerLazySingleton<SharedPreferences>(
-    () => prefs,  
-  ); 
-  await Firebase.initializeApp( 
+    () => prefs,
+  );
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   //increase cache memory size
@@ -30,9 +33,9 @@ void main() async {
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
 }
 
-
 void configureCache() {
-  PaintingBinding.instance.imageCache.maximumSizeBytes = 300 * 1024 * 1024; // 300 MB
+  PaintingBinding.instance.imageCache.maximumSizeBytes =
+      300 * 1024 * 1024; // 300 MB
 }
 
 class MyApp extends StatelessWidget {
@@ -56,7 +59,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => locator.get<MemberController>(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (context) => locator.get<EventController>(),
+        ),
       ],
       builder: (context, _) {
         // Access the ThemeProvider instance
@@ -83,7 +89,6 @@ class AuthState extends StatefulWidget {
 
 class _AuthStateState extends State<AuthState> {
   User? currentUser = FirebaseAuth.instance.currentUser;
- 
 
   void checkPrefs() async {
     await _checkPreferences(context);
