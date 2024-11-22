@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class MenuTile extends StatefulWidget {
@@ -6,6 +5,7 @@ class MenuTile extends StatefulWidget {
       {super.key,
       this.onTap,
       required this.title,
+      this.isSelected = false,
       this.leading,
       this.icon,
       this.showTrailingIcon = true});
@@ -14,6 +14,7 @@ class MenuTile extends StatefulWidget {
   final Widget? leading;
   final IconData? icon;
   final bool? showTrailingIcon;
+  final bool isSelected;
 
   @override
   State<MenuTile> createState() => _MenuTileState();
@@ -41,13 +42,20 @@ class _MenuTileState extends State<MenuTile>
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: widget.onTap,
-      leading: widget.icon == null ? widget.leading : Icon(widget.icon),
-      title: Text(widget.title),
-      trailing: widget.showTrailingIcon == true
-          ? const Icon(Icons.arrow_forward_sharp)
+    return Card(
+      elevation: 1,
+      borderOnForeground: false,
+      color: widget.isSelected
+          ? Theme.of(context).primaryColor.withOpacity(.6)
           : null,
+      child: ListTile(
+        onTap: widget.onTap,
+        leading: widget.icon == null ? widget.leading : Icon(widget.icon),
+        title: Text(widget.title),
+        trailing: widget.showTrailingIcon == true
+            ? const Icon(Icons.arrow_forward_sharp)
+            : null,
+      ),
     );
   }
 }

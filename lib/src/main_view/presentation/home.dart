@@ -114,6 +114,7 @@ class _HomeBodyViewState extends State<HomeBodyView> {
   Widget build(BuildContext context) {
     var controller = context.read<MainViewController>();
     return PageView.builder(
+      physics: const NeverScrollableScrollPhysics(),
         itemCount: views.length,
         controller: controller.pageController,
         itemBuilder: (context, index) => views[index]);
