@@ -1,5 +1,7 @@
 import 'package:ch_db_admin/src/events/data/models/event.dart';
+import 'package:ch_db_admin/src/events/presentation/controller/event_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EventsView extends StatefulWidget {
   const EventsView({super.key});
@@ -9,6 +11,12 @@ class EventsView extends StatefulWidget {
 }
 
 class _EventsViewState extends State<EventsView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  getAllEvents() {}
   // Sample event data
   final List<EventModel> events = [
     EventModel(
@@ -16,14 +24,20 @@ class _EventsViewState extends State<EventsView> {
       date: DateTime.now(),
       location: 'Church Hall A',
       description: 'A conference for the youth to engage and learn.',
-      imageUrl: 'https://images.pexels.com/photos/28457391/pexels-photo-28457391/free-photo-of-fisherman-in-istanbul-with-city-skyline.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load', id: '', organizerId: '',
+      imageUrl:
+          'https://images.pexels.com/photos/28457391/pexels-photo-28457391/free-photo-of-fisherman-in-istanbul-with-city-skyline.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
+      id: '',
+      organizerId: '',
     ),
     EventModel(
       title: 'Community Outreach',
       date: DateTime.now().add(const Duration(days: 3)),
       location: 'Community Center',
       description: 'Outreach event for community service.',
-      imageUrl: 'https://images.pexels.com/photos/28457391/pexels-photo-28457391/free-photo-of-fisherman-in-istanbul-with-city-skyline.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load', id: '', organizerId: '',
+      imageUrl:
+          'https://images.pexels.com/photos/28457391/pexels-photo-28457391/free-photo-of-fisherman-in-istanbul-with-city-skyline.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
+      id: '',
+      organizerId: '',
     ),
     // Add more event records as needed
   ];
@@ -73,9 +87,13 @@ class _EventsViewState extends State<EventsView> {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: isGridView
-                  ? _buildGridView(filteredEvents)
-                  : _buildListView(filteredEvents),
+              child: Consumer<EventController>(
+                builder: (context, controller, _) {
+                  return isGridView
+                      ? _buildGridView(filteredEvents)
+                      : _buildListView(filteredEvents);
+                }
+              ),
             ),
           ],
         ),
@@ -84,63 +102,71 @@ class _EventsViewState extends State<EventsView> {
   }
 
   Widget _buildGridView(List<EventModel> events) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 3 / 2,
-      ),
-      itemCount: events.length,
-      itemBuilder: (context, index) {
-        final event = events[index];
-        return GestureDetector(
-          onTap: () {
-            // Navigate to event details or perform any action
-          },
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Image.network(
-                  event.imageUrl,
-                  height: 100,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+    return Consumer<EventController>(builder: (context, controller, _) {
+      return GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 3 / 2,
+        ),
+        itemCount: controller.events.length,
+        itemBuilder: (context, index) {
+          final events = controller.events;
+          if (events.isEmpty) {
+            return const Center(
+                child: Text('Events list is empty. Press + to add one.'));
+          } else {
+            final event = events[index];
+            return GestureDetector(
+              onTap: () {
+                // Navigate to event details or perform any action
+              },
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event.title,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        overflow: TextOverflow.ellipsis,
+                child: Column(
+                  children: [
+                    Image.network(
+                      event.imageUrl,
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            event.title,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Location: ${event.location}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Date: ${event.date.toLocal()}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Location: ${event.location}',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Date: ${event.date.toLocal()}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+              ),
+            );
+          }
+        },
+      );
+    });
   }
 
   Widget _buildListView(List<EventModel> events) {
