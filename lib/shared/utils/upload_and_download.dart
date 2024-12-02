@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 Future<String> imageStore(
   BuildContext context,
  { required String fileFolder,
-  required String imageUrl,
+   String? imageUrl,
   required File selectedImage,
   }
 ) async {
@@ -17,5 +17,5 @@ Future<String> imageStore(
     //upload image to firebase storage
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
     //get and store url to image
-  return  imageUrl = await taskSnapshot.ref.getDownloadURL();
+  return await taskSnapshot.ref.getDownloadURL();
 }

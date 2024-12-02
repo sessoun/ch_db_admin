@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:ch_db_admin/shared/utils/upload_and_download.dart';
 import 'package:ch_db_admin/src/events/domain/entities/event.dart';
+import 'package:ch_db_admin/src/events/presentation/controller/event_controller.dart';
+import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddEventView extends StatefulWidget {
   const AddEventView({super.key, this.event});
@@ -50,7 +54,8 @@ class _AddEventViewState extends State<AddEventView> {
       // Handle image upload
       if (eventImage != null && !eventImage!.path.contains('https://')) {
         // Upload image logic (placeholder for your implementation)
-        imageUrl = await uploadImage(eventImage!);
+        imageUrl = await imageStore(context,
+            selectedImage: eventImage!, fileFolder: 'events');
       }
 
       // Create or update the event
@@ -61,20 +66,23 @@ class _AddEventViewState extends State<AddEventView> {
         imageUrl: imageUrl,
         date: date,
         location: location,
-        organizerId: 'exampleOrganizerId', // Replace with actual organizer logic
+        organizerId:
+            'exampleOrganizerId', // Replace with actual organizer logic
       );
 
       if (widget.event != null) {
         // Update event logic (placeholder for your implementation)
-        await updateEvent(newEvent);
+        await context.read<EventController>().updateEvent(newEvent);
       } else {
         // Add event logic (placeholder for your implementation)
-        await addEvent(newEvent);
+        await context.read<EventController>().createEvent(newEvent);
       }
 
       // Notify user and go back
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(widget.event != null ? 'Event updated!' : 'Event added!')),
+        SnackBar(
+            content:
+                Text(widget.event != null ? 'Event updated!' : 'Event added!')),
       );
       Navigator.of(context).pop();
     }
@@ -84,7 +92,8 @@ class _AddEventViewState extends State<AddEventView> {
   void initState() {
     super.initState();
     titleController = TextEditingController(text: widget.event?.title);
-    descriptionController = TextEditingController(text: widget.event?.description);
+    descriptionController =
+        TextEditingController(text: widget.event?.description);
     locationController = TextEditingController(text: widget.event?.location);
     dateController = TextEditingController(
       text: widget.event?.date.toIso8601String().split('T')[0],
@@ -179,7 +188,7 @@ class _AddEventViewState extends State<AddEventView> {
                     child: const Text('Pick Event Image'),
                   ),
                   const SizedBox(width: 16),
-                  if (eventImage != null)
+                  if (widget.event == null && eventImage != null)
                     Image.file(
                       eventImage!,
                       width: 100,
@@ -198,7 +207,8 @@ class _AddEventViewState extends State<AddEventView> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text(widget.event != null ? 'Save Changes' : 'Add Event'),
+                child:
+                    Text(widget.event != null ? 'Save Changes' : 'Add Event'),
               ),
             ],
           ),
@@ -206,51 +216,4 @@ class _AddEventViewState extends State<AddEventView> {
       ),
     );
   }
-
-  Future<String> uploadImage(File image) async {
-    // Replace this with your image upload logic
-    return 'https://example.com/uploaded_image.png';
-  }
-
-  Future<void> addEvent(Event event) async {
-    // Replace with logic to add the event to your database
-    print('Adding event: ${event.title}');
-  }
-
-  Future<void> updateEvent(Event event) async {
-    // Replace with logic to update the event in your database
-    print('Updating event: ${event.title}');
-  }
 }
-
-class CustomTextFormField extends StatelessWidget {
-  final TextEditingController controller;
-  final String labelText;
-  final String hintText;
-  final int maxLines;
-  final String? Function(String?)? validator;
-
-  const CustomTextFormField({
-    super.key,
-    required this.controller,
-    required this.labelText,
-    required this.hintText,
-    this.maxLines = 1,
-    this.validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        hintText: hintText,
-        border: const OutlineInputBorder(),
-      ),
-      maxLines: maxLines,
-      validator: validator,
-    );
-  }
-}
-

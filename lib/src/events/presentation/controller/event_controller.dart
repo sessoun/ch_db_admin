@@ -12,7 +12,8 @@ class EventController extends ChangeNotifier {
   final DeleteEvent deleteEventUseCase;
 
   List<Event> _events = [];
-  List<Event> get events => _events;
+  // final List<Event> _filteredEvents = [];
+  // List<Event> get events => _filteredEvents;
 
   String _message = '';
   String get message => _message;
@@ -23,6 +24,14 @@ class EventController extends ChangeNotifier {
     required this.getEventsUseCase,
     required this.deleteEventUseCase,
   });
+
+  List<Event> filterEvents(String searchText){
+    final filteredEvents = _events
+        .where((event) =>
+            event.title.toLowerCase().contains(searchText.toLowerCase()))
+        .toList();
+        return filteredEvents;
+  }
 
   // Fetch all events
   Future<void> fetchEvents() async {
