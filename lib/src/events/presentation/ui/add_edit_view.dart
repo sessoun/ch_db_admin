@@ -217,3 +217,7 @@ class _AddEventViewState extends State<AddEventView> {
     );
   }
 }
+
+/**
+ keytool -genkey -v -keystore $env:D:\store\keystores\ch_db_admin\upload-keystore.jks `-storetype JKS -keyalg RSA -keysize 2048 -validity 10000 `-alias upload
+ */

@@ -1,4 +1,4 @@
-package com.example.ch_db_admin
+package com.estep.Shepherd
 
 import io.flutter.embedding.android.FlutterActivity
 
