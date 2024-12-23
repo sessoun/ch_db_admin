@@ -1,13 +1,13 @@
+import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
+
 class Attendance {
-  final String memberId;         
-  final DateTime date;           
-  final bool isPresent;         
-  final String notes;           
+  final List<Member> members;
+  final DateTime createdAt;
+  final String event;
 
   Attendance({
-    required this.memberId,
-    required this.date,
-    required this.isPresent,
-    this.notes = '',
+    required this.members,
+    required this.createdAt,
+    required this.event,
   });
 }

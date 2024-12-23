@@ -1,4 +1,5 @@
 import 'package:ch_db_admin/src/attendance/data/models/attendance.dart';
+import 'package:ch_db_admin/src/attendance/domain/entities/attendance.dart';
 import 'package:flutter/material.dart';
 class AttendanceView extends StatefulWidget {
   const AttendanceView({super.key});
@@ -9,9 +10,9 @@ class AttendanceView extends StatefulWidget {
 
 class _AttendanceViewState extends State<AttendanceView> {
   // Sample attendance data
-  final List<AttendanceModel> attendanceRecords = [
-    AttendanceModel(memberId: '1', date: DateTime.now(), isPresent: true, notes: 'Attended service'),
-    AttendanceModel(memberId: '2', date: DateTime.now().subtract(const Duration(days: 1)), isPresent: false, notes: 'Absent'),
+  final List<Attendance> attendanceRecords = [
+    // Attendance(memberId: '1', date: DateTime.now(), isPresent: true, notes: 'Attended service'),
+    // Attendance(memberId: '2', date: DateTime.now().subtract(const Duration(days: 1)), isPresent: false, notes: 'Absent'),
     // Add more attendance records as needed
   ];
 
@@ -21,7 +22,7 @@ class _AttendanceViewState extends State<AttendanceView> {
   @override
   Widget build(BuildContext context) {
     final filteredAttendance = attendanceRecords
-        .where((record) => record.memberId.toLowerCase().contains(searchText.toLowerCase()))
+        .where((record) => record.members[1].fullName.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
 
     return Scaffold(
@@ -69,7 +70,7 @@ class _AttendanceViewState extends State<AttendanceView> {
     );
   }
 
-  Widget _buildGridView(List<AttendanceModel> records) {
+  Widget _buildGridView(List<Attendance> records) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -93,17 +94,17 @@ class _AttendanceViewState extends State<AttendanceView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Member ID: ${record.memberId}',
+                    'Member ID: ',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Date: ${record.date.toLocal()}',
+                    'Date:',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Status: ${record.isPresent ? 'Present' : 'Absent'}',
+                    'Status: ',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -115,7 +116,7 @@ class _AttendanceViewState extends State<AttendanceView> {
     );
   }
 
-  Widget _buildListView(List<AttendanceModel> records) {
+  Widget _buildListView(List<Attendance> records) {
     return ListView.builder(
       itemCount: records.length,
       itemBuilder: (context, index) {
@@ -137,17 +138,17 @@ class _AttendanceViewState extends State<AttendanceView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Member ID: ${record.memberId}',
+                        'Member ID: ',
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Date: ${record.date.toLocal()}',
+                        'Date: ',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Status: ${record.isPresent ? 'Present' : 'Absent'}',
+                        'Status: ',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
