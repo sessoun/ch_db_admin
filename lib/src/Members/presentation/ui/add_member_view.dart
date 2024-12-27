@@ -127,7 +127,7 @@ class _AddMemberViewState extends State<AddMemberView> {
         additionalImage: otherImage,
         groupAffiliate: selectedAffiliations,
         role: selectedRole,
-        dateOfBirth: DateTime.parse(dateOfBirthController.text),
+        dateOfBirth: DateTime.parse(dateOfBirthController.text.trim()),
       );
       print(newMember.role);
       if (widget.member != null) {
