@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:ch_db_admin/src/Dashboard/dash_borad_view.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/members_view.dart';
-import 'package:ch_db_admin/src/attendance/presentation/attendance_view.dart';
+import 'package:ch_db_admin/src/attendance/presentation/ui/attendance_view.dart';
 import 'package:ch_db_admin/src/events/presentation/ui/events_view.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/side_menu_view.dart';
@@ -29,7 +29,6 @@ class _HomeViewState extends State<HomeView>
     super.initState();
   }
 
- 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -104,17 +103,17 @@ class _HomeBodyViewState extends State<HomeBodyView> {
   }
 
   var views = const [
-    DashboardView(),
+    // DashboardView(),
     MembersView(),
     AttendanceView(),
-    EventsView(),
+    // EventsView(),
     NotificationsView()
   ];
   @override
   Widget build(BuildContext context) {
     var controller = context.read<MainViewController>();
     return PageView.builder(
-      physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: views.length,
         controller: controller.pageController,
         itemBuilder: (context, index) => views[index]);

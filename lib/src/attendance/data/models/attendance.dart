@@ -1,6 +1,5 @@
 import 'package:ch_db_admin/src/attendance/domain/entities/attendance.dart';
 
-
 class AttendanceModel extends Attendance {
   AttendanceModel({
     required super.members,
@@ -13,7 +12,7 @@ class AttendanceModel extends Attendance {
     return {
       'members': members,
       'dcreatedAtate': createdAt.toIso8601String(),
-            'event': event,
+      'event': event,
     };
   }
 

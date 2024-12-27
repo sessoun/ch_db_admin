@@ -100,10 +100,10 @@ class _SideMenuViewState extends State<SideMenuView> {
 }
 
 List<Map<String, dynamic>> navItems = [
-  {
-    'icon': Icons.dashboard,
-    'title': 'Dashboard',
-  },
+  // {
+  //   'icon': Icons.dashboard,
+  //   'title': 'Dashboard',
+  // },
   {
     'icon': Icons.group,
     'title': 'Members',
@@ -112,10 +112,10 @@ List<Map<String, dynamic>> navItems = [
     'icon': Icons.calendar_today,
     'title': 'Attendance',
   },
-  {
-    'icon': Icons.event,
-    'title': 'Events',
-  },
+  // {
+  //   'icon': Icons.event,
+  //   'title': 'Events',
+  // },
   {
     'icon': Icons.notifications,
     'title': 'Notifications',
