@@ -18,8 +18,8 @@ class AttendanceDB {
   // CREATE: Add a new attendance record
   Future<String> createAttendance(AttendanceModel attendanceData) async {
     try {
-      await db.doc().set(attendanceData.toJson());
-      print("Attendance record added successfully.");
+      final docRef = db.doc();
+      await docRef.set(attendanceData.toJson());
       return 'Attendance record added successfully';
     } on FirebaseException catch (e) {
       throw DatabaseException(
@@ -37,7 +37,7 @@ class AttendanceDB {
     try {
       final snapshot = await db.get();
       final attendanceRecords = snapshot.docs
-          .map((doc) => AttendanceModel.fromJson(doc.data()))
+          .map((doc) => AttendanceModel.fromFirestore(doc))
           .toList();
       return attendanceRecords;
     } on FirebaseException catch (e) {
@@ -56,7 +56,7 @@ class AttendanceDB {
     try {
       final docSnapshot = await db.doc(recordId).get();
       if (docSnapshot.exists) {
-        return AttendanceModel.fromJson(docSnapshot.data()!);
+        return AttendanceModel.fromFirestore(docSnapshot);
       } else {
         print("Attendance record not found.");
         return null;

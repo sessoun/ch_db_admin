@@ -1,5 +1,7 @@
 import 'package:ch_db_admin/firebase_options.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
+import 'package:ch_db_admin/src/attendance/presentation/controller/attendance_controller.dart';
+import 'package:ch_db_admin/src/dependencies/attendance.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/dependencies/events.dart';
 import 'package:ch_db_admin/src/dependencies/member.dart';
@@ -21,6 +23,7 @@ void main() async {
   initAuthDep();
   initMemberDep();
   initEventDep();
+  initAttendanceDep();
   final prefs = await SharedPreferences.getInstance();
   locator.registerLazySingleton<SharedPreferences>(
     () => prefs,
@@ -62,6 +65,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => locator.get<EventController>(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => locator.get<AttendanceController>(),
         ),
       ],
       builder: (context, _) {

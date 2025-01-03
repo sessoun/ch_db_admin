@@ -1,3 +1,4 @@
+import 'package:ch_db_admin/shared/failure.dart';
 import 'package:ch_db_admin/shared/usecase.dart';
 import 'package:ch_db_admin/src/attendance/domain/usecase/create_attendance.dart';
 import 'package:ch_db_admin/src/attendance/domain/usecase/get_all_attendance.dart';
@@ -35,12 +36,10 @@ class AttendanceController extends ChangeNotifier {
     _setLoading(true);
     final result = await createAttendanceUseCase(Params(attendance));
     result.fold(
-      (failure) {
-        _message = failure.message;
-        notifyListeners();
-      },
+      (failure) => _handleFailure(failure),
       (data) {
         _message = data;
+        print(_message);
         notifyListeners();
       },
     );
@@ -52,12 +51,10 @@ class AttendanceController extends ChangeNotifier {
     _setLoading(true);
     final result = await fetchAllAttendanceUseCase(NoParams());
     result.fold(
-      (failure) {
-        _message = failure.message;
-        notifyListeners();
-      },
+      (failure) => _handleFailure(failure),
       (data) {
         _attendanceList = data;
+        print('attendance: $_attendance');
         notifyListeners();
       },
     );
@@ -69,15 +66,13 @@ class AttendanceController extends ChangeNotifier {
     _setLoading(true);
     final result = await fetchAttendanceByIdUseCase(Params(id));
     result.fold(
-      (failure) {
-        _message = failure.message;
-        notifyListeners();
-      },
+      (failure) => _handleFailure(failure),
       (data) {
         _attendance = data;
-        notifyListeners();
       },
     );
+    notifyListeners();
+
     _setLoading(false);
   }
 
@@ -101,6 +96,12 @@ class AttendanceController extends ChangeNotifier {
   // Private helper method to manage loading state
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void _handleFailure(Failure failure) {
+    _message = 'Error: ${failure.message}';
+    print(_message);
     notifyListeners();
   }
 }

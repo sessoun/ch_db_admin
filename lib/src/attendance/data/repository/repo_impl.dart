@@ -14,7 +14,7 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   AttendanceRepositoryImpl(this._attendanceDB);
 
   @override
-  Future<Either<Failure,String>> createAttendance(
+  Future<Either<Failure, String>> createAttendance(
       Attendance attendance) async {
     final attendanceModel = AttendanceModel(
       members: attendance.members,
@@ -25,7 +25,7 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       final result = await _attendanceDB.createAttendance(attendanceModel);
       return Right(result);
     } on FirebaseException catch (e) {
-      return Left(Failure(e.message ?? 'Error adding member',
+      return Left(Failure(e.message ?? 'Error adding attendance',
           code: e.code)); // Firebase failure
     } on SocketException catch (_) {
       return Left(Failure('No internet connection')); // Network failure
@@ -35,8 +35,9 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   @override
-  Future<Either<Failure,List<AttendanceModel>>> fetchAllAttendance() async {
-   try{   final result = await _attendanceDB.getAllAttendance();
+  Future<Either<Failure, List<AttendanceModel>>> fetchAllAttendance() async {
+    try {
+      final result = await _attendanceDB.getAllAttendance();
       return Right(result);
     } on FirebaseException catch (e) {
       return Left(Failure(e.message ?? 'Error getting attendance',
@@ -45,10 +46,11 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       return Left(Failure('No internet connection')); // Network failure
     } catch (e) {
       return Left(Failure('Unknown error: $e')); // Generic failure
-    }  }
+    }
+  }
 
   @override
-  Future<Either<Failure,AttendanceModel?>> fetchAttendanceById(
+  Future<Either<Failure, AttendanceModel?>> fetchAttendanceById(
       String id) async {
     try {
       final result = await _attendanceDB.getAttendanceById(id);
@@ -70,8 +72,9 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   // }
 
   @override
-  Future<Either<Failure,String>> removeAttendance(String id) async {
-    try{  final result = await _attendanceDB.deleteAttendance(id);
+  Future<Either<Failure, String>> removeAttendance(String id) async {
+    try {
+      final result = await _attendanceDB.deleteAttendance(id);
       return Right(result);
     } on FirebaseException catch (e) {
       return Left(Failure(e.message ?? 'Error adding member',
@@ -80,5 +83,6 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       return Left(Failure('No internet connection')); // Network failure
     } catch (e) {
       return Left(Failure('Unknown error: $e')); // Generic failure
-    }  }
+    }
+  }
 }

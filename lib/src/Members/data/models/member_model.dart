@@ -62,4 +62,23 @@ class MemberModel extends Member {
       'dateOfBirth': Timestamp.fromDate(dateOfBirth),
     };
   }
+
+    /// Convert MemberModel to Member (Domain object)
+  Member toDomain() {
+    return Member(
+      id: id,
+      fullName: fullName,
+      location: location,
+      contact: contact,
+      marriageStatus: marriageStatus,
+      spouseName: spouseName,
+      children: children,
+      relativeContact: relativeContact,
+      additionalImage: additionalImage,
+      profilePic: profilePic,
+      dateOfBirth: dateOfBirth,
+      groupAffiliate: groupAffiliate,
+      role: role,
+    );
+  }
 }

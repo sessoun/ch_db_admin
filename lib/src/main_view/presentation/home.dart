@@ -1,9 +1,7 @@
 import 'dart:math';
 
-import 'package:ch_db_admin/src/Dashboard/dash_borad_view.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/members_view.dart';
 import 'package:ch_db_admin/src/attendance/presentation/ui/attendance_view.dart';
-import 'package:ch_db_admin/src/events/presentation/ui/events_view.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/side_menu_view.dart';
 import 'package:ch_db_admin/src/notifications/presentation/ui/notifications_view.dart';

@@ -1,6 +1,11 @@
-import 'package:ch_db_admin/src/attendance/data/models/attendance.dart';
-import 'package:ch_db_admin/src/attendance/domain/entities/attendance.dart';
+import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
+import 'package:ch_db_admin/src/attendance/presentation/controller/attendance_controller.dart';
+import 'package:ch_db_admin/src/attendance/presentation/ui/new_attendance.dart';
 import 'package:flutter/material.dart';
+import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
+import 'package:ch_db_admin/src/attendance/domain/entities/attendance.dart';
+import 'package:provider/provider.dart';
+
 class AttendanceView extends StatefulWidget {
   const AttendanceView({super.key});
 
@@ -9,110 +14,81 @@ class AttendanceView extends StatefulWidget {
 }
 
 class _AttendanceViewState extends State<AttendanceView> {
-  // Sample attendance data
-  final List<Attendance> attendanceRecords = [
-    // Attendance(memberId: '1', date: DateTime.now(), isPresent: true, notes: 'Attended service'),
-    // Attendance(memberId: '2', date: DateTime.now().subtract(const Duration(days: 1)), isPresent: false, notes: 'Absent'),
-    // Add more attendance records as needed
-  ];
+  Future<void> getAllAttendance() async {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        await context.read<AttendanceController>().fetchAllAttendance();
+      },
+    );
+  }
 
   String searchText = '';
-  bool isGridView = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getAllAttendance();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filteredAttendance = attendanceRecords
-        .where((record) => record.members[1].fullName.toLowerCase().contains(searchText.toLowerCase()))
+    final attendanceController = context.watch<AttendanceController>();
+    final filteredAttendance = attendanceController.attendanceList
+        .where((record) =>
+            record.event.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Attendance'),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(isGridView ? Icons.list : Icons.grid_view),
-            onPressed: () {
-              setState(() {
-                isGridView = !isGridView;
-              });
-            },
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search by Member ID...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  searchText = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: isGridView
-                  ? _buildGridView(filteredAttendance)
-                  : _buildListView(filteredAttendance),
-            ),
-          ],
-        ),
+        child:
+            Consumer<AttendanceController>(builder: (context, controller, _) {
+          if (controller.message != null &&
+              controller.message!.contains('Error')) {
+            return Center(child: Text(controller.message!));
+          }
+          return controller.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search by Event...',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchText = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    Expanded(
+                      child: filteredAttendance.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'No attendance records found.',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            )
+                          : _buildListView(filteredAttendance),
+                    ),
+                  ],
+                );
+        }),
       ),
-    );
-  }
-
-  Widget _buildGridView(List<Attendance> records) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 3 / 2,
+      floatingActionButton: FloatingActionButton(
+        heroTag: '//',
+        onPressed: _createNewAttendance,
+        child: const Icon(Icons.add),
       ),
-      itemCount: records.length,
-      itemBuilder: (context, index) {
-        final record = records[index];
-        return GestureDetector(
-          onTap: () {
-            // Navigate to attendance details or perform an action
-          },
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Member ID: ',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Date:',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Status: ',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -123,11 +99,12 @@ class _AttendanceViewState extends State<AttendanceView> {
         final record = records[index];
         return GestureDetector(
           onTap: () {
-            // Navigate to attendance details or perform an action
+            _showMembersDialog(record.members);
           },
           child: Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.symmetric(vertical: 8.0),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -138,17 +115,32 @@ class _AttendanceViewState extends State<AttendanceView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Member ID: ',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                        'Event: ${record.event}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Text(
-                        'Date: ',
+                        'Created At: ${record.createdAt.toLocal().toIso8601String().split('T')[0]}',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                      const SizedBox(height: 4),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       Text(
-                        'Status: ',
+                        'Total',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        record.members.length.toString(),
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
@@ -159,6 +151,51 @@ class _AttendanceViewState extends State<AttendanceView> {
           ),
         );
       },
+    );
+  }
+
+  void _showMembersDialog(List<Member> members) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Members'),
+          content: SizedBox(
+            height: 200,
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: members.length,
+              itemBuilder: (context, index) {
+                final member = members[index];
+                return ListTile(
+                  title: Text(member.fullName),
+                  subtitle: Text('Role: ${member.role}'),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _createNewAttendance() {
+    final members = context.read<MemberController>().members;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateAttendanceView(
+          allMembers: members,
+        ), // Replace with actual page
+      ),
     );
   }
 }

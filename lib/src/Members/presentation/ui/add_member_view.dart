@@ -132,7 +132,7 @@ class _AddMemberViewState extends State<AddMemberView> {
       print(newMember.role);
       if (widget.member != null) {
         await provider.updateMember(newMember.id!, newMember).then(
-          (result) {
+          (_) {
             if (provider.statusMessage.contains('Error')) {
               NotificationUtil.showError(context, provider.statusMessage);
             } else {
