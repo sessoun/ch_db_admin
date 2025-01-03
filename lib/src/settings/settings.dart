@@ -32,20 +32,10 @@ class _SettingsViewState extends State<SettingsView> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Choose Theme'),
+          title: const Text('Choose Primary Color:'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SwitchListTile(
-                title: const Text('Dark Mode'),
-                value: themeProvider.isDarkMode,
-                onChanged: (value) {
-                  themeProvider.toggleTheme();
-                },
-              ),
-              const SizedBox(height: 20),
-              const Text('Choose Primary Color:'),
-              const SizedBox(height: 10),
               Wrap(
                 spacing: 10.0,
                 children: presetColors.map((color) {
