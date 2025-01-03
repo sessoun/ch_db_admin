@@ -3,6 +3,7 @@ import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
+import 'package:ch_db_admin/src/settings/settings.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/src/main_view/presentation/menu_tile.dart';
 import 'package:flutter/material.dart';
@@ -56,10 +57,15 @@ class _SideMenuViewState extends State<SideMenuView> {
                               index,
                     )),
             const Spacer(),
-            const MenuTile(
+            MenuTile(
               title: 'Settings',
               icon: Icons.settings,
               showTrailingIcon: false,
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const SettingsView(),
+                ));
+              },
             ),
             MenuTile(
               title: '${watchTheme.isDarkMode ? 'Dark' : 'Light'}' ' Mode',

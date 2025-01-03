@@ -78,9 +78,6 @@ class _CreateAttendanceViewState extends State<CreateAttendanceView> {
             createdAt: DateTime.now(),
             event: eventController.text.trim(),
           );
-
-          print(newAttendance);
-
           await controller.createAttendance(newAttendance).then((_) async {
             final message = controller.message!;
             if (message.contains('Error')) {
