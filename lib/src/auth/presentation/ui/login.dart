@@ -2,6 +2,7 @@ import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/src/auth/data/models/user_login_credentials.dart';
 import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
+import 'package:ch_db_admin/src/auth/presentation/ui/forget_password.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/orgname_dialog.dart';
 import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
@@ -109,7 +110,9 @@ class _LoginViewState extends State<LoginView> {
               // Forgot Password Link
               TextButton(
                 onPressed: () {
-                  // Navigate to Forgot Password screen
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const ForgotPasswordView(),
+                  ));
                 },
                 child: Text(
                   'Forgot Password?',

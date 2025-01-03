@@ -1,5 +1,6 @@
 import 'package:ch_db_admin/shared/failure.dart';
 import 'package:ch_db_admin/shared/usecase.dart';
+import 'package:ch_db_admin/src/auth/domain/usecase/reset_password.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/auth/domain/entities/user_credentials.dart';
 import 'package:ch_db_admin/src/auth/domain/usecase/log_out.dart';
@@ -13,12 +14,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthController extends ChangeNotifier {
   final SignIn _signIn;
   final SignOut _signOut;
+  final ResetPassword _resetPassword;
 
   AuthController({
     required SignIn signIn,
     required SignOut signOut,
+    required ResetPassword resetPassword,
   })  : _signIn = signIn,
-        _signOut = signOut;
+        _signOut = signOut,
+        _resetPassword = resetPassword;
 
   bool _isLoading = false;
   get isLoading => _isLoading;
@@ -96,6 +100,21 @@ class AuthController extends ChangeNotifier {
      _isLoading = true;
     notifyListeners();
     final result = await _signOut(NoParams());
+    return result.fold((failure) {
+       _isLoading = false;
+    notifyListeners();
+      return left(Failure(failure.message));
+    }, (success) {
+       _isLoading = false;
+    notifyListeners();
+      return right(success);
+    });
+  }
+
+  Future<Either<Failure, String>> resetPassword(String email) async {
+     _isLoading = true;
+    notifyListeners();
+    final result = await _resetPassword(Params(email));
     return result.fold((failure) {
        _isLoading = false;
     notifyListeners();

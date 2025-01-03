@@ -66,4 +66,21 @@ class AuthRepoImpl implements AuthRepo {
       throw AppException('An unknown error occurred: ${e.toString()}');
     }
   }
+  
+  @override
+  Future<Either<Failure, String>> resetPassword(String email) async {
+    try {
+      final result = await auth.resetPassword(email);
+      return Right(result);
+    } on FirebaseAuthException {
+      throw custom.FirebaseAuthException(
+        'Something went wrong while sending password reset email',
+      );
+    } on SocketException {
+      throw NetworkException(
+          'No internet connection. Please check your network settings.');
+    } on Exception catch (e) {
+      throw AppException('An unknown error occurred: ${e.toString()}');
+    }
+  }
 }
