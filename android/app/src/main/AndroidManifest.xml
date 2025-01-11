@@ -2,7 +2,7 @@
     <application
         android:label="Shepherd"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_ic">
         <activity
             android:name=".MainActivity"
             android:exported="true"
