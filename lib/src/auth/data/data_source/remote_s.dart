@@ -2,7 +2,8 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ch_db_admin/shared/exceptions/app_exception.dart';
-import 'package:ch_db_admin/shared/exceptions/firebase_exception.dart' as custom;
+import 'package:ch_db_admin/shared/exceptions/firebase_exception.dart'
+    as custom;
 import 'package:ch_db_admin/shared/exceptions/network_exception.dart';
 import 'package:ch_db_admin/src/auth/data/models/user_login_credentials.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
@@ -15,7 +16,7 @@ class LoginRemoteS {
   Future<User?> signIn(UserLoginCredentialsModel data) async {
     try {
       final userCredential = await auth.signInWithEmailAndPassword(
-        email: data.email,
+        email: data.email.trim(),
         password: data.password,
       );
       return userCredential.user;

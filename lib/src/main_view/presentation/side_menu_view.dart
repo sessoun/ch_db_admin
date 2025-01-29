@@ -87,11 +87,13 @@ class _SideMenuViewState extends State<SideMenuView> {
                           (l) => NotificationUtil.showError(context, l.message),
                           (r) {
                             controller.toggleMenuOpened();
+                            
                             NotificationUtil.showSuccess(context, r);
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                              builder: (context) => const LoginView(),
-                            ));
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginView(),
+                                ),
+                                (r) => false);
                           },
                         ),
                       );

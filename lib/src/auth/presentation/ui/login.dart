@@ -4,6 +4,7 @@ import 'package:ch_db_admin/src/auth/data/models/user_login_credentials.dart';
 import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/forget_password.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/orgname_dialog.dart';
+import 'package:ch_db_admin/src/auth/presentation/ui/request_credentials.dart';
 import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
@@ -39,7 +40,7 @@ class _LoginViewState extends State<LoginView> {
               ),
               Center(
                 child: Text(
-                  'Church Admin',
+                  'Jesus is the Good Shepherd',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -96,9 +97,11 @@ class _LoginViewState extends State<LoginView> {
                       await checkOnOrgName(context);
 
                       // Navigate to HomeView
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const HomeView(),
-                      ));
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const HomeView(),
+                          ),
+                          (r) => false);
                     },
                   );
                 },
@@ -107,17 +110,33 @@ class _LoginViewState extends State<LoginView> {
                   context, context.watch<AuthController>().isLoading),
               const SizedBox(height: 16),
 
-              // Forgot Password Link
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const ForgotPasswordView(),
-                  ));
-                },
-                child: Text(
-                  'Forgot Password?',
-                  style: TextStyle(color: themeProvider.theme.primaryColor),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const RequestCredentialsView(),
+                      ));
+                    },
+                    child: Text(
+                      'Request for credentials.',
+                      style: TextStyle(color: themeProvider.theme.primaryColor),
+                    ),
+                  ),
+                  // Forgot Password Link
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordView(),
+                      ));
+                    },
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: themeProvider.theme.primaryColor),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
             ],
