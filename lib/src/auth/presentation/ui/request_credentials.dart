@@ -68,7 +68,10 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
                           'subject': 'Requesting_For_Shepherd_Credentials',
                           'body':
                               "Use_${emailController.text}_as_the_email_address_to_my_credentials."
-                        }));
+                        })).then((_) {
+                      emailController.clear();
+                      Navigator.of(context).pop();
+                    });
                   }
                 },
                 child: const Text(
