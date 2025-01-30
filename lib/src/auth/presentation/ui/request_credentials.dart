@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
@@ -6,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:mailer/smtp_server/gmail.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RequestCredentialsView extends StatefulWidget {
   const RequestCredentialsView({super.key});
@@ -29,7 +26,7 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
     setState(() {
       isRequesting = true;
     });
-    print('Connecting to SMTP server...');
+    //configuring smtp server
     final smtpServer = SmtpServer(
       'smtp.gmail.com',
       port: 465,
@@ -38,7 +35,7 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
       ssl: true,
     );
 
-    print('Creating message...');
+    //constructing message
     final message = Message()
       ..from = Address(email, 'Shepherd System') // Use YOUR email as sender
       ..recipients.add(email) // Sending to yourself/admin
