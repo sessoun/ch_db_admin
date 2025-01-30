@@ -1,11 +1,13 @@
 import 'dart:math';
 
+import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/members_view.dart';
 import 'package:ch_db_admin/src/attendance/presentation/ui/attendance_view.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/side_menu_view.dart';
 import 'package:ch_db_admin/src/notifications/presentation/ui/notifications_view.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -19,6 +21,26 @@ class _HomeViewState extends State<HomeView>
     with SingleTickerProviderStateMixin {
   void update() {
     setState(() {});
+  }
+
+  AppUpdateInfo? _updateInfo;
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> checkForUpdate() async {
+    InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        _updateInfo = info;
+      });
+
+      if (_updateInfo?.updateAvailability ==
+          UpdateAvailability.updateAvailable) {
+        InAppUpdate.startFlexibleUpdate().then(
+          (result) => InAppUpdate.completeFlexibleUpdate(),
+        );
+      }
+    }).catchError((e) {
+      NotificationUtil.showError(context, e.toString());
+    });
   }
 
   @override
