@@ -1,3 +1,4 @@
+
 import 'package:ch_db_admin/firebase_options.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/attendance/presentation/controller/attendance_controller.dart';
@@ -13,6 +14,7 @@ import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,8 +33,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   //increase cache memory size
   configureCache();
+
+  await dotenv.load(fileName: ".env");
+
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
 }
 
