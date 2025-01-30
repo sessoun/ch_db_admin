@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String?> orgNameFormField(BuildContext context) {
+  final key = GlobalKey<FormState>();
   return showDialog<String>(
     context: context,
     barrierDismissible: false,
@@ -12,23 +13,33 @@ Future<String?> orgNameFormField(BuildContext context) {
       final orgNameController = TextEditingController();
       return AlertDialog(
         title: const Text("Enter Organization Name"),
-        content: TextField(
-          controller: orgNameController,
-          decoration: const InputDecoration(
-            hintText: "Organization Name",
+        content: Form(
+          key: key,
+          child: TextFormField(
+            controller: orgNameController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'This field is required';
+              }
+              return null;
+            },
+            decoration: const InputDecoration(
+              hintText: "Organization Name. eg. OB Group",
+            ),
           ),
         ),
         actions: [
+          // TextButton(
+          //   onPressed: () {
+          //     Navigator.of(context).pop(); // Close dialog without saving
+          //   },
+          //   child: const Text("Cancel"),
+          // ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); // Close dialog without saving
-            },
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pop(orgNameController.text); // Return entered name
+              if (key.currentState!.validate()) {
+                Navigator.of(context).pop(orgNameController.text);
+              } // Return entered name
             },
             child: const Text("Save"),
           ),

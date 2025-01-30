@@ -124,7 +124,7 @@ Future<void> savePreferences(bool isDarkMode, Color primaryColor) async {
 Future<Map<String, dynamic>> loadPreferences() async {
   final prefs = await SharedPreferences.getInstance();
   final isDarkMode = prefs.getBool('isDarkMode') ?? false;
-  final primaryColor = prefs.getInt('primaryColor') ?? Colors.teal.value;
+  final primaryColor = prefs.getInt('primaryColor') ?? Colors.indigo.value;
   return {
     'isDarkMode': isDarkMode,
     'primaryColor': Color(primaryColor),

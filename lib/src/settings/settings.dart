@@ -21,7 +21,7 @@ class _SettingsViewState extends State<SettingsView> {
     Colors.teal,
     Colors.pink,
     Colors.indigo,
-    Colors.yellow,
+    const Color(0xFF5E5501),
     Colors.brown,
   ];
 
@@ -32,12 +32,13 @@ class _SettingsViewState extends State<SettingsView> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Choose Primary Color:'),
+          title: const Text('Choose a prefered color:'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Wrap(
                 spacing: 10.0,
+                runSpacing: 10,
                 children: presetColors.map((color) {
                   return GestureDetector(
                     onTap: () async {
