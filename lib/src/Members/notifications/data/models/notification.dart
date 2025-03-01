@@ -1,5 +1,5 @@
 
-import 'package:ch_db_admin/src/notifications/domain/entities/notification.dart';
+import 'package:ch_db_admin/src/Members/notifications/domain/entities/notification.dart';
 
 class NotificationModel extends Notification {
   NotificationModel({

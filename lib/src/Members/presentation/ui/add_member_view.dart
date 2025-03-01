@@ -37,7 +37,7 @@ class _AddMemberViewState extends State<AddMemberView> {
 
   final ImagePicker _picker = ImagePicker();
 
-  // Method to pick an image from camera or gallery
+  /// Method to pick an image from camera or gallery
   Future<void> _pickImage(String type) async {
     final pickedFile = await _picker.pickImage(
       source: type == 'profile' ? ImageSource.camera : ImageSource.gallery,
@@ -77,7 +77,7 @@ class _AddMemberViewState extends State<AddMemberView> {
   Future<void> submitForm() async {
     final provider = context.read<MemberController>();
 
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && profilePic != null) {
       String profileImage = profilePic?.path ?? '';
       String otherImage = additionalImage?.path ?? '';
 
@@ -93,7 +93,7 @@ class _AddMemberViewState extends State<AddMemberView> {
               selectedImage: profilePic!,
             );
           }
-          if (!otherImage.contains('https://')) {
+          if (!otherImage.contains('https://') && additionalImage != null) {
             otherImage = await imageStore(
               // ignore: use_build_context_synchronously
               context,
@@ -129,7 +129,7 @@ class _AddMemberViewState extends State<AddMemberView> {
         role: selectedRole,
         dateOfBirth: DateTime.parse(dateOfBirthController.text.trim()),
       );
-      print(newMember.role);
+
       if (widget.member != null) {
         await provider.updateMember(newMember.id!, newMember).then(
           (_) {
@@ -151,7 +151,11 @@ class _AddMemberViewState extends State<AddMemberView> {
           },
         );
       }
-      print(newMember.role);
+    } else if (_formKey.currentState!.validate() && profilePic == null) {
+      NotificationUtil.showError(context, "Profile picture must be provided");
+    } else {
+      NotificationUtil.showError(
+          context, "Some fields are required, including profile picture");
     }
   }
 
@@ -165,8 +169,7 @@ class _AddMemberViewState extends State<AddMemberView> {
       selectedAffiliations =
           widget.member?.groupAffiliate ?? selectedAffiliations;
     }
-    print(selectedAffiliations);
-    print(selectedRole);
+
     fullNameController = TextEditingController(text: widget.member?.fullName);
     locationController = TextEditingController(text: widget.member?.location);
     contactController = TextEditingController(text: widget.member?.contact);
@@ -178,6 +181,7 @@ class _AddMemberViewState extends State<AddMemberView> {
         TextEditingController(text: widget.member?.relativeContact);
     dateOfBirthController = TextEditingController(
         text: widget.member?.dateOfBirth.toIso8601String().split('T')[0]);
+
   }
 
   @override
@@ -354,7 +358,7 @@ class _AddMemberViewState extends State<AddMemberView> {
               CustomTextFormField(
                 controller: dateOfBirthController,
                 labelText: 'Date of Birth (YYYY-MM-DD)',
-                hintText: 'Enter date of birth',
+                hintText: 'Enter date of birth (YYYY-MM-DD)',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter date of birth';

@@ -5,7 +5,7 @@ import 'package:ch_db_admin/src/Members/presentation/ui/members_view.dart';
 import 'package:ch_db_admin/src/attendance/presentation/ui/attendance_view.dart';
 import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/src/main_view/presentation/side_menu_view.dart';
-import 'package:ch_db_admin/src/notifications/presentation/ui/notifications_view.dart';
+import 'package:ch_db_admin/src/Members/notifications/presentation/ui/notifications_view.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/provider.dart';
