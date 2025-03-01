@@ -1,7 +1,10 @@
+
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 class RequestCredentialsView extends StatefulWidget {
   const RequestCredentialsView({super.key});
@@ -11,15 +14,50 @@ class RequestCredentialsView extends StatefulWidget {
 }
 
 class _RequestCredentialsViewState extends State<RequestCredentialsView> {
+  bool isRequesting = false;
   late TextEditingController emailController;
   final formKey = GlobalKey<FormState>();
 
-  Future<void> _sendRequestMail(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      NotificationUtil.showError(context, 'Could not launch $url');
+  final email = dotenv.env['EMAIL_ADDRESS'] ?? 'Not set';
+  final appPassword = dotenv.env['GOOGLE_APP_PASSWORD'] ?? 'Not set';
+
+  //directly sends email without opening any external application
+  Future<void> sendRequestEmail(String userEmail) async {
+    setState(() {
+      isRequesting = true;
+    });
+    //configuring smtp server
+    final smtpServer = SmtpServer(
+      'smtp.gmail.com',
+      port: 465,
+      username: email,
+      password: appPassword,
+      ssl: true,
+    );
+
+    //constructing message
+    final message = Message()
+      ..from = Address(email, 'Shepherd System') // Use YOUR email as sender
+      ..recipients.add(email) // Sending to yourself/admin
+      ..subject = 'New User Requesting Shepherd Credentials'
+      ..text = '''
+A new user has requested credentials for Shepherd.
+
+Requesting User's Email: $userEmail
+
+Please process their credentials using the email address above.
+
+- Shepherd System''';
+
+    try {
+      await send(message, smtpServer).then((_) => setState(() {
+            isRequesting = false;
+          }));
+
+      NotificationUtil.showSuccess(context,
+          'Request sent successfully! Admin will process your credentials.');
+    } catch (e) {
+      NotificationUtil.showError(context, 'Failed to send request: $e');
     }
   }
 
@@ -59,21 +97,17 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
                   hintText: ''),
               const SizedBox(height: 10),
               TextButton(
-                onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    _sendRequestMail(Uri(
-                        scheme: 'mailto',
-                        path: 'essoun379@gmail.com',
-                        queryParameters: {
-                          'subject': 'Requesting_For_Shepherd_Credentials',
-                          'body':
-                              "Use_${emailController.text}_as_the_email_address_to_my_credentials."
-                        }));
-                  }
-                },
-                child: const Text(
-                  'Send request',
-                  style: TextStyle(fontSize: 16),
+                onPressed: isRequesting
+                    ? DoNothingAction.new
+                    : () {
+                        if (formKey.currentState!.validate()) {
+                          sendRequestEmail(emailController.text)
+                              .then((_) => Navigator.of(context).pop());
+                        }
+                      },
+                child: Text(
+                  isRequesting ? 'Hold on! Sending request' : 'Send request',
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ],

@@ -9,7 +9,7 @@ class MemberInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    print(member.children);
+    print(member.children.runtimeType);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -20,7 +20,11 @@ class MemberInfoWidget extends StatelessWidget {
         _buildLabelValue("Spouse:", member.spouseName!, theme),
         _buildLabelValue(
           "Children:",
-          member.children!.isNotEmpty ? member.children!.join(', ') : 'N/A',
+          member.children!.isNotEmpty
+              ? member.children!.length == 1 && member.children!.first.isEmpty
+                  ? 'N/A'
+                  : member.children!.join(',')
+              : 'N/A',
           theme,
         ),
         _buildLabelValue("Relative Contact:", member.relativeContact!, theme),

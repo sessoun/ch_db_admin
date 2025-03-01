@@ -33,9 +33,6 @@ class _MembersViewState extends State<MembersView>
 
   void debugImageCache() {
     final cache = PaintingBinding.instance.imageCache;
-    print('Current cache size: ${cache.currentSizeBytes} bytes');
-    print('Cache currentSize count: ${cache.currentSize}');
-    print('Cache liveImageCount count: ${cache.liveImageCount}');
   }
 
   String searchText = '';
@@ -125,8 +122,6 @@ class _MembersViewState extends State<MembersView>
     return ListView.builder(
       itemCount: members.length,
       itemBuilder: (context, index) {
-        debugImageCache();
-
         final member = members[index];
         return Card(
           key: ValueKey(index),
@@ -196,7 +191,7 @@ class _MembersViewState extends State<MembersView>
               builder: (context) => Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height * .9 ,
+                    height: MediaQuery.of(context).size.height * .9,
                     child: Column(
                       // mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +240,7 @@ class _MembersViewState extends State<MembersView>
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
                           image: CachedNetworkImageProvider(
-                              member.additionalImage!),
+                              member.additionalImage ?? member.profilePic!),
                           fit: BoxFit.cover)),
                 ),
               ),

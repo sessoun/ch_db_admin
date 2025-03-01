@@ -1,4 +1,4 @@
-import 'package:ch_db_admin/src/notifications/data/models/notification.dart';
+import 'package:ch_db_admin/src/Members/notifications/data/models/notification.dart';
 import 'package:flutter/material.dart';
 
 class NotificationsView extends StatefulWidget {
@@ -15,19 +15,19 @@ class _NotificationsViewState extends State<NotificationsView> {
       title: 'Service Reminder',
       message: 'Sunday service at 9:00 AM.',
       timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      id: '', 
+      id: '',
     ),
     NotificationModel(
       title: 'Event Update',
       message: 'Youth Conference moved to 2:00 PM.',
-      timestamp: DateTime.now().subtract(const Duration(days: 3)), id: '',
-      
+      timestamp: DateTime.now().subtract(const Duration(days: 3)),
+      id: '',
     ),
     NotificationModel(
       title: 'Special Announcement',
       message: 'New outreach program this weekend!',
-      timestamp: DateTime.now().subtract(const Duration(days: 7)), id: '',
-    
+      timestamp: DateTime.now().subtract(const Duration(days: 7)),
+      id: '',
     ),
     // Add more notification records as needed
   ];
@@ -39,8 +39,12 @@ class _NotificationsViewState extends State<NotificationsView> {
   Widget build(BuildContext context) {
     final filteredNotifications = notifications
         .where((notification) =>
-            notification.title.toLowerCase().contains(searchText.toLowerCase()) ||
-            notification.message.toLowerCase().contains(searchText.toLowerCase()))
+            notification.title
+                .toLowerCase()
+                .contains(searchText.toLowerCase()) ||
+            notification.message
+                .toLowerCase()
+                .contains(searchText.toLowerCase()))
         .toList();
 
     return Scaffold(
@@ -77,11 +81,19 @@ class _NotificationsViewState extends State<NotificationsView> {
               },
             ),
             const SizedBox(height: 16.0),
-            Expanded(
-              child: isGridView
-                  ? _buildGridView(filteredNotifications)
-                  : _buildListView(filteredNotifications),
-            ),
+            const Expanded(
+                child: Center(
+                    child: Text(
+              'Anticipate!',
+              style: TextStyle(
+                fontSize: 30,
+                fontStyle: FontStyle.italic,
+              ),
+            ))
+                //  isGridView
+                //     ? _buildGridView(filteredNotifications)
+                //     : _buildListView(filteredNotifications),
+                ),
           ],
         ),
       ),
@@ -113,7 +125,8 @@ class _NotificationsViewState extends State<NotificationsView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.notifications, size: 36, color: Theme.of(context).primaryColor),
+                  Icon(Icons.notifications,
+                      size: 36, color: Theme.of(context).primaryColor),
                   const SizedBox(height: 8),
                   Text(
                     notification.title,
@@ -157,7 +170,8 @@ class _NotificationsViewState extends State<NotificationsView> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  Icon(Icons.notifications, size: 36, color: Theme.of(context).primaryColor),
+                  Icon(Icons.notifications,
+                      size: 36, color: Theme.of(context).primaryColor),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(

@@ -4,6 +4,7 @@ import 'dart:io' show File;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
+///store and retrieve image from firebase store
 Future<String> imageStore(
   BuildContext context,
  { required String fileFolder,
