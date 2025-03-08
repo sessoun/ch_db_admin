@@ -1,4 +1,3 @@
-
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +20,9 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
   final email = dotenv.env['EMAIL_ADDRESS'] ?? 'Not set';
   final appPassword = dotenv.env['GOOGLE_APP_PASSWORD'] ?? 'Not set';
 
-  //directly sends email without opening any external application
   Future<void> sendRequestEmail(String userEmail) async {
-    setState(() {
-      isRequesting = true;
-    });
-    //configuring smtp server
+    setState(() => isRequesting = true);
+
     final smtpServer = SmtpServer(
       'smtp.gmail.com',
       port: 465,
@@ -35,29 +31,23 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
       ssl: true,
     );
 
-    //constructing message
     final message = Message()
-      ..from = Address(email, 'Shepherd System') // Use YOUR email as sender
-      ..recipients.add(email) // Sending to yourself/admin
+      ..from = Address(email, 'Shepherd System')
+      ..recipients.add(email)
       ..subject = 'New User Requesting Shepherd Credentials'
-      ..text = '''
-A new user has requested credentials for Shepherd.
-
-Requesting User's Email: $userEmail
-
-Please process their credentials using the email address above.
-
-- Shepherd System''';
+      ..text = 'A new user has requested credentials for Shepherd.\n\n'
+          'Requesting User\'s Email: $userEmail\n\n'
+          'Please process their credentials using the email address above.\n\n'
+          '- Shepherd System';
 
     try {
-      await send(message, smtpServer).then((_) => setState(() {
-            isRequesting = false;
-          }));
-
+      await send(message, smtpServer);
       NotificationUtil.showSuccess(context,
           'Request sent successfully! Admin will process your credentials.');
     } catch (e) {
       NotificationUtil.showError(context, 'Failed to send request: $e');
+    } finally {
+      setState(() => isRequesting = false);
     }
   }
 
@@ -69,8 +59,8 @@ Please process their credentials using the email address above.
 
   @override
   void dispose() {
-    super.dispose();
     emailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -78,40 +68,59 @@ Please process their credentials using the email address above.
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request Credentials'),
+        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Please enter your prefered email address to recieve your credential.\nNote that same address will be used as part of your credentials.',
-                style: TextStyle(fontSize: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Enter your email to receive your credentials. The same email will be used as part of your credentials.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.black87),
+            ),
+            const SizedBox(height: 20),
+            Form(
+              key: formKey,
+              child: CustomTextFormField(
+                controller: emailController,
+                labelText: 'Email Address',
+                hintText: 'Enter your email',
+                validator: (p0) => p0 == null || p0.isEmpty
+                    ? 'Enter a valid email address'
+                    : null,
               ),
-              const SizedBox(height: 10),
-              CustomTextFormField(
-                  controller: emailController,
-                  labelText: 'Email address',
-                  hintText: ''),
-              const SizedBox(height: 10),
-              TextButton(
+            ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
                 onPressed: isRequesting
-                    ? DoNothingAction.new
+                    ? null
                     : () {
                         if (formKey.currentState!.validate()) {
-                          sendRequestEmail(emailController.text)
-                              .then((_) => Navigator.of(context).pop());
+                          sendRequestEmail(emailController.text).then((_) {
+                            Navigator.of(context).pop();
+                          });
                         }
                       },
-                child: Text(
-                  isRequesting ? 'Hold on! Sending request' : 'Send request',
-                  style: const TextStyle(fontSize: 16),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  textStyle: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+                child: isRequesting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text('Send Request'),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

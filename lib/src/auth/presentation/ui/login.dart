@@ -21,6 +21,13 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(const AssetImage('images/lil.jpg'), context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,115 +38,128 @@ class _LoginViewState extends State<LoginView> {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Image.asset(
-                'images/lil.jpg',
-              ),
-              Center(
-                child: Text(
-                  'Jesus is the Good Shepherd',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: themeProvider.theme.primaryColor,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Image.asset(
+                  'images/lil.jpg',
+                  height: 250,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+
+                Center(
+                  child: Text(
+                    'Jesus is the Good Shepherd',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: themeProvider.theme.primaryColor,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
+                const SizedBox(height: 30),
 
-              // Email Field
-              CustomTextFormField(
-                controller: emailController,
-                labelText: 'Email',
-                hintText: '',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              // Password Field
-              CustomTextFormField(
-                controller: passwordController,
-                labelText: 'Password',
-                hintText: '',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
+                // Email Field
+                CustomTextFormField(
+                  controller: emailController,
+                  labelText: 'Email',
+                  hintText: '',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                // Password Field
+                CustomTextFormField(
+                  controller: passwordController,
+                  labelText: 'Password',
+                  hintText: '',
+                  obscureText: true,
+                  maxLines: 1,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    } else if (value.length < 6) {
+                      return 'Password must be at least 6 characters long';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
 
-              // Login Button
-              ElevatedButton(
-                onPressed: () async {
-                  final result = await context.read<AuthController>().signIn(
-                        UserLoginCredentialsModel(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        ),
+                // Login Button
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      final result =
+                          await context.read<AuthController>().signIn(
+                                UserLoginCredentialsModel(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                ),
+                              );
+
+                      result.fold(
+                        (failure) => NotificationUtil.showError(
+                            context, failure.message),
+                        (success) async {
+                          NotificationUtil.showSuccess(
+                              context, 'Signed in successfully');
+                          await checkOnOrgName(context);
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => const HomeView()),
+                            (r) => false,
+                          );
+                        },
                       );
+                    }
+                  },
+                  child: const Text('Login'),
+                ).loadingIndicator(
+                    context, context.watch<AuthController>().isLoading),
+                const SizedBox(height: 16),
 
-                  result.fold(
-                    (failure) =>
-                        NotificationUtil.showError(context, failure.message),
-                    (success) async {
-                      NotificationUtil.showSuccess(
-                          context, 'Signed in successfully');
-
-                      await checkOnOrgName(context);
-
-                      // Navigate to HomeView
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const HomeView(),
-                          ),
-                          (r) => false);
-                    },
-                  );
-                },
-                child: const Text('Login'),
-              ).loadingIndicator(
-                  context, context.watch<AuthController>().isLoading),
-              const SizedBox(height: 16),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const RequestCredentialsView(),
-                      ));
-                    },
-                    child: Text(
-                      'Request for credentials.',
-                      style: TextStyle(color: themeProvider.theme.primaryColor),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const RequestCredentialsView(),
+                        ));
+                      },
+                      child: Text(
+                        'Request for credentials.',
+                        style:
+                            TextStyle(color: themeProvider.theme.primaryColor),
+                      ),
                     ),
-                  ),
-                  // Forgot Password Link
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ForgotPasswordView(),
-                      ));
-                    },
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: themeProvider.theme.primaryColor),
+                    // Forgot Password Link
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ForgotPasswordView(),
+                        ));
+                      },
+                      child: Text(
+                        'Forgot Password?',
+                        style:
+                            TextStyle(color: themeProvider.theme.primaryColor),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),
