@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:ch_db_admin/shared/exceptions/database_exception.dart';
+import 'package:ch_db_admin/shared/firestore_instance.dart'
+    show firestoreCollection;
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,15 +11,10 @@ import '../../../../shared/exceptions/app_exception.dart';
 import '../../../../shared/exceptions/network_exception.dart';
 
 class MembersRemoteDb {
-
   final prefs = locator.get<SharedPreferences>();
-  final db = FirebaseFirestore.instance
-      .collection('organisations')
+  final db = firestoreCollection()
       .doc(locator.get<SharedPreferences>().getString('org_id'))
       .collection('members');
-      
-
-  
 
   // Create a member in the Firestore database
   Future<String> addMember(MemberModel data) async {
