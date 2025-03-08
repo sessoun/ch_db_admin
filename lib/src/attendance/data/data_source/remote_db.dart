@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:ch_db_admin/shared/exceptions/app_exception.dart';
 import 'package:ch_db_admin/shared/exceptions/database_exception.dart';
 import 'package:ch_db_admin/shared/exceptions/network_exception.dart';
+import 'package:ch_db_admin/shared/firestore_instance.dart'
+    show firestoreCollection;
 import 'package:ch_db_admin/src/attendance/data/models/attendance.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,8 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceDB {
   final prefs = locator.get<SharedPreferences>();
-  final db = FirebaseFirestore.instance
-      .collection('organisations')
+
+  final db = firestoreCollection()
       .doc(locator.get<SharedPreferences>().getString('org_id'))
       .collection('attendance');
 

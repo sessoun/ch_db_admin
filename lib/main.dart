@@ -15,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,15 +32,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  //increase cache memory size
-  configureCache();
+  await dotenv.load(fileName: '.env');
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
 }
 
-void configureCache() {
-  PaintingBinding.instance.imageCache.maximumSizeBytes =
-      300 * 1024 * 1024; // 300 MB
-}
 
 class MyApp extends StatelessWidget {
   final bool isDarkMode;
@@ -95,104 +91,6 @@ class AuthState extends StatefulWidget {
 
 class _AuthStateState extends State<AuthState> {
   User? currentUser = FirebaseAuth.instance.currentUser;
-
-  // void checkPrefs() async {
-  //   await _checkPreferences(context);
-  // }
-
-  // // Define preset colors
-  // final List<Color> presetColors = [
-  //   Colors.red,
-  //   Colors.green,
-  //   Colors.blue,
-  //   Colors.orange,
-  //   Colors.purple,
-  //   Colors.teal,
-  //   Colors.pink,
-  //   Colors.indigo,
-  //   Colors.yellow,
-  //   Colors.brown,
-  // ];
-
-  // Future<void> _checkPreferences(BuildContext context) async {
-  //   final prefs = locator.get<SharedPreferences>();
-  //   // Check if theme preferences are already saved
-  //   if (!prefs.containsKey('isDarkMode') ||
-  //       !prefs.containsKey('primaryColor')) {
-  //     // If not saved, show theme dialog to let the user choose
-  //     _showThemeDialog(context);
-  //   } else {
-  //     Navigator.of(context).pushReplacement(
-  //       MaterialPageRoute(
-  //         builder: (context) => const HomeView(),
-  //       ),
-  //     );
-  //   }
-  // }
-
-  // void _showThemeDialog(BuildContext context) {
-  //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: const Text('Choose Theme'),
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             SwitchListTile(
-  //               title: const Text('Dark Mode'),
-  //               value: themeProvider.isDarkMode,
-  //               onChanged: (value) {
-  //                 themeProvider.toggleTheme();
-  //               },
-  //             ),
-  //             const SizedBox(height: 20),
-  //             const Text('Choose Primary Color:'),
-  //             const SizedBox(height: 10),
-  //             Wrap(
-  //               spacing: 10.0,
-  //               children: presetColors.map((color) {
-  //                 return GestureDetector(
-  //                   onTap: () async {
-  //                     themeProvider.setPrimaryColor(color);
-  //                     // Save preferences after selecting the color and theme
-  //                     await savePreferences(themeProvider.isDarkMode,
-  //                         themeProvider.theme.primaryColor);
-
-  //                     // Close the dialog after saving
-  //                     Navigator.of(context).pushAndRemoveUntil(
-  //                       MaterialPageRoute(
-  //                         builder: (context) => const HomeView(),
-  //                       ),
-  //                       (route) => false,
-  //                     );
-  //                   },
-  //                   child: Container(
-  //                     width: 40,
-  //                     height: 40,
-  //                     decoration: BoxDecoration(
-  //                       color: color,
-  //                       shape: BoxShape.circle,
-  //                       border: Border.all(
-  //                         color: themeProvider.theme.primaryColor == color
-  //                             ? Colors.black
-  //                             : Colors.transparent,
-  //                         width: 3.0,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 );
-  //               }).toList(),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     if (currentUser == null) {

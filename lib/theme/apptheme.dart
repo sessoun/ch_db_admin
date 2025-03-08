@@ -14,7 +14,6 @@ class AppTheme {
       scaffoldBackgroundColor: Colors.white70,
       cardColor: Colors.white,
       canvasColor: Colors.grey[50],
-      dialogBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -38,7 +37,7 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: primaryColor),
         ),
-      ),
+      ), dialogTheme: DialogThemeData(backgroundColor: Colors.white),
     );
   }
 
@@ -54,7 +53,6 @@ class AppTheme {
       scaffoldBackgroundColor: Colors.black26,
       cardColor: Colors.grey[900],
       canvasColor: Colors.grey[850],
-      dialogBackgroundColor: Colors.grey[800],
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.grey[900],
         iconTheme: const IconThemeData(color: Colors.white),
@@ -79,7 +77,7 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: primaryColor),
         ),
-      ),
+      ), dialogTheme: DialogThemeData(backgroundColor: Colors.grey[800]),
     );
   }
 }
