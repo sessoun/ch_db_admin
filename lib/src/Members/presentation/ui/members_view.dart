@@ -4,6 +4,7 @@ import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/member_info_widget.dart';
+import 'package:ch_db_admin/src/auth/presentation/ui/orgname_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -26,13 +27,11 @@ class _MembersViewState extends State<MembersView>
   void getMembers() async {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
+        await checkOnOrgName(context);
+
         await context.read<MemberController>().fetchAllMembers();
       },
     );
-  }
-
-  void debugImageCache() {
-    final cache = PaintingBinding.instance.imageCache;
   }
 
   String searchText = '';

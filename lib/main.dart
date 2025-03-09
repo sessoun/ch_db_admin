@@ -1,6 +1,8 @@
+import 'package:ch_db_admin/auth_state.dart';
 import 'package:ch_db_admin/firebase_options.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/attendance/presentation/controller/attendance_controller.dart';
+import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
 import 'package:ch_db_admin/src/dependencies/attendance.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/dependencies/events.dart';
@@ -35,7 +37,6 @@ void main() async {
   await dotenv.load(fileName: '.env');
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
 }
-
 
 class MyApp extends StatelessWidget {
   final bool isDarkMode;
@@ -79,23 +80,5 @@ class MyApp extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class AuthState extends StatefulWidget {
-  const AuthState({super.key});
-
-  @override
-  State<AuthState> createState() => _AuthStateState();
-}
-
-class _AuthStateState extends State<AuthState> {
-  User? currentUser = FirebaseAuth.instance.currentUser;
-  @override
-  Widget build(BuildContext context) {
-    if (currentUser == null) {
-      return const LoginView();
-    }
-    return const HomeView();
   }
 }
