@@ -7,8 +7,12 @@ import 'package:ch_db_admin/src/auth/presentation/ui/forget_password.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/request_credentials.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+
+import '../../../main_view/presentation/home.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -114,11 +118,20 @@ class _LoginViewState extends State<LoginView> {
                           NotificationUtil.showSuccess(
                               context, 'Signed in successfully');
                           // await checkOnOrgName(context);
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => const AuthState()),
-                            (r) => false,
-                          );
+
+                          // 🔥 Check if the password is default
+                          if (passwordController.text ==
+                              dotenv.env['DEFAULT_PASSWORD']) {
+                            _showPasswordResetDialog(
+                                context, emailController.text.trim());
+                          } else {
+                            // Proceed to HomeView if password is not default
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeView()),
+                              (r) => false,
+                            );
+                          }
                         },
                       );
                     }
@@ -164,6 +177,51 @@ class _LoginViewState extends State<LoginView> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _showPasswordResetDialog(
+      BuildContext context, String email) async {
+    if (!context.mounted) return;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Reset Password?"),
+          content: const Text(
+            "You're using the default password. Do you want to reset it now?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await FirebaseAuth.instance
+                    .sendPasswordResetEmail(email: email);
+                await context.read<AuthController>().signOut();
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  NotificationUtil.showSuccess(
+                      context, 'Password reset email sent.');
+                }
+              },
+              child: const Text("Reset Now"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                // 🔥 Continue to HomeView if user chooses "Later"
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const HomeView()),
+                  (r) => false,
+                );
+              },
+              child: const Text("Later"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

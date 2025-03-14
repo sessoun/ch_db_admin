@@ -26,13 +26,13 @@ class _AuthStateState extends State<AuthState> {
   //   _checkPasswordStatus();
   // }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      _checkPasswordStatus(); // ✅ Call after widget is in the tree.
-    });
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   WidgetsBinding.instance.addPersistentFrameCallback((_) {
+  //     _checkPasswordStatus();
+  //   });
+  // }
 
   Future<void> _checkPasswordStatus() async {
     currentUser = _auth.currentUser;
@@ -40,13 +40,16 @@ class _AuthStateState extends State<AuthState> {
 
     // 🔥 Compare entered password with default
     if (triggerPasswordReset.value == defaultPassword) {
-      _showPasswordResetDialog();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showPasswordResetDialog();
+        }
+      });
     }
   }
 
   Future<void> _showPasswordResetDialog() async {
     if (!mounted) return;
-
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -72,9 +75,7 @@ class _AuthStateState extends State<AuthState> {
                 }
                 setState(() => isLoading = true);
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => const LoginView(),
-                ));
+                Navigator.of(context).pop();
               },
               child: const Text("Reset Now"),
             ),
