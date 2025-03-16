@@ -79,7 +79,6 @@ class MemberController extends ChangeNotifier {
 
   // Add a new member from excel sheet
   Future<void> addMemberFromExcel(Member member) async {
-    setLoading(true);
     final result = await _addMember(Params(member));
     print(member.groupAffiliate);
     result.fold(
@@ -92,8 +91,6 @@ class MemberController extends ChangeNotifier {
         notifyListeners();
       },
     );
-
-    setLoading(false);
   }
 
 
