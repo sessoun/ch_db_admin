@@ -131,14 +131,14 @@ class _AddMemberViewState extends State<AddMemberView> {
       );
 
       if (widget.member != null) {
-        await provider.updateMember(newMember.id!, newMember).then(
-          (_) {
-            if (provider.statusMessage.contains('Error')) {
-              NotificationUtil.showError(context, provider.statusMessage);
-            } else {
-              NotificationUtil.showSuccess(context, provider.statusMessage);
-            }
-          },
+          await provider.updateMember(newMember.id!, newMember).then(
+            (_) {
+              if (provider.statusMessage.contains('Error')) {
+                NotificationUtil.showError(context, provider.statusMessage);
+              } else {
+                NotificationUtil.showSuccess(context, provider.statusMessage);
+              }
+            },
         );
       } else {
         await provider.addMember(newMember).then(

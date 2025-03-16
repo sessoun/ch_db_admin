@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/shared/chached_network_image.dart';
+import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/member_info_widget.dart';
+import 'package:ch_db_admin/src/Members/presentation/ui/pick_process_xlsx.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/orgname_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -106,9 +108,35 @@ class _MembersViewState extends State<MembersView>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddMemberView()),
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Add Member"),
+              content: const Text("How would you like to add a member?"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close dialog
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddMemberView()),
+                    );
+                  },
+                  child: const Text("Fill Form Manually"),
+                ),
+                TextButton(
+                  onPressed: () async {
+
+                    await pickAndProcessExcel(
+                        context); // Call function to handle file upload
+                    //Navigator.pop(context);
+                    },
+                  child: const Text("Upload Excel File"),
+                ).loadingIndicator(
+                    context, context.watch<MemberController>().isLoading),
+              ],
+            ),
           );
         },
         child: const Icon(Icons.person_add),

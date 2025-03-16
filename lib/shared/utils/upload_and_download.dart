@@ -13,7 +13,7 @@ Future<String> imageStore(
   }
 ) async {
     final storageRef = FirebaseStorage.instance.ref();
-    String fileName = '$fileFolder/${DateTime.now().millisecondsSinceEpoch}.png';
+    String fileName = '$fileFolder/${DateTime.now().millisecondsSinceEpoch}.jpg';
     final uploadTask = storageRef.child(fileName).putFile(selectedImage);
     //upload image to firebase storage
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
