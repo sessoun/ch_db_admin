@@ -76,6 +76,27 @@ class MemberController extends ChangeNotifier {
     setLoading(false);
   }
 
+
+  // Add a new member from excel sheet
+  Future<void> addMemberFromExcel(Member member) async {
+    setLoading(true);
+    final result = await _addMember(Params(member));
+    print(member.groupAffiliate);
+    result.fold(
+          (failure) => _handleFailure(failure),
+          (successMessage) {
+        _clearError();
+        _statusMessage = 'Members updated';
+        print(_statusMessage);
+
+        notifyListeners();
+      },
+    );
+
+    setLoading(false);
+  }
+
+
   // Get a specific member by ID
   Future<void> getMemberById(String memberId) async {
     setLoading(true);

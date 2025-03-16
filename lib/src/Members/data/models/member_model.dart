@@ -29,7 +29,7 @@ class MemberModel extends Member {
       fullName: data['fullName'] == '' ? 'N/A' : data['fullName'],
       location: data['location'] == '' ? 'N/A' : data['location'],
       contact: data['contact'] == '' ? 'N/A' : data['contact'],
-      marriageStatus: data['marriageStatus'] ?? '',
+      marriageStatus: data['marriageStatus'] ?? 'N/A',
       spouseName: data['spouseName'] == '' ? 'N/A' : data['spouseName'],
       children:
           data['children'] != null ? List<String>.from(data['children']) : [],

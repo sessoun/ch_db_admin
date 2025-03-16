@@ -17,8 +17,8 @@ class AuthState extends StatefulWidget {
 class _AuthStateState extends State<AuthState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? currentUser;
-  static final String defaultPassword = dotenv.env['DEFAULT_PASSWORD']!;
-  bool isLoading = false;
+  // static final String defaultPassword = dotenv.env['DEFAULT_PASSWORD']!;
+  // bool isLoading = false;
 
   // @override
   // void initState() {
@@ -34,56 +34,56 @@ class _AuthStateState extends State<AuthState> {
   //   });
   // }
 
-  Future<void> _checkPasswordStatus() async {
-    currentUser = _auth.currentUser;
-    if (currentUser == null || triggerPasswordReset.value == null) return;
-
-    // 🔥 Compare entered password with default
-    if (triggerPasswordReset.value == defaultPassword) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          _showPasswordResetDialog();
-        }
-      });
-    }
-  }
-
-  Future<void> _showPasswordResetDialog() async {
-    if (!mounted) return;
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Password Reset Required"),
-          content: const Text(
-            "You are using the default password. Please reset your password now.",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                setState(() => isLoading = true);
-                await FirebaseAuth.instance.sendPasswordResetEmail(
-                  email: currentUser!.email!,
-                );
-
-                await FirebaseAuth.instance.signOut();
-                if (mounted) {
-                  setState(() {
-                    currentUser = null;
-                  });
-                }
-                setState(() => isLoading = true);
-
-                Navigator.of(context).pop();
-              },
-              child: const Text("Reset Now"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Future<void> _checkPasswordStatus() async {
+  //   currentUser = _auth.currentUser;
+  //   if (currentUser == null || triggerPasswordReset.value == null) return;
+  //
+  //   // 🔥 Compare entered password with default
+  //   if (triggerPasswordReset.value == defaultPassword) {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       if (mounted) {
+  //         _showPasswordResetDialog();
+  //       }
+  //     });
+  //   }
+  // }
+  //
+  // Future<void> _showPasswordResetDialog() async {
+  //   if (!mounted) return;
+  //   await showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: const Text("Password Reset Required"),
+  //         content: const Text(
+  //           "You are using the default password. Please reset your password now.",
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () async {
+  //               setState(() => isLoading = true);
+  //               await FirebaseAuth.instance.sendPasswordResetEmail(
+  //                 email: currentUser!.email!,
+  //               );
+  //
+  //               await FirebaseAuth.instance.signOut();
+  //               if (mounted) {
+  //                 setState(() {
+  //                   currentUser = null;
+  //                 });
+  //               }
+  //               setState(() => isLoading = true);
+  //
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text("Reset Now"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

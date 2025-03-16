@@ -17,7 +17,7 @@ class MemberInfoWidget extends StatelessWidget {
         _buildLabelValue("Location:", member.location, theme),
         _buildLabelValue("Contact:", member.contact, theme),
         _buildLabelValue("Marriage Status:", member.marriageStatus, theme),
-        _buildLabelValue("Spouse:", member.spouseName!, theme),
+        _buildLabelValue("Spouse:", member.spouseName??'N/A', theme),
         _buildLabelValue(
           "Children:",
           member.children!.isNotEmpty
@@ -27,7 +27,7 @@ class MemberInfoWidget extends StatelessWidget {
               : 'N/A',
           theme,
         ),
-        _buildLabelValue("Relative Contact:", member.relativeContact!, theme),
+        _buildLabelValue("Relative Contact:", member.relativeContact??'N/A', theme),
         _buildLabelValue(
           "Date of Birth:",
           member.dateOfBirth.toLocal().toIso8601String().split('T')[0],

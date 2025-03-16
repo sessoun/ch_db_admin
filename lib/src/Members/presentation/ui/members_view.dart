@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../shared/utils/create_google_form.dart';
+
 class MembersView extends StatefulWidget {
   const MembersView({super.key});
 
@@ -113,7 +115,10 @@ class _MembersViewState extends State<MembersView>
             builder: (context) => AlertDialog(
               title: const Text("Add Member"),
               content: const Text("How would you like to add a member?"),
+              actionsAlignment: MainAxisAlignment.start,
+              actionsOverflowAlignment: OverflowBarAlignment.start,
               actions: [
+                // ✅ Fill Form Manually
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context); // Close dialog
@@ -125,16 +130,26 @@ class _MembersViewState extends State<MembersView>
                   },
                   child: const Text("Fill Form Manually"),
                 ),
+
+                // ✅ Upload Excel File
                 TextButton(
                   onPressed: () async {
-
                     await pickAndProcessExcel(
-                        context); // Call function to handle file upload
-                    //Navigator.pop(context);
-                    },
+                        context); // Call function to handle Excel upload
+                    Navigator.pop(context); // Close dialog
+                  },
                   child: const Text("Upload Excel File"),
                 ).loadingIndicator(
                     context, context.watch<MemberController>().isLoading),
+
+                // ✅ Share Google Form
+                TextButton(
+                  onPressed: () async {
+                    generateAndShareGoogleForm(context);
+                    Navigator.pop(context); // Close dialog
+                  },
+                  child: const Text("Share Google Form"),
+                ),
               ],
             ),
           );
@@ -159,7 +174,13 @@ class _MembersViewState extends State<MembersView>
           child: ExpansionTile(
             shape: const RoundedRectangleBorder(),
             expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            leading: networkImage(member.profilePic!),
+            leading: member.profilePic != null
+                ? networkImage(member.profilePic!)
+                : Image.asset(
+                    'images/img.png',
+                    height: 30,
+                    width: 30,
+                  ),
             title: Text(
               member.fullName,
               style: theme.textTheme.bodyLarge!
@@ -225,7 +246,9 @@ class _MembersViewState extends State<MembersView>
                       children: [
                         Align(
                           alignment: Alignment.topCenter,
-                          child: networkImage(member.profilePic!),
+                          child: member.profilePic != null
+                              ? networkImage(member.profilePic!)
+                              : Image.asset('images/img.png',height:40,width:40)
                         ),
                         const SizedBox(height: 10),
                         Center(
@@ -263,15 +286,22 @@ class _MembersViewState extends State<MembersView>
               Card(
                 elevation: 3,
                 child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                          image: CachedNetworkImageProvider(
-                              member.additionalImage!.isEmpty ||
-                                      member.additionalImage == null
-                                  ? member.profilePic!
-                                  : member.additionalImage!),
-                          fit: BoxFit.cover)),
+                  decoration: member.profilePic != null ||
+                          member.additionalImage != null
+                      ? BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                              image: CachedNetworkImageProvider(
+                                  member.additionalImage!.isEmpty ||
+                                          member.additionalImage == null
+                                      ? member.profilePic!
+                                      : member.additionalImage!),
+                              fit: BoxFit.cover))
+                      : null,
+                  child: member.profilePic == null &&
+                          member.additionalImage == null
+                      ? Center(child: Image.asset('images/img.png',))
+                      : null,
                 ),
               ),
               Padding(

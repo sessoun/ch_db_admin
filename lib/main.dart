@@ -1,5 +1,6 @@
 import 'package:ch_db_admin/auth_state.dart';
 import 'package:ch_db_admin/firebase_options.dart';
+import 'package:ch_db_admin/shared/utils/create_google_form.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/attendance/presentation/controller/attendance_controller.dart';
 import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
@@ -35,6 +36,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: '.env');
+
+  loadServiceAccount();
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
 }
 

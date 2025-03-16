@@ -16,7 +16,6 @@ import '../controller/member._controller.dart';
 
 Future<void> pickAndProcessExcel(BuildContext context) async {
   final provider = context.read<MemberController>();
-
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowedExtensions: ['xlsx'],
@@ -62,15 +61,17 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
       // Skip header row
       if (row.isEmpty) continue;
 
-      String fullName = row[0]?.value?.toString() ?? '';
+      String fullName = row[0]!.value!.toString();
       String location = row[1]?.value?.toString() ?? '';
       String contact = row[2]?.value?.toString() ?? '';
       String marriageStatus = row[3]?.value?.toString() ?? '';
       String? spouseName = row[4]?.value?.toString();
       List<String>? children = row[5]?.value?.toString().split(",");
       String? relativeContact = row[6]?.value?.toString();
-      String? additionalImage = await uploadImageFromDrive(context,  row[7]!.value!.toString(), 'otherImages');
-      String? profilePic = await uploadImageFromDrive(context,  row[8]!.value!.toString(), 'profilePics');
+      String? additionalImage = await uploadImageFromDrive(
+          context, row[7]!.value!.toString(), 'otherImages');
+      String? profilePic = await uploadImageFromDrive(
+          context, row[8]!.value!.toString(), 'profilePics');
       DateTime dateOfBirth =
           DateTime.tryParse(row[9]?.value?.toString() ?? '') ?? DateTime.now();
       List<String>? groupAffiliate = row[10]?.value?.toString().split(",");
@@ -109,22 +110,21 @@ Future<void> _saveToFirebase(List<Member> members, MemberController provider,
   provider.setLoading(true);
 
   for (var member in members) {
-    await provider.addMember(member).then((_) {
-      if (provider.statusMessage.contains('Error')) {
-        NotificationUtil.showError(context, provider.statusMessage);
-      } else {
-        NotificationUtil.showSuccess(context, provider.statusMessage);
-      }
-    });
+    await provider.addMember(member);
   }
-
+  if (context.mounted) {
+    NotificationUtil.showSuccess(context,"Excel data uploaded successfully!");
+  }
+  await provider.fetchAllMembers().then((_) {
+    if (provider.statusMessage.contains('Error')) {
+      NotificationUtil.showError(context, provider.statusMessage);
+    } else {
+      NotificationUtil.showSuccess(context, provider.statusMessage);
+    }
+  });
   provider.setLoading(false);
 
-  if (context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Excel data uploaded successfully!")),
-    );
-  }
+
 }
 
 //retrieves url from excel as drive file, download and store in firebase storage
@@ -154,7 +154,7 @@ Future<String?> uploadImageFromDrive(
     // Write the image to file
     await file.writeAsBytes(response.bodyBytes);
 
-   /* // Upload to Firebase Storage
+    /* // Upload to Firebase Storage
     FirebaseStorage storage = FirebaseStorage.instance;
     Reference ref = storage
         .ref()
