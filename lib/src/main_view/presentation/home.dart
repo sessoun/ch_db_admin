@@ -23,25 +23,7 @@ class _HomeViewState extends State<HomeView>
     setState(() {});
   }
 
-  AppUpdateInfo? _updateInfo;
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> checkForUpdate() async {
-    InAppUpdate.checkForUpdate().then((info) {
-      setState(() {
-        _updateInfo = info;
-      });
-
-      if (_updateInfo?.updateAvailability ==
-          UpdateAvailability.updateAvailable) {
-        InAppUpdate.startFlexibleUpdate().then(
-          (result) => InAppUpdate.completeFlexibleUpdate(),
-        );
-      }
-    }).catchError((e) {
-      NotificationUtil.showError(context, e.toString());
-    });
-  }
 
 
 

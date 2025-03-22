@@ -37,7 +37,6 @@ void main() async {
   );
   await dotenv.load(fileName: '.env');
 
-  loadServiceAccount();
   runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
 }
 

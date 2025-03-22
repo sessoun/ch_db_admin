@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/shared/chached_network_image.dart';
+import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
@@ -111,6 +112,7 @@ class _MembersViewState extends State<MembersView>
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
+            barrierDismissible:false,
             context: context,
             builder: (context) => AlertDialog(
               title: const Text("Add Member"),
@@ -145,11 +147,19 @@ class _MembersViewState extends State<MembersView>
                 // ✅ Share Google Form
                 TextButton(
                   onPressed: () async {
-                    generateAndShareGoogleForm(context);
-                    Navigator.pop(context); // Close dialog
+                    membersController.setCreatingGoogleForm(true);
+                    var formLink = await generateAndShareGoogleForm(context);
+                    membersController.setCreatingGoogleForm(false);
+                    if (context.mounted) Navigator.pop(context); // Close dialog
+                    if(!formLink!.contains('null')) {
+                      if (context.mounted) {
+                        showFormBottomSheet(context, formLink!);
+                      }
+                    }
                   },
                   child: const Text("Share Google Form"),
-                ),
+                ).loadingIndicator(context,
+                    context.watch<MemberController>().isCreatingGoogleForm),
               ],
             ),
           );
@@ -245,11 +255,11 @@ class _MembersViewState extends State<MembersView>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Align(
-                          alignment: Alignment.topCenter,
-                          child: member.profilePic != null
-                              ? networkImage(member.profilePic!)
-                              : Image.asset('images/img.png',height:40,width:40)
-                        ),
+                            alignment: Alignment.topCenter,
+                            child: member.profilePic != null
+                                ? networkImage(member.profilePic!)
+                                : Image.asset('images/img.png',
+                                    height: 40, width: 40)),
                         const SizedBox(height: 10),
                         Center(
                           child: Text(
@@ -300,7 +310,10 @@ class _MembersViewState extends State<MembersView>
                       : null,
                   child: member.profilePic == null &&
                           member.additionalImage == null
-                      ? Center(child: Image.asset('images/img.png',))
+                      ? Center(
+                          child: Image.asset(
+                          'images/img.png',
+                        ))
                       : null,
                 ),
               ),

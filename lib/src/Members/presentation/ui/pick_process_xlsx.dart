@@ -57,48 +57,57 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
   List<Member> members = [];
 
   for (var table in excel.tables.keys) {
-    for (var row in excel.tables[table]!.rows.skip(1)) {
-      // Skip header row
-      if (row.isEmpty) continue;
+    {
+      var sheet = excel.tables[table]!;
+      for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
+        var row = sheet.rows[rowIndex];
 
-      String fullName = row[0]!.value!.toString();
-      String location = row[1]?.value?.toString() ?? '';
-      String contact = row[2]?.value?.toString() ?? '';
-      String marriageStatus = row[3]?.value?.toString() ?? '';
-      String? spouseName = row[4]?.value?.toString();
-      List<String>? children = row[5]?.value?.toString().split(",");
-      String? relativeContact = row[6]?.value?.toString();
-      String? additionalImage = await uploadImageFromDrive(
-          context, row[7]!.value!.toString(), 'otherImages');
-      String? profilePic = await uploadImageFromDrive(
-          context, row[8]!.value!.toString(), 'profilePics');
-      DateTime dateOfBirth =
-          DateTime.tryParse(row[9]?.value?.toString() ?? '') ?? DateTime.now();
-      List<String>? groupAffiliate = row[10]?.value?.toString().split(",");
-      String? role = row[11]?.value?.toString();
+        if (row.length > 1) {
+          var filteredRow = row.sublist(1);
+          String fullName = filteredRow[0]!.value!.toString();
+          String location = filteredRow[1]?.value?.toString() ?? '';
+          String contact = filteredRow[2]?.value?.toString() ?? '';
+          String marriageStatus = filteredRow[3]?.value?.toString() ?? '';
+          String? spouseName = filteredRow[4]?.value?.toString();
+          List<String>? children = filteredRow[5]?.value?.toString().split(",");
+          String? relativeContact = filteredRow[6]?.value?.toString();
+          String? profilePic = await uploadImageFromDrive(
+              context, filteredRow[7]!.value!.toString(), 'profilePics');
+          String? additionalImage = filteredRow[8]?.value != null
+              ? await uploadImageFromDrive(
+                  context, filteredRow[8]!.value!.toString(), 'otherImages')
+              : null;
+          DateTime dateOfBirth =
+              DateTime.tryParse(filteredRow[9]!.value!.toString()) ??
+                  DateTime.now();
+          List<String>? groupAffiliate =
+              filteredRow[10]?.value?.toString().split(",");
+          String? role = row[11]?.value?.toString();
 
-      if (fullName.isEmpty ||
-          location.isEmpty ||
-          contact.isEmpty ||
-          marriageStatus.isEmpty) {
-        // Skip invalid rows
-        continue;
+          if (fullName.isEmpty ||
+              location.isEmpty ||
+              contact.isEmpty ||
+              marriageStatus.isEmpty) {
+            // Skip invalid rows
+            continue;
+          }
+
+          members.add(Member(
+            fullName: fullName,
+            location: location,
+            contact: contact,
+            marriageStatus: marriageStatus,
+            spouseName: spouseName,
+            children: children,
+            relativeContact: relativeContact,
+            additionalImage: additionalImage,
+            profilePic: profilePic,
+            dateOfBirth: dateOfBirth,
+            groupAffiliate: groupAffiliate,
+            role: role,
+          ));
+        }
       }
-
-      members.add(Member(
-        fullName: fullName,
-        location: location,
-        contact: contact,
-        marriageStatus: marriageStatus,
-        spouseName: spouseName,
-        children: children,
-        relativeContact: relativeContact,
-        additionalImage: additionalImage,
-        profilePic: profilePic,
-        dateOfBirth: dateOfBirth,
-        groupAffiliate: groupAffiliate,
-        role: role,
-      ));
     }
   }
 
@@ -113,7 +122,7 @@ Future<void> _saveToFirebase(List<Member> members, MemberController provider,
     await provider.addMember(member);
   }
   if (context.mounted) {
-    NotificationUtil.showSuccess(context,"Excel data uploaded successfully!");
+    NotificationUtil.showSuccess(context, "Excel data uploaded successfully!");
   }
   await provider.fetchAllMembers().then((_) {
     if (provider.statusMessage.contains('Error')) {
@@ -123,8 +132,6 @@ Future<void> _saveToFirebase(List<Member> members, MemberController provider,
     }
   });
   provider.setLoading(false);
-
-
 }
 
 //retrieves url from excel as drive file, download and store in firebase storage

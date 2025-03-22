@@ -34,11 +34,13 @@ class MemberController extends ChangeNotifier {
   Member? _selectedMember;
   String _statusMessage = '';
   bool _isLoading = false;
+  bool _isCreatingGoogleForm = false;
 
   List<Member> get members => _members;
   Member? get selectedMember => _selectedMember;
   String get statusMessage => _statusMessage;
   bool get isLoading => _isLoading;
+  bool get isCreatingGoogleForm => _isCreatingGoogleForm;
 
   // Fetch all members
   Future<void> fetchAllMembers() async {
@@ -167,6 +169,10 @@ class MemberController extends ChangeNotifier {
   // Helper functions to handle state changes
   void setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+  void setCreatingGoogleForm(bool value) {
+    _isCreatingGoogleForm = value;
     notifyListeners();
   }
 

@@ -1,8 +1,10 @@
+import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:in_app_update/in_app_update.dart';
 
 // ✅ Global instance to track entered password
 final triggerPasswordReset = TriggerPasswordReset();
@@ -17,6 +19,26 @@ class AuthState extends StatefulWidget {
 class _AuthStateState extends State<AuthState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? currentUser;
+
+  AppUpdateInfo? _updateInfo;
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> checkForUpdate() async {
+    InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        _updateInfo = info;
+      });
+
+      if (_updateInfo?.updateAvailability ==
+          UpdateAvailability.updateAvailable) {
+        InAppUpdate.startFlexibleUpdate().then(
+          (result) => InAppUpdate.completeFlexibleUpdate(),
+        );
+      }
+    }).catchError((e) {
+      NotificationUtil.showError(context, e.toString());
+    });
+  }
   // static final String defaultPassword = dotenv.env['DEFAULT_PASSWORD']!;
   // bool isLoading = false;
 
@@ -86,12 +108,20 @@ class _AuthStateState extends State<AuthState> {
   // }
 
   @override
+  void initState() {
+    checkForUpdate();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    currentUser = _auth.currentUser;
     return currentUser == null ? const LoginView() : const HomeView();
   }
 }
 
 // ✅ ValueNotifier to track entered password globally
+//This class checks if the password being used is the default one
 class TriggerPasswordReset extends ValueNotifier<String?> {
   TriggerPasswordReset() : super(null);
 

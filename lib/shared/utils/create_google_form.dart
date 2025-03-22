@@ -1,218 +1,191 @@
-import 'dart:convert';
-import 'dart:io';
+import 'package:ch_db_admin/shared/notification_util.dart';
+import 'package:ch_db_admin/shared/utils/request_form.dart';
+import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:googleapis/forms/v1.dart' as gapi show FormsApi, Form;
-import 'package:googleapis/forms/v1.dart';
-import 'package:googleapis_auth/auth_io.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:googleapis/forms/v1.dart' as form;
+import 'package:googleapis_auth/googleapis_auth.dart' as auth;
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../src/Members/presentation/controller/member._controller.dart';
 import '../../src/dependencies/auth.dart';
-import '../notification_util.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-Future<String?> createOrganizationGoogleForm(String orgName) async {
+// Google Sign-In instance
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+  serverClientId: dotenv.env["WEB_CLIENT_ID"],
+  scopes: [
+    form.FormsApi.formsBodyScope,
+    drive.DriveApi.driveScope,
+  ],
+);
+
+//returns the formId for the user to have edit access
+Future<String?> createOrganizationGoogleForm(
+    BuildContext context, String orgName) async {
   try {
-    // Load the service account JSON
-    final String credentials =
-        await rootBundle.loadString('assets/service_account.json');
-    // Decode JSON
-    final dynamic decoded = json.decode(credentials);
-
-    // final Map<String, dynamic> jsonCredentials =
-    // (json.decode(credentials) as Map).map((key, value) => MapEntry(key.toString(), value));
-
-    // final Map<String, dynamic> jsonCredentials = Map<String, dynamic>.from(decoded);
-
-    // Ensure it's a Map before casting
-    if (decoded is! Map) {
-      throw Exception(
-          "Decoded JSON is not a Map! It's of type ${decoded.runtimeType}");
+    print("Requesting authentication...");
+    final client = await getAuthenticatedClient(context);
+    if (client == null) {
+      NotificationUtil.showError(context, "❌ Failed to authenticate.");
+      return null;
     }
 
-    // Print debug info
-    print("Decoded Type: ${decoded.runtimeType}");
+    final formsApi = form.FormsApi(client);
+    final createdForm = await _createGoogleForm(formsApi, orgName);
+    if (createdForm == null) {
+      NotificationUtil.showError(context, "❌ Google Form creation failed.");
+      return null;
+    }
 
-    // Authenticate with Google
-    final client = await clientViaServiceAccount(
-      ServiceAccountCredentials.fromJson(decoded),
-      [FormsApi.formsBodyScope],
-    );
-
-    print("Decoded Data: ${decoded}");
-
-    // Initialize Google Forms API
-    final gapi.FormsApi formsApi = gapi.FormsApi(client);
-
-    print("Here ..............///////////////");
-
-    // Create a new form with organization-specific title
-
-
-    Map<String, dynamic> formJson = {
-      "formId": orgName,
-      "info": {
-        "title": "$orgName - Member Registration",
-      },
-      "items": [
-        // Hidden field for Organization ID (Optional)
-        {
-          "itemId": "72b30353",
-          "title": "Organization ID: $orgName",
-          "description":
-              "This field links responses to the correct organization.",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          },
-        },
-        {
-          "itemId": "72bd0353",
-          "title": "Full Name",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "72b30153",
-          "title": "Location",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "72b30350",
-          "title": "Contact",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "71b30353",
-          "title": "Marriage Status",
-          "questionItem": {
-            "question": {
-              "choiceQuestion": {
-                "type": "DROP_DOWN",
-                "options": ["Single", "Married", "Divorced"]
-              }
-            }
-          }
-        },
-        {
-          "itemId": "72230353",
-          "title": "Spouse Name",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "72b30303",
-          "title": "Children (Comma Separated)",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "72b31353",
-          "title": "Relative Contact",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "72b30357",
-          "title": "Profile Picture",
-          "questionItem": {
-            "question": {"fileUploadQuestion": {}}
-          }
-        },
-        {
-          "itemId": "22b30353",
-          "title": "Additional Image",
-          "questionItem": {
-            "question": {"fileUploadQuestion": {}}
-          }
-        },
-        {
-          "itemId": "82b30353",
-          "title": "Date of Birth (YYYY-MM-DD)",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "72bc0353",
-          "title": "Group Affiliations (Comma Separated)",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        },
-        {
-          "itemId": "7ab30353",
-          "title": "Role",
-          "questionItem": {
-            "question": {"textQuestion": {}}
-          }
-        }
-      ]
-    };
-
-      gapi.Form newForm = gapi.Form.fromJson({
-        "info": {
-          "title": "My Organization Form"
-        }
-      });
-
-    print("Here ..............///////////////");
-
-    print('About to create .......');
-    var createdForm = await formsApi.forms.create(newForm);
-    print("✅ Google Form Created for $orgName: ${createdForm.responderUri}");
-
-    return createdForm.responderUri; // Return form link
+    await _addFormQuestions(formsApi, createdForm.formId!);
+    return createdForm.formId;
   } catch (e) {
-    print("❌ Error creating form: $e");
+    NotificationUtil.showError(context, "❌ Error creating Google Form: $e");
     return null;
   }
 }
 
-Future<String?> generateAndShareGoogleForm(BuildContext context) async {
-  // context.read<MemberController>().setLoading(true);
+Future<auth.AuthClient?> getAuthenticatedClient(BuildContext context) async {
+  try {
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      NotificationUtil.showError(context, "❌ Google Sign-In canceled.");
+      return null;
+    }
 
-  String orgName = locator.get<SharedPreferences>().getString('org_id')!;
-  // Generate Google Form
-  return await createOrganizationGoogleForm(orgName);
-  //
-  // if (formLink != null) {
-  //   // Show share options
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text("Share Google Form"),
-  //       content: SelectableText("Share this form link:\n$formLink"),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context),
-  //           child: const Text("Close"),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-    // context.read<MemberController>().setLoading(false);
-  // } else {
-  //   // NotificationUtil.showError(context, "Failed to generate form.");
-  //   print("Failed to generate form.");
-  // }
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    if (googleAuth.accessToken == null) {
+      NotificationUtil.showError(context, "❌ Failed to get access token.");
+      return null;
+    }
+
+    final auth.AccessCredentials credentials = auth.AccessCredentials(
+      auth.AccessToken(
+        'Bearer',
+        googleAuth.accessToken!,
+        DateTime.now().add(const Duration(hours: 1)).toUtc(), // Expiry
+      ),
+      googleAuth.idToken, // Refresh token (null for now)
+      ['https://www.googleapis.com/auth/forms.body'],
+    );
+
+    return auth.authenticatedClient(http.Client(), credentials);
+  } catch (e) {
+    NotificationUtil.showError(context, "❌ Google Authentication Error: $e");
+    return null;
+  }
 }
 
-Future<void> loadServiceAccount() async {
+Future<form.Form?> _createGoogleForm(
+    form.FormsApi formsApi, String orgName) async {
+  final newForm = form.Form.fromJson({
+    "info": {"title": "$orgName - Member Registration"}
+  });
+
   try {
-    final String credentials =
-        await rootBundle.loadString('assets/service_account.json');
-    final Map<String, dynamic> jsonCredentials = json.decode(credentials);
-    print("✅ JSON Loaded Successfully: ${jsonCredentials['client_email']}");
+    final createdForm = await formsApi.forms.create(newForm);
+    print(
+        "✅ Google Form Created: https://docs.google.com/forms/d/${createdForm.formId}/edit");
+    return createdForm;
   } catch (e) {
-    print("❌ Error loading service account JSON: $e");
+    print("❌ Error creating Google Form: $e");
+    return null;
   }
+}
+
+Future<void> _addFormQuestions(form.FormsApi formsApi, String formId) async {
+  try {
+    await formsApi.forms.batchUpdate(
+      form.BatchUpdateFormRequest(requests: reqObj()),
+      formId,
+    );
+    print("✅ Form questions added successfully.");
+  } catch (e) {
+    print("❌ Error adding questions to form: $e");
+    throw Exception("❌ Error adding questions to form: $e");
+  }
+}
+
+Future<String?> generateAndShareGoogleForm(BuildContext context) async {
+  String orgName = await context.read<AuthController>().getOrgName() ??
+      'Organization name here';
+  var createdFormId = await createOrganizationGoogleForm(context, orgName);
+
+  return "https://docs.google.com/forms/d/$createdFormId/edit";
+}
+
+void showFormBottomSheet(BuildContext context, String formLink) {
+  showModalBottomSheet(
+    context: context,
+    isDismissible: false,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Center(
+              child: Text(
+                "✅ Form Generated Successfully!",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Divider(),
+            const SizedBox(height: 10),
+            const Text(
+              """Before sharing the form:
+✅ Name the form properly (e.g., Church Member Registration).
+✅ Do not edit any fields.
+✅ Go to 'Responses' > 'Link to Sheets' to connect it to Google Sheets.
+✅ Only share the form after linking it.""",
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: SelectableText(formLink,
+                  style: const TextStyle(fontSize: 14)),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    await Clipboard.setData(ClipboardData(text: formLink));
+                    if (context.mounted)
+                      NotificationUtil.showSuccess(context, "📋 Link copied!");
+                  },
+                  child: const Text("Copy Link"),
+                ),
+                TextButton(
+                  onPressed: () async => await launchUrl(Uri.parse(formLink)),
+                  child: const Text("Open Form"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel"),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
