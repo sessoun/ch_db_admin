@@ -1,3 +1,4 @@
+import 'package:ch_db_admin/shared/utils/custom_print.dart';
 import 'package:flutter/material.dart';
 
 class NotificationUtil {
@@ -16,7 +17,7 @@ class NotificationUtil {
   }
 
   static void showSuccess(BuildContext context, String message) {
-    print(message);
+    miPrint(message);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

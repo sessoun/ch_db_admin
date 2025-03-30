@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../src/dependencies/auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'custom_print.dart';
+
 // Google Sign-In instance
 final GoogleSignIn _googleSignIn = GoogleSignIn(
   serverClientId: dotenv.env["WEB_CLIENT_ID"],
@@ -27,7 +29,7 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
 Future<String?> createOrganizationGoogleForm(
     BuildContext context, String orgName) async {
   try {
-    print("Requesting authentication...");
+    miPrint("Requesting authentication...");
     final client = await getAuthenticatedClient(context);
     if (client == null) {
       NotificationUtil.showError(context, "❌ Failed to authenticate.");
@@ -89,11 +91,11 @@ Future<form.Form?> _createGoogleForm(
 
   try {
     final createdForm = await formsApi.forms.create(newForm);
-    print(
+    miPrint(
         "✅ Google Form Created: https://docs.google.com/forms/d/${createdForm.formId}/edit");
     return createdForm;
   } catch (e) {
-    print("❌ Error creating Google Form: $e");
+    miPrint("❌ Error creating Google Form: $e");
     return null;
   }
 }
@@ -104,9 +106,9 @@ Future<void> _addFormQuestions(form.FormsApi formsApi, String formId) async {
       form.BatchUpdateFormRequest(requests: reqObj()),
       formId,
     );
-    print("✅ Form questions added successfully.");
+    miPrint("✅ Form questions added successfully.");
   } catch (e) {
-    print("❌ Error adding questions to form: $e");
+    miPrint("❌ Error adding questions to form: $e");
     throw Exception("❌ Error adding questions to form: $e");
   }
 }
@@ -146,7 +148,9 @@ void showFormBottomSheet(BuildContext context, String formLink) {
 ✅ Name the form properly (e.g., Church Member Registration).
 ✅ Do not edit any fields.
 ✅ Go to 'Responses' > 'Link to Sheets' to connect it to Google Sheets.
-✅ Only share the form after linking it.""",
+✅ Only share the form after linking it.
+This form is always available in your Google Drive and can create a new
+one.""",
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 10),
@@ -166,8 +170,9 @@ void showFormBottomSheet(BuildContext context, String formLink) {
                 TextButton(
                   onPressed: () async {
                     await Clipboard.setData(ClipboardData(text: formLink));
-                    if (context.mounted)
+                    if (context.mounted) {
                       NotificationUtil.showSuccess(context, "📋 Link copied!");
+                    }
                   },
                   child: const Text("Copy Link"),
                 ),
@@ -179,7 +184,7 @@ void showFormBottomSheet(BuildContext context, String formLink) {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Cancel"),
+                  child: const Text("Close"),
                 ),
               ],
             ),

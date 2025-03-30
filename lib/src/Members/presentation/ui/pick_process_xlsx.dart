@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:ch_db_admin/shared/utils/upload_and_download.dart';
@@ -11,8 +12,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../shared/notification_util.dart';
+import '../../../../shared/utils/custom_print.dart';
 import '../../domain/entities/member.dart';
 import '../controller/member._controller.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> pickAndProcessExcel(BuildContext context) async {
   final provider = context.read<MemberController>();
@@ -22,11 +25,11 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
   );
 
   if (result == null) {
-    print("❌ No file selected.");
+    miPrint("❌ No file selected.");
     return;
   } // User canceled the picker
 
-  print("📂 File selected: ${result.files.single.name}");
+  miPrint("📂 File selected: ${result.files.single.name}");
 
   //makes sure the result has only one item. Throws error if empty or more than one
   Uint8List? bytes = result.files.single.bytes;
@@ -34,22 +37,26 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
   if (bytes == null && filePath != null) {
     try {
       bytes = await File(filePath).readAsBytes();
-      print("✅ File read successfully from path.");
+      miPrint("✅ File read successfully from path.");
     } catch (e) {
-      print("❌ Error reading file: $e");
+      miPrint("❌ Error reading file: $e");
+      NotificationUtil.showError(context, "Error reading file: $e");
       return;
     }
   }
 
   if (bytes == null) {
-    print("❌ Unable to read file bytes.");
+    miPrint("❌ Unable to read file bytes.");
+    NotificationUtil.showError(context, "Error reading file");
     return;
   }
   try {
     var excel = Excel.decodeBytes(bytes);
-    print("✅ Excel file loaded successfully.");
+    miPrint("✅ Excel file loaded successfully.");
   } catch (e) {
-    print("❌ Error decoding Excel file: $e");
+    miPrint("❌ Error decoding Excel file: $e");
+    NotificationUtil.showError(context, "Error reading file: $e");
+
     return;
   }
 
@@ -148,33 +155,24 @@ Future<String?> uploadImageFromDrive(
 
     String fileId = match.group(1)!;
     String downloadUrl =
-        "https://drive.google.com/uc?export=download&id=$fileId";
+        "https://www.googleapis.com/drive/v3/files/$fileId?alt=media&key=${dotenv.env['DRIVE_API_KEY']}";
 
     // Download image
     var response = await http.get(Uri.parse(downloadUrl));
+
     if (response.statusCode != 200) return null;
 
     // Get local directory to save image
     Directory tempDir = await getTemporaryDirectory();
-    File file = File("${tempDir.path}/temp_image.jpg");
+    File file = File("${tempDir.path}/image.jpg");
 
     // Write the image to file
     await file.writeAsBytes(response.bodyBytes);
 
-    /* // Upload to Firebase Storage
-    FirebaseStorage storage = FirebaseStorage.instance;
-    Reference ref = storage
-        .ref()
-        .child("uploads/${DateTime.now().millisecondsSinceEpoch}.jpg");
-    UploadTask uploadTask = ref.putFile(file);
-
-    TaskSnapshot snapshot = await uploadTask;
-    String firebaseUrl = await snapshot.ref.getDownloadURL();
-*/
     return await imageStore(context,
         fileFolder: fileFolder, selectedImage: file); // Return Firebase URL
   } catch (e) {
-    print("Error uploading image: $e");
+    miPrint("Error uploading image: $e");
     return null;
   }
 }

@@ -1,8 +1,9 @@
-
 import 'package:ch_db_admin/src/Members/data/models/member_model.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/attendance/domain/entities/attendance.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../../../shared/utils/custom_print.dart';
 
 class AttendanceModel extends Attendance {
   AttendanceModel({
@@ -46,7 +47,7 @@ class AttendanceModel extends Attendance {
     final data = doc.data() as Map<String, dynamic>;
 
     // Debugging: Log the data for inspection
-    print("Raw data: $data");
+    miPrint("Raw data: $data");
 
     // Handle members safely
     final members = (data['members'] as List<dynamic>?)

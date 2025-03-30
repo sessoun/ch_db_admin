@@ -11,6 +11,8 @@ import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/shared/failure.dart';
 import 'package:ch_db_admin/shared/usecase.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class MemberController extends ChangeNotifier {
   // Injected use cases
   final AddMember _addMember;
@@ -62,13 +64,13 @@ class MemberController extends ChangeNotifier {
   Future<void> addMember(Member member) async {
     setLoading(true);
     final result = await _addMember(Params(member));
-    print(member.groupAffiliate);
+    miPrint(member.groupAffiliate);
     result.fold(
       (failure) => _handleFailure(failure),
       (successMessage) {
         _clearError();
         _statusMessage = successMessage;
-        print(_statusMessage);
+        miPrint(_statusMessage);
 
         notifyListeners();
         fetchAllMembers(); // Refresh list after adding
@@ -78,23 +80,21 @@ class MemberController extends ChangeNotifier {
     setLoading(false);
   }
 
-
   // Add a new member from excel sheet
   Future<void> addMemberFromExcel(Member member) async {
     final result = await _addMember(Params(member));
-    print(member.groupAffiliate);
+    miPrint(member.groupAffiliate);
     result.fold(
-          (failure) => _handleFailure(failure),
-          (successMessage) {
+      (failure) => _handleFailure(failure),
+      (successMessage) {
         _clearError();
         _statusMessage = 'Members updated';
-        print(_statusMessage);
+        miPrint(_statusMessage);
 
         notifyListeners();
       },
     );
   }
-
 
   // Get a specific member by ID
   Future<void> getMemberById(String memberId) async {
@@ -171,6 +171,7 @@ class MemberController extends ChangeNotifier {
     _isLoading = value;
     notifyListeners();
   }
+
   void setCreatingGoogleForm(bool value) {
     _isCreatingGoogleForm = value;
     notifyListeners();

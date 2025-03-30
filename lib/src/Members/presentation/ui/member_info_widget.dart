@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class MemberInfoWidget extends StatelessWidget {
   final Member member;
 
@@ -9,7 +11,7 @@ class MemberInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    print(member.children.runtimeType);
+    miPrint(member.children.runtimeType);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -17,7 +19,7 @@ class MemberInfoWidget extends StatelessWidget {
         _buildLabelValue("Location:", member.location, theme),
         _buildLabelValue("Contact:", member.contact, theme),
         _buildLabelValue("Marriage Status:", member.marriageStatus, theme),
-        _buildLabelValue("Spouse:", member.spouseName??'N/A', theme),
+        _buildLabelValue("Spouse:", member.spouseName ?? 'N/A', theme),
         _buildLabelValue(
           "Children:",
           member.children!.isNotEmpty
@@ -27,7 +29,8 @@ class MemberInfoWidget extends StatelessWidget {
               : 'N/A',
           theme,
         ),
-        _buildLabelValue("Relative Contact:", member.relativeContact??'N/A', theme),
+        _buildLabelValue(
+            "Relative Contact:", member.relativeContact ?? 'N/A', theme),
         _buildLabelValue(
           "Date of Birth:",
           member.dateOfBirth.toLocal().toIso8601String().split('T')[0],

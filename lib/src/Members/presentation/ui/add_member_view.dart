@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class AddMemberView extends StatefulWidget {
   const AddMemberView({super.key, this.member});
   final Member? member;
@@ -131,14 +133,14 @@ class _AddMemberViewState extends State<AddMemberView> {
       );
 
       if (widget.member != null) {
-          await provider.updateMember(newMember.id!, newMember).then(
-            (_) {
-              if (provider.statusMessage.contains('Error')) {
-                NotificationUtil.showError(context, provider.statusMessage);
-              } else {
-                NotificationUtil.showSuccess(context, provider.statusMessage);
-              }
-            },
+        await provider.updateMember(newMember.id!, newMember).then(
+          (_) {
+            if (provider.statusMessage.contains('Error')) {
+              NotificationUtil.showError(context, provider.statusMessage);
+            } else {
+              NotificationUtil.showSuccess(context, provider.statusMessage);
+            }
+          },
         );
       } else {
         await provider.addMember(newMember).then(
@@ -181,7 +183,6 @@ class _AddMemberViewState extends State<AddMemberView> {
         TextEditingController(text: widget.member?.relativeContact);
     dateOfBirthController = TextEditingController(
         text: widget.member?.dateOfBirth.toIso8601String().split('T')[0]);
-
   }
 
   @override
@@ -375,7 +376,7 @@ class _AddMemberViewState extends State<AddMemberView> {
                     value: selectedAffiliations.contains(affiliation),
                     onChanged: (_) {
                       toggleAffiliation(affiliation);
-                      print(selectedAffiliations);
+                      miPrint(selectedAffiliations);
                     },
                   );
                 }).toList(),
@@ -403,7 +404,7 @@ class _AddMemberViewState extends State<AddMemberView> {
                   setState(() {
                     selectedRole = value!;
                   });
-                  print(selectedRole);
+                  miPrint(selectedRole);
                 },
               ),
               const SizedBox(height: 16),

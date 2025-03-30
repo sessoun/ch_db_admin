@@ -10,6 +10,8 @@ import 'package:ch_db_admin/src/events/data/models/event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class EventRemoteDb {
   final prefs = locator.get<SharedPreferences>();
   final db = firestoreCollection()
@@ -21,7 +23,7 @@ class EventRemoteDb {
     try {
       // Adding event data to Firestore
       await db.doc().set(eventData.toFirebase());
-      print("Event added successfully.");
+      miPrint("Event added successfully.");
       return 'Event added successfully';
     } on FirebaseException catch (e) {
       throw DatabaseException(e.message ?? 'Could\'t create event. Try again.',
@@ -57,11 +59,11 @@ class EventRemoteDb {
       if (docSnapshot.exists) {
         return docSnapshot.data() as Map<String, dynamic>;
       } else {
-        print("Event not found.");
+        miPrint("Event not found.");
         return null;
       }
     } catch (e) {
-      print("Error fetching event: $e");
+      miPrint("Error fetching event: $e");
       rethrow;
     }
   }
@@ -70,7 +72,7 @@ class EventRemoteDb {
   Future<String> updateEvent(EventModel updatedData) async {
     try {
       await db.doc(updatedData.id).update(updatedData.toFirebase());
-      print("Event updated successfully.");
+      miPrint("Event updated successfully.");
       return 'Event updated successfully';
     } on FirebaseException catch (e) {
       throw DatabaseException(e.message ?? 'Could\'t update event. Try again.',
@@ -86,7 +88,7 @@ class EventRemoteDb {
   Future<String> deleteEvent(String eventId) async {
     try {
       await db.doc(eventId).delete();
-      print("Event deleted successfully.");
+      miPrint("Event deleted successfully.");
       return 'EVent deleted successfully';
     } on FirebaseException catch (e) {
       throw DatabaseException(e.message ?? 'Could\'t create event. Try again.',

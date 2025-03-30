@@ -7,7 +7,7 @@ Map<String, dynamic> requestFormJson = {
         "item": {
           "title": "Full Name",
           "questionItem": {
-            "required":true,
+            "required": true,
             "question": {"textQuestion": {}}
           }
         }
@@ -18,7 +18,7 @@ Map<String, dynamic> requestFormJson = {
         "item": {
           "title": "Location",
           "questionItem": {
-            "required":true,
+            "required": true,
             "question": {"textQuestion": {}}
           }
         }
@@ -29,7 +29,7 @@ Map<String, dynamic> requestFormJson = {
         "item": {
           "title": "Contact",
           "questionItem": {
-            "required":true,
+            "required": true,
             "question": {"textQuestion": {}}
           }
         }
@@ -89,10 +89,10 @@ Map<String, dynamic> requestFormJson = {
     {
       "createItem": {
         "item": {
-          "title": "Profile Picture (Google Drive Link)",
+          "title": "Profile Picture (Google Drive Link). After uploading, click 'Share' in Google Drive and set visibility to 'Anyone with the link'",
           "questionItem": {
-            "required":true,
-            "question": { "textQuestion": {} }
+            "required": true,
+            "question": {"textQuestion": {}}
           }
         }
       }
@@ -100,7 +100,8 @@ Map<String, dynamic> requestFormJson = {
     {
       "createItem": {
         "item": {
-          "title": "Additional Image (Google Drive Link)",
+          "title":
+              "Additional Image (Google Drive Link). After uploading, click 'Share' in Google Drive and set visibility to 'Anyone with the link'",
           "questionItem": {
             "question": {"textQuestion": {}}
           }
@@ -112,7 +113,7 @@ Map<String, dynamic> requestFormJson = {
         "item": {
           "title": "Date of Birth (YYYY-MM-DD)",
           "questionItem": {
-            "required":true,
+            "required": true,
             "question": {"textQuestion": {}}
           }
         }
@@ -185,7 +186,7 @@ List<gapi.Request> reqObj() {
     if (question.containsKey('textQuestion')) {
       gapiItem.questionItem = gapi.QuestionItem(
         question: gapi.Question(
-          required: questionItem['required']??false,
+            required: questionItem['required'] ?? false,
             textQuestion: gapi.TextQuestion()),
       );
     } else if (question.containsKey('choiceQuestion')) {
@@ -193,10 +194,12 @@ List<gapi.Request> reqObj() {
       gapiItem.questionItem = gapi.QuestionItem(
         question: gapi.Question(
           choiceQuestion: gapi.ChoiceQuestion(
-            type: choiceQuestion['type'] ?? "RADIO", // Default to RADIO if missing
+            type: choiceQuestion['type'] ??
+                "RADIO", // Default to RADIO if missing
             options: (choiceQuestion['options'] as List?)
-                ?.map((option) => gapi.Option(value: option['value']))
-                .toList() ?? [],
+                    ?.map((option) => gapi.Option(value: option['value']))
+                    .toList() ??
+                [],
           ),
         ),
       );

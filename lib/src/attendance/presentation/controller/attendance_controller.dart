@@ -6,6 +6,8 @@ import 'package:ch_db_admin/src/attendance/domain/usecase/get_attendance_by_id.d
 import 'package:flutter/foundation.dart';
 import 'package:ch_db_admin/src/attendance/domain/entities/attendance.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class AttendanceController extends ChangeNotifier {
   final CreateAttendance createAttendanceUseCase;
   final FetchAllAttendance fetchAllAttendanceUseCase;
@@ -39,7 +41,7 @@ class AttendanceController extends ChangeNotifier {
       (failure) => _handleFailure(failure),
       (data) {
         _message = data;
-        print(_message);
+        miPrint(_message);
         notifyListeners();
       },
     );
@@ -54,7 +56,7 @@ class AttendanceController extends ChangeNotifier {
       (failure) => _handleFailure(failure),
       (data) {
         _attendanceList = data;
-        print('attendance: $_attendance');
+        miPrint('attendance: $_attendance');
         notifyListeners();
       },
     );
@@ -101,7 +103,7 @@ class AttendanceController extends ChangeNotifier {
 
   void _handleFailure(Failure failure) {
     _message = 'Error: ${failure.message}';
-    print(_message);
+    miPrint(_message);
     notifyListeners();
   }
 }

@@ -11,6 +11,8 @@ import 'package:ch_db_admin/src/auth/domain/repository/auth_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class AuthRepoImpl implements AuthRepo {
   final LoginRemoteS auth;
 
@@ -21,7 +23,7 @@ class AuthRepoImpl implements AuthRepo {
       final result = await auth.signIn(data);
       return Right(result);
     } on custom.FirebaseAuthException catch (e) {
-      print(e);
+      miPrint(e);
       if (e.code == 'user-not-found') {
         return Left(Failure(
           'No user found for that email.',
@@ -34,7 +36,7 @@ class AuthRepoImpl implements AuthRepo {
         return Left(Failure(
             'A network error has occurred. Check your internet settings'));
       } else {
-        print(e.code);
+        miPrint(e.code);
         return Left(Failure(e.message));
       }
     } on NetworkException catch (e) {
@@ -45,7 +47,7 @@ class AuthRepoImpl implements AuthRepo {
         return Left(Failure('Internet connection error'));
       }
     } on AppException catch (e) {
-      print(e);
+      miPrint(e);
       return Left(Failure('An unknown error occurred: ${e.toString()}'));
     }
   }
@@ -66,7 +68,7 @@ class AuthRepoImpl implements AuthRepo {
       throw AppException('An unknown error occurred: ${e.toString()}');
     }
   }
-  
+
   @override
   Future<Either<Failure, String>> resetPassword(String email) async {
     try {

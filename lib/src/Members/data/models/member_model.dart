@@ -3,6 +3,8 @@
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class MemberModel extends Member {
   MemberModel(
       {super.id,
@@ -22,7 +24,7 @@ class MemberModel extends Member {
   // Factory method for creating a MemberModel from JSON
   factory MemberModel.fromFirebase(DocumentSnapshot doc) {
     final id = doc.id;
-    print('id: $id');
+    miPrint('id: $id');
     final data = doc.data() as Map<String, dynamic>;
     return MemberModel(
       id: id,
@@ -63,7 +65,7 @@ class MemberModel extends Member {
     };
   }
 
-    /// Convert MemberModel to Member (Domain object)
+  /// Convert MemberModel to Member (Domain object)
   Member toDomain() {
     return Member(
       id: id,

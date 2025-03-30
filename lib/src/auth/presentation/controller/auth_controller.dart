@@ -11,6 +11,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class AuthController extends ChangeNotifier {
   final SignIn _signIn;
   final SignOut _signOut;
@@ -32,7 +34,7 @@ class AuthController extends ChangeNotifier {
     final orgId = locator.get<SharedPreferences>().getString('org_id');
 
     if (orgId == null) {
-      print('Organization ID is not set');
+      miPrint('Organization ID is not set');
       return null;
     }
 
@@ -46,14 +48,14 @@ class AuthController extends ChangeNotifier {
 
       // Check if the document exists and retrieve the `orgName` field
       if (snapshot.exists) {
-        print('orgName exits');
+        miPrint('orgName exits');
         return snapshot.data()?['orgName'] as String?;
       } else {
-        print('No organization found for ID: $orgId');
+        miPrint('No organization found for ID: $orgId');
         return null;
       }
     } catch (e) {
-      print('Error retrieving organization name: $e');
+      miPrint('Error retrieving organization name: $e');
       return null;
     }
   }
@@ -64,7 +66,7 @@ class AuthController extends ChangeNotifier {
     final orgId = locator.get<SharedPreferences>().getString('org_id');
 
     if (orgId == null) {
-      print('Organization ID is not set');
+      miPrint('Organization ID is not set');
       return;
     }
 
@@ -75,9 +77,9 @@ class AuthController extends ChangeNotifier {
     try {
       // Set or update the `orgName` field in Firestore
       await db.set({'orgName': orgName});
-      print('Organization name updated successfully');
+      miPrint('Organization name updated successfully');
     } catch (e) {
-      print('Error updating organization name: $e');
+      miPrint('Error updating organization name: $e');
     }
   }
 
@@ -97,31 +99,31 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<Either<Failure, String>> signOut() async {
-     _isLoading = true;
+    _isLoading = true;
     notifyListeners();
     final result = await _signOut(NoParams());
     return result.fold((failure) {
-       _isLoading = false;
-    notifyListeners();
+      _isLoading = false;
+      notifyListeners();
       return left(Failure(failure.message));
     }, (success) {
-       _isLoading = false;
-    notifyListeners();
+      _isLoading = false;
+      notifyListeners();
       return right(success);
     });
   }
 
   Future<Either<Failure, String>> resetPassword(String email) async {
-     _isLoading = true;
+    _isLoading = true;
     notifyListeners();
     final result = await _resetPassword(Params(email));
     return result.fold((failure) {
-       _isLoading = false;
-    notifyListeners();
+      _isLoading = false;
+      notifyListeners();
       return left(Failure(failure.message));
     }, (success) {
-       _isLoading = false;
-    notifyListeners();
+      _isLoading = false;
+      notifyListeners();
       return right(success);
     });
   }

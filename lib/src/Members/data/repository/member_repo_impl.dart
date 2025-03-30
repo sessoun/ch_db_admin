@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import 'dart:developer';
 
+import '../../../../shared/utils/custom_print.dart';
 import '../../domain/repository/member_repo.dart';
 import '../data_source/remote_db.dart';
 
@@ -16,7 +17,7 @@ class MemberRepositoryImpl implements MemberRepository {
 
   // Convert MemberModel to Member
   Member _convertMemberModelToMember(MemberModel memberModel) {
-    print('mId: ${memberModel.id}');
+    miPrint('mId: ${memberModel.id}');
     return Member(
         id: memberModel.id,
         fullName: memberModel.fullName,
@@ -35,7 +36,7 @@ class MemberRepositoryImpl implements MemberRepository {
 
   @override
   Future<Either<Failure, String>> addMember(Member member) async {
-    print(member.role);
+    miPrint(member.role);
     try {
       final memberModel = MemberModel(
         fullName: member.fullName,

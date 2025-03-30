@@ -10,6 +10,8 @@ import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../shared/utils/custom_print.dart';
+
 class AttendanceDB {
   final prefs = locator.get<SharedPreferences>();
 
@@ -60,7 +62,7 @@ class AttendanceDB {
       if (docSnapshot.exists) {
         return AttendanceModel.fromFirestore(docSnapshot);
       } else {
-        print("Attendance record not found.");
+        miPrint("Attendance record not found.");
         return null;
       }
     } on FirebaseException catch (e) {
@@ -78,7 +80,7 @@ class AttendanceDB {
   // Future<String> updateAttendance(AttendanceModel updatedData) async {
   //   try {
   //     await db.doc(updatedData.id).update(updatedData.toJson());
-  //     print("Attendance record updated successfully.");
+  //     miPrint("Attendance record updated successfully.");
   //     return 'Attendance record updated successfully';
   //   } on FirebaseException catch (e) {
   //     throw DatabaseException(
@@ -95,7 +97,7 @@ class AttendanceDB {
   Future<String> deleteAttendance(String recordId) async {
     try {
       await db.doc(recordId).delete();
-      print("Attendance record deleted successfully.");
+      miPrint("Attendance record deleted successfully.");
       return 'Attendance record deleted successfully';
     } on FirebaseException catch (e) {
       throw DatabaseException(

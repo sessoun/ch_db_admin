@@ -302,8 +302,7 @@ class _MembersViewState extends State<MembersView>
                           borderRadius: BorderRadius.circular(10),
                           image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                  member.additionalImage!.isEmpty ||
-                                          member.additionalImage == null
+                                  member.additionalImage == null|| member.additionalImage!.isEmpty
                                       ? member.profilePic!
                                       : member.additionalImage!),
                               fit: BoxFit.cover))
