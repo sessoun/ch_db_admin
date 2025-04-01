@@ -21,7 +21,7 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
   serverClientId: dotenv.env["WEB_CLIENT_ID"],
   scopes: [
     form.FormsApi.formsBodyScope,
-    drive.DriveApi.driveScope,
+    "https://www.googleapis.com/auth/drive.file",
   ],
 );
 
@@ -62,7 +62,7 @@ Future<auth.AuthClient?> getAuthenticatedClient(BuildContext context) async {
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     if (googleAuth.accessToken == null) {
-      NotificationUtil.showError(context, "❌ Failed to get access token.");
+      NotificationUtil.showError(context, "❌ Something went wrong.");
       return null;
     }
 

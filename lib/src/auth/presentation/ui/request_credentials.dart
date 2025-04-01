@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:ch_db_admin/shared/notification_util.dart';
+import 'package:ch_db_admin/shared/utils/custom_print.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:http/http.dart' as http;
 
 class RequestCredentialsView extends StatefulWidget {
   const RequestCredentialsView({super.key});
@@ -17,8 +21,33 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
   late TextEditingController emailController;
   final formKey = GlobalKey<FormState>();
 
-  final email = dotenv.env['EMAIL_ADDRESS'] ?? 'Not set';
-  final appPassword = dotenv.env['GOOGLE_APP_PASSWORD'] ?? 'Not set';
+  final email = dotenv.env['EMAIL_ADDRESS'];
+  final appPassword = dotenv.env['GOOGLE_APP_PASSWORD'];
+  final apiKey = dotenv.env['EMAIL_VALIDATOR'];
+
+  /// ✅ Function to check if an email exists using ZeroBounce
+  Future<dynamic> verifyEmail() async {
+    final url = "https://api.zerobounce.net/v2/validate?api_key=$apiKey&email=${emailController.text}";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        miPrint("Email Status: ${data['status']}"); // Returns "valid" or "invalid"
+      if(data['status']=='valid'){
+       await sendRequestEmail(emailController.text);
+      }else{
+        NotificationUtil.showError(context, 'Please use a valid email address.');
+      }
+      return data['status'];
+      } else {
+        miPrint("❌ API Request Failed: ${response.statusCode}");
+      }
+    } catch (e) {
+      miPrint("❌ Error: $e");
+    }
+  }
 
   Future<void> sendRequestEmail(String userEmail) async {
     setState(() => isRequesting = true);
@@ -32,7 +61,7 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
     );
 
     final message = Message()
-      ..from = Address(email, 'Shepherd System')
+      ..from = Address(email!, 'Shepherd System')
       ..recipients.add(email)
       ..subject = 'New User Requesting Shepherd Credentials'
       ..text = 'A new user has requested credentials for Shepherd.\n\n'
@@ -100,8 +129,10 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
                     ? null
                     : () {
                         if (formKey.currentState!.validate()) {
-                          sendRequestEmail(emailController.text).then((_) {
-                            Navigator.of(context).pop();
+                          verifyEmail().then((status) {
+                            if(status=='valid') {
+                              Navigator.of(context).pop();
+                            }
                           });
                         }
                       },
