@@ -3,7 +3,6 @@ import 'package:ch_db_admin/src/auth/presentation/ui/login.dart';
 import 'package:ch_db_admin/src/main_view/presentation/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:in_app_update/in_app_update.dart';
 
 // ✅ Global instance to track entered password

@@ -112,7 +112,7 @@ class _MembersViewState extends State<MembersView>
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
-            barrierDismissible:false,
+            barrierDismissible: false,
             context: context,
             builder: (context) => AlertDialog(
               title: const Text("Add Member"),
@@ -147,17 +147,21 @@ class _MembersViewState extends State<MembersView>
                 // ✅ Share Google Form
                 TextButton(
                   onPressed: () async {
-                    membersController.setCreatingGoogleForm(true);
-                    var formLink = await generateAndShareGoogleForm(context);
-                    membersController.setCreatingGoogleForm(false);
+                    // membersController.setCreatingGoogleForm(true);
+                    // var formLink = await generateAndShareGoogleForm(context);
+                    // membersController.setCreatingGoogleForm(false);
+                    NotificationUtil.showSuccess(
+                      context,
+                      'This feature is not available yet',
+                    );
                     if (context.mounted) Navigator.pop(context); // Close dialog
-                    if(!formLink!.contains('null')) {
-                      if (context.mounted) {
-                        showFormBottomSheet(context, formLink!);
-                      }
-                    }
+                    // if(!formLink!.contains('null')) {
+                    //   if (context.mounted) {
+                    //     showFormBottomSheet(context, formLink);
+                    //   }
+                    // }
                   },
-                  child: const Text("Share Google Form"),
+                  child: const Text("Share Google Form Link"),
                 ).loadingIndicator(context,
                     context.watch<MemberController>().isCreatingGoogleForm),
               ],
@@ -302,7 +306,8 @@ class _MembersViewState extends State<MembersView>
                           borderRadius: BorderRadius.circular(10),
                           image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                  member.additionalImage == null|| member.additionalImage!.isEmpty
+                                  member.additionalImage == null ||
+                                          member.additionalImage!.isEmpty
                                       ? member.profilePic!
                                       : member.additionalImage!),
                               fit: BoxFit.cover))

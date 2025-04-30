@@ -4,14 +4,11 @@ import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dar
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:googleapis/forms/v1.dart' as form;
 import 'package:googleapis_auth/googleapis_auth.dart' as auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../src/dependencies/auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'custom_print.dart';

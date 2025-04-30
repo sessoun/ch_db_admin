@@ -37,7 +37,7 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: primaryColor),
         ),
-      ), dialogTheme: DialogThemeData(backgroundColor: Colors.white),
+      ), dialogTheme: const DialogThemeData(backgroundColor: Colors.white),
     );
   }
 
