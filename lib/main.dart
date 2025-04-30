@@ -1,5 +1,6 @@
 import 'package:ch_db_admin/auth_state.dart';
 import 'package:ch_db_admin/firebase_options.dart';
+import 'package:ch_db_admin/shared/ads/ad_state.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/attendance/presentation/controller/attendance_controller.dart';
 import 'package:ch_db_admin/src/dependencies/attendance.dart';
@@ -11,6 +12,7 @@ import 'package:ch_db_admin/src/main_view/controller/main_view_controller.dart';
 import 'package:ch_db_admin/theme/apptheme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,6 +20,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await loadPreferences();
+
+  // Ads initialization
+  final initFuture = MobileAds.instance.initialize();
+  final adState = AdState(initializationStatus: initFuture);
+
   //initialize dependencies
   initAuthDep();
   initMemberDep();
@@ -32,7 +39,10 @@ void main() async {
   );
   await dotenv.load(fileName: '.env');
 
-  runApp(MyApp(preferences['isDarkMode'], preferences['primaryColor']));
+  runApp(Provider<AdState>.value(
+    value: adState,
+    child: MyApp(preferences['isDarkMode'], preferences['primaryColor']),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -63,6 +73,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => locator.get<AttendanceController>(),
         ),
+       
       ],
       builder: (context, _) {
         // Access the ThemeProvider instance

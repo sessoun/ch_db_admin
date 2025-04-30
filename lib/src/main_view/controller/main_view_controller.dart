@@ -7,7 +7,7 @@ class MainViewController extends ChangeNotifier {
   late Animation<double> _scaleAnimation;
   late PageController _pageController;
   int _initialPage = 0;
-  get isMenuOpened => _isMenuOpened;
+bool  get isMenuOpened => _isMenuOpened;
   get animationController => _animationController;
   get animation => _animation;
   get scaleAnimation => _scaleAnimation;
