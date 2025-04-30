@@ -23,6 +23,10 @@ class _HomeViewState extends State<HomeView>
     setState(() {});
   }
 
+  bool isKeyboardVisible(BuildContext context) {
+    return MediaQuery.of(context).viewInsets.bottom > 0;
+  }
+
   BannerAd? banner;
 
   @override
@@ -52,6 +56,7 @@ class _HomeViewState extends State<HomeView>
     final screenWidth = MediaQuery.sizeOf(context).width;
     var controller = context.read<MainViewController>();
     var watchController = context.watch<MainViewController>();
+
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -103,7 +108,9 @@ class _HomeViewState extends State<HomeView>
                 ],
               ),
             ),
-            if (banner != null && watchController.isMenuOpened != true)
+            if (banner != null &&
+                watchController.isMenuOpened != true &&
+                !isKeyboardVisible(context))
               Container(
                 color: Colors.white,
                 width: screenWidth,
