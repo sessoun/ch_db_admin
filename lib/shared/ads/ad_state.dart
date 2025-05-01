@@ -11,7 +11,7 @@ class AdState {
 
   // Test and actual ad unit IDs
   static const String testAdUnitId = 'ca-app-pub-3940256099942544/9214589741';
-  static const String actualAdUnitId = 'ca-app-pub-7606494628821479~2182971866';
+  static const String actualAdUnitId = 'ca-app-pub-7606494628821479/5202278648';
 
   String get bannerAdUnitId {
     miPrint('Using test ad unit ID: $testAdUnitId');
