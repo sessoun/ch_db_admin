@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/shared/chached_network_image.dart';
 import 'package:ch_db_admin/shared/notification_util.dart';
+import 'package:ch_db_admin/shared/utils/create_google_form.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
@@ -11,7 +12,6 @@ import 'package:ch_db_admin/src/auth/presentation/ui/orgname_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-
 
 class MembersView extends StatefulWidget {
   const MembersView({super.key});
@@ -110,65 +110,73 @@ class _MembersViewState extends State<MembersView>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text("Add Member"),
-              content: const Text("How would you like to add a member?"),
-              actionsAlignment: MainAxisAlignment.start,
-              actionsOverflowAlignment: OverflowBarAlignment.start,
-              actions: [
-                // ✅ Fill Form Manually
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AddMemberView()),
-                    );
-                  },
-                  child: const Text("Fill Form Manually"),
-                ),
-
-                // ✅ Upload Excel File
-                TextButton(
-                  onPressed: () async {
-                    await pickAndProcessExcel(
-                        context); // Call function to handle Excel upload
-                    Navigator.pop(context); // Close dialog
-                  },
-                  child: const Text("Upload Excel File"),
-                ).loadingIndicator(
-                    context, context.watch<MemberController>().isLoading),
-
-                // ✅ Share Google Form
-                TextButton(
-                  onPressed: () async {
-                    // membersController.setCreatingGoogleForm(true);
-                    // var formLink = await generateAndShareGoogleForm(context);
-                    // membersController.setCreatingGoogleForm(false);
-                    NotificationUtil.showSuccess(
-                      context,
-                      'This feature is not available yet',
-                    );
-                    if (context.mounted) Navigator.pop(context); // Close dialog
-                    // if(!formLink!.contains('null')) {
-                    //   if (context.mounted) {
-                    //     showFormBottomSheet(context, formLink);
-                    //   }
-                    // }
-                  },
-                  child: const Text("Share Google Form Link"),
-                ).loadingIndicator(context,
-                    context.watch<MemberController>().isCreatingGoogleForm),
-              ],
+          // Directly navigate to AddMemberView for now
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddMemberView(),
             ),
           );
         },
         child: const Icon(Icons.person_add),
       ),
+
+      // --- Commented out dialog for adding member ---
+      // onPressed: () {
+      //   showDialog(
+      //     barrierDismissible: false,
+      //     context: context,
+      //     builder: (context) => AlertDialog(
+      //       title: const Text("Add Member"),
+      //       content: const Text("How would you like to add a member?"),
+      //       actionsAlignment: MainAxisAlignment.start,
+      //       actionsOverflowAlignment: OverflowBarAlignment.start,
+      //       actions: [
+      //         // ✅ Fill Form Manually
+      //         TextButton(
+      //           onPressed: () {
+      //             Navigator.pop(context); // Close dialog
+      //             Navigator.push(
+      //               context,
+      //               MaterialPageRoute(
+      //                   builder: (context) => const AddMemberView()),
+      //             );
+      //           },
+      //           child: const Text("Fill Form Manually"),
+      //         ),
+      //
+      //         // ✅ Upload Excel File
+      //         TextButton(
+      //           onPressed: () async {
+      //             await pickAndProcessExcel(
+      //                 context); // Call function to handle Excel upload
+      //             Navigator.pop(context); // Close dialog
+      //           },
+      //           child: const Text("Upload Excel File"),
+      //         ).loadingIndicator(
+      //             context, context.watch<MemberController>().isLoading),
+      //
+      //         // ✅ Share Google Form
+      //         TextButton(
+      //           onPressed: () async {
+      //             membersController.setCreatingGoogleForm(true);
+      //             var formLink = await generateAndShareGoogleForm(context);
+      //             membersController.setCreatingGoogleForm(false);
+      //
+      //             if (context.mounted) Navigator.pop(context); // Close dialog
+      //             if(!formLink!.contains('null')) {
+      //               if (context.mounted) {
+      //                 showFormBottomSheet(context, formLink);
+      //               }
+      //             }
+      //           },
+      //           child: const Text("Share Google Form Link"),
+      //         ).loadingIndicator(context,
+      //             context.watch<MemberController>().isCreatingGoogleForm),
+      //       ],
+      //     ),
+      //   );
+      // },
     );
   }
 

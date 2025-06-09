@@ -1,6 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 void miPrint(dynamic message){
   if(kDebugMode){
-    print(message);
+    log(message.toString(), name: 'CustomPrint');
   }
 }

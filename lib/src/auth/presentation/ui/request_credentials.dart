@@ -1,13 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/custom_print.dart';
+import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:http/http.dart' as http;
+import 'package:cloud_functions/cloud_functions.dart';
 
 class RequestCredentialsView extends StatefulWidget {
   const RequestCredentialsView({super.key});
@@ -24,28 +28,60 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
   final email = dotenv.env['EMAIL_ADDRESS'];
   final appPassword = dotenv.env['GOOGLE_APP_PASSWORD'];
   final apiKey = dotenv.env['EMAIL_VALIDATOR'];
+  bool isLoading = false;
 
   /// ✅ Function to check if an email exists using ZeroBounce
   Future<dynamic> verifyEmail() async {
-    final url = "https://api.zerobounce.net/v2/validate?api_key=$apiKey&email=${emailController.text}";
+    setState(() {
+      isLoading = true;
+    });
+    final url =
+        "https://api.zerobounce.net/v2/validate?api_key=$apiKey&email=${emailController.text}";
 
     try {
       final response = await http.get(Uri.parse(url));
+      setState(() {
+        isLoading = false;
+      });
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        miPrint("Email Status: ${data['status']}"); // Returns "valid" or "invalid"
-      if(data['status']=='valid'){
-       await sendRequestEmail(emailController.text);
-      }else{
-        NotificationUtil.showError(context, 'Please use a valid email address.');
-      }
-      return data['status'];
+        miPrint(
+            "Email Status: ${data['status']}"); // Returns "valid" or "invalid"
+        if (data['status'] == 'valid') {
+          // await sendRequestEmail(emailController.text);
+          await sm();
+          // NotificationUtil.showSuccess(context,
+          //     'Request sent successfully! Admin will process your credentials.');
+        } else if (data['status'] == 'invalid') {
+          NotificationUtil.showError(
+              context, 'Email address is invalid. Please try again.');
+        } else if (data['status'] == 'catch-all') {
+          NotificationUtil.showError(
+              context, 'Email address is catch-all. Please try again.');
+        } else if (data['status'] == 'unknown') {
+          NotificationUtil.showError(
+              context, 'Email address status is unknown. Please try again.');
+        } else {
+          NotificationUtil.showError(
+              context, 'Please use a valid email address.');
+        }
+        return data['status'];
       } else {
         miPrint("❌ API Request Failed: ${response.statusCode}");
       }
     } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       miPrint("❌ Error: $e");
+      if (e.toString().toLowerCase().contains('socketexception')) {
+        NotificationUtil.showError(
+            context, "Network issues.Check and try again, please.");
+      } else {
+        NotificationUtil.showError(
+            context, "Something went wrong. Try again, please.");
+      }
     }
   }
 
@@ -78,6 +114,50 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
     } finally {
       setState(() => isRequesting = false);
     }
+  }
+
+  Future<void> sm() async {
+    try {
+      miPrint('Sending email... ${emailController.text.trim()}');
+      final callable =
+          FirebaseFunctions.instance.httpsCallable('sendCredentialEmail');
+
+      final result =
+          await callable.call({'email': emailController.text.trim()});
+
+      if (result.data['success'] == true) {
+        miPrint('Email sent successfully');
+        NotificationUtil.showSuccess(
+          context,
+          'Request sent successfully! Admin will process your credentials.\nYou will receive an email with your credentials shortly.',
+        );
+        Navigator.of(context).pop();
+      } else {
+        miPrint('Failed to send email: ${result.data}');
+        NotificationUtil.showError(
+          context,
+          result.data['message'] ?? 'Failed to send request. Please try again.',
+        );
+      }
+    } on FirebaseFunctionsException catch (e) {
+      miPrint('FirebaseFunctionsException: ${e.message}');
+      NotificationUtil.showError(
+        context,
+        e.message ?? 'A server error occurred. Please try again.',
+      );
+    } catch (e) {
+      miPrint('Unexpected error: $e');
+      NotificationUtil.showError(
+        context,
+        'An unexpected error occurred. Please try again.',
+      );
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    emailController = TextEditingController();
   }
 
   @override
@@ -130,8 +210,8 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
                     : () {
                         if (formKey.currentState!.validate()) {
                           verifyEmail().then((status) {
-                            if(status=='valid') {
-                              Navigator.of(context).pop();
+                            if (status == 'valid' && mounted) {
+                              // Navigator.of(context).pop();
                             }
                           });
                         }
@@ -141,15 +221,8 @@ class _RequestCredentialsViewState extends State<RequestCredentialsView> {
                   textStyle: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                child: isRequesting
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Text('Send Request'),
-              ),
+                child: const Text('Send Request'),
+              ).loadingIndicator(context, isLoading),
             ),
           ],
         ),

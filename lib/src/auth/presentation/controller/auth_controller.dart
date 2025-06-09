@@ -127,4 +127,4 @@ class AuthController extends ChangeNotifier {
       return right(success);
     });
   }
-}
+  }

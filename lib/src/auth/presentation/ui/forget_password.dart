@@ -13,7 +13,6 @@ class ForgotPasswordView extends StatefulWidget {
 
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final TextEditingController _emailController = TextEditingController();
-  bool _isLoading = false;
 
   Future<void> _resetPassword() async {
     final email = _emailController.text.trim();
@@ -22,24 +21,18 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
+    await context.read<AuthController>().resetPassword(email).then((result) {
+      result.fold(
+        (failure) {
+          NotificationUtil.showError(context, "Error: ${failure.message}");
+        },
+        (success) {
+          NotificationUtil.showSuccess(
+              context, success);
+          _emailController.clear();
+        },
+      );
     });
-
-    try {
-      // Simulate sending password reset email (replace with actual logic)
-      await Future.delayed(const Duration(seconds: 2));
-
-      NotificationUtil.showSuccess(
-          context, "Password reset email sent successfully!");
-      _emailController.clear();
-    } catch (e) {
-      NotificationUtil.showError(context, "Error: ${e.toString()}");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   @override
@@ -71,7 +64,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _isLoading ? null : _resetPassword,
+              onPressed: _resetPassword,
               child: const Text("Send Password Reset Email"),
             ).loadingIndicator(
                 context, context.watch<AuthController>().isLoading),
