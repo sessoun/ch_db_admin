@@ -27,7 +27,9 @@ exports.sendCredentialEmail = functions.onCall(
 
       const msg = {
         to: email,
-        from: "essoun379@gmail.com",
+        from: {email:"noreply@em9760.shepherd.esstep.com",
+              name: "Shepherd App Team"
+        },
         subject: "Your Shepherd App Access",
         text: `Hello,\n\nEmail: ${email}\nPassword: ${password}\n\n\nBest regards, Shepherd App Team`,
       };

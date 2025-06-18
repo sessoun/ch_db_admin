@@ -25,6 +25,7 @@ class _LoginViewState extends State<LoginView> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool obscureText = true;
 
   @override
   void didChangeDependencies() {
@@ -84,7 +85,19 @@ class _LoginViewState extends State<LoginView> {
                   controller: passwordController,
                   labelText: 'Password',
                   hintText: '',
-                  obscureText: true,
+                  obscureText: obscureText,
+                  keyboardType: TextInputType.visiblePassword,
+                  suffixIcon: GestureDetector(
+                      child: Icon(
+                        obscureText ? Icons.visibility :
+                         Icons.visibility_off,
+                        color: themeProvider.theme.primaryColor,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          obscureText = !obscureText;
+                        });
+                      }),
                   maxLines: 1,
                   validator: (value) {
                     if (value == null || value.isEmpty) {

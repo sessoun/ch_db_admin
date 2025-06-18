@@ -99,7 +99,7 @@ flutter run
 ```
 lib/
   main.dart                # App entry point
-  shared/                  # Shared utilities, ads, notifications
+  shared/                  # Shared utilities, ads, 
   src/
     Members/               # Membership features
     attendance/            # Attendance features

@@ -7,6 +7,7 @@ import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/add_member_view.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/member_info_widget.dart';
+import 'package:ch_db_admin/src/Members/presentation/ui/member_status_indicator.dart';
 import 'package:ch_db_admin/src/Members/presentation/ui/pick_process_xlsx.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/orgname_dialog.dart';
 import 'package:flutter/material.dart';
@@ -193,43 +194,49 @@ class _MembersViewState extends State<MembersView>
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           child: ExpansionTile(
-            shape: const RoundedRectangleBorder(),
-            expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            leading: member.profilePic != null
-                ? networkImage(member.profilePic!)
-                : Image.asset(
-                    'images/img.png',
-                    height: 30,
-                    width: 30,
-                  ),
-            title: Text(
-              member.fullName,
-              style: theme.textTheme.bodyLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              member.role == 'None' ? '' : member.role!,
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: MemberInfoWidget(member: member),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => AddMemberView(member: member),
+              shape: const RoundedRectangleBorder(),
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              leading: member.profilePic != null
+                  ? SizedBox(
+                      height: 48,
+                      width: 48,
+                      child: Center(
+                        child: networkImage(member.profilePic!),
                       ),
-                    );
-                  },
-                  child: const Text("Edit"),
-                ),
+                    )
+                  : Image.asset(
+                      'images/img.png',
+                      height: 30,
+                      width: 30,
+                    ),
+              title: Text(
+                member.fullName,
+                style: theme.textTheme.bodyLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
-            ],
-          ),
+              subtitle: Text(
+                member.role == 'None' ? '' : member.role!,
+              ),
+              trailing: memberStatusIndicator(member.status),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: MemberInfoWidget(member: member),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddMemberView(member: member),
+                        ),
+                      );
+                    },
+                    child: const Text("Edit"),
+                  ),
+                ),
+              ]),
         );
       },
     );
@@ -254,21 +261,23 @@ class _MembersViewState extends State<MembersView>
               context: context,
               showDragHandle: true,
               useSafeArea: true,
+              isScrollControlled: true,
+              isDismissible: true,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               builder: (context) => Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height * .9,
+                    height: MediaQuery.of(context).size.height / 2,
                     child: Column(
-                      // mainAxisSize: MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Align(
                             alignment: Alignment.topCenter,
                             child: member.profilePic != null
-                                ? networkImage(member.profilePic!)
+                                ? networkImage(member.profilePic!, radius: 40)
                                 : Image.asset('images/img.png',
                                     height: 40, width: 40)),
                         const SizedBox(height: 10),
@@ -346,6 +355,11 @@ class _MembersViewState extends State<MembersView>
                     ),
                   ),
                 ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: memberStatusIndicator(member.status),
               ),
             ],
           ),

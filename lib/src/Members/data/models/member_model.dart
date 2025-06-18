@@ -19,7 +19,8 @@ class MemberModel extends Member {
       super.profilePic,
       required super.dateOfBirth,
       super.groupAffiliate,
-      super.role});
+      super.role,
+      super.status,});
 
   // Factory method for creating a MemberModel from JSON
   factory MemberModel.fromFirebase(DocumentSnapshot doc) {
@@ -43,6 +44,10 @@ class MemberModel extends Member {
       groupAffiliate: data['groupAffiliate'] != null
           ? List<String>.from(data['groupAffiliate'])
           : [],
+          status: MemberStatus.values.firstWhere(
+            (e) => e.name == (data['status'] ?? 'newMember'),
+            orElse: () => MemberStatus.newMember,
+          ),
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
     );
   }
@@ -62,6 +67,7 @@ class MemberModel extends Member {
       'groupAffiliate': groupAffiliate,
       'role': role,
       'dateOfBirth': Timestamp.fromDate(dateOfBirth),
+      'status': status.name,
     };
   }
 
@@ -81,6 +87,7 @@ class MemberModel extends Member {
       dateOfBirth: dateOfBirth,
       groupAffiliate: groupAffiliate,
       role: role,
+      status: status,
     );
   }
 }

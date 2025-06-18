@@ -12,6 +12,8 @@ class Member {
   final DateTime dateOfBirth;
   final List<String>? groupAffiliate;
   String? role;
+  final MemberStatus status;
+
 
   Member({
     this.id,
@@ -27,5 +29,7 @@ class Member {
     required this.dateOfBirth,
     this.groupAffiliate,
     this.role,
+    this.status = MemberStatus.newMember,
   });
 }
+enum MemberStatus { newMember, active, inactive}

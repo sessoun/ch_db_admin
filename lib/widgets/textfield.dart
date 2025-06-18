@@ -9,6 +9,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final bool obscureText;
   final int? maxLines;
+  final Widget? suffixIcon;
 
   const CustomTextFormField({
     super.key,
@@ -18,7 +19,9 @@ class CustomTextFormField extends StatelessWidget {
     this.onSaved,
     this.keyboardType = TextInputType.text,
     this.controller,
-    this.obscureText = false, this.maxLines,
+    this.obscureText = false,
+    this.maxLines,
+    this.suffixIcon,
   });
 
   @override
@@ -29,6 +32,7 @@ class CustomTextFormField extends StatelessWidget {
       obscureText: obscureText,
       maxLines: maxLines,
       decoration: InputDecoration(
+        suffixIcon: suffixIcon,
         labelText: labelText,
         hintText: hintText,
         border: const OutlineInputBorder(),

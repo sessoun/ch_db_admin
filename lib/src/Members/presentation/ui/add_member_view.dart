@@ -22,6 +22,8 @@ class AddMemberView extends StatefulWidget {
 }
 
 class _AddMemberViewState extends State<AddMemberView> {
+  MemberStatus _selectedStatus = MemberStatus.newMember;
+
   final _formKey = GlobalKey<FormState>();
   File? profilePic;
   File? additionalImage;
@@ -120,6 +122,7 @@ class _AddMemberViewState extends State<AddMemberView> {
         location: locationController.text,
         contact: contactController.text,
         marriageStatus: marriageStatus,
+        status: _selectedStatus,
         spouseName: spouseNameController.text,
         children: childrenController.text
             .split(',')
@@ -312,6 +315,31 @@ class _AddMemberViewState extends State<AddMemberView> {
                   }
                   return null;
                 },
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<MemberStatus>(
+                value: _selectedStatus,
+                decoration: const InputDecoration(
+                  labelText: 'Member Status',
+                ),
+                onChanged: (MemberStatus? newValue) {
+                  setState(() {
+                    _selectedStatus = newValue!;
+                  });
+                },
+                items: MemberStatus.values.map((status) {
+                  return DropdownMenuItem(
+                    value: status,
+                    child: Text(
+                      status == MemberStatus.newMember
+                          ? 'New'
+                          : status == MemberStatus.active
+                              ? 'Active'
+                              : 'Lukewarm',
+                    ),
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
