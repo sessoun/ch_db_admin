@@ -14,13 +14,25 @@ import 'package:url_launcher/url_launcher.dart';
 import 'custom_print.dart';
 
 // Google Sign-In instance
-final GoogleSignIn _googleSignIn = GoogleSignIn(
-  serverClientId: dotenv.env["WEB_CLIENT_ID"],
-  scopes: [
+// final GoogleSignIn _googleSignIn = GoogleSignIn(
+//   serverClientId: dotenv.env['GOOGLE_CLIENT_ID'],
+//   scopes: [
+//     form.FormsApi.formsBodyScope,
+//     "https://www.googleapis.com/auth/drive.file",
+//   ],
+// );
+
+// Google Authentication instance
+final _gAuth = GoogleSignIn.instance;
+
+final scopes = [
     form.FormsApi.formsBodyScope,
     "https://www.googleapis.com/auth/drive.file",
-  ],
-);
+  ];
+
+
+
+
 
 //returns the formId for the user to have edit access
 Future<String?> createOrganizationGoogleForm(
@@ -29,44 +41,59 @@ Future<String?> createOrganizationGoogleForm(
     miPrint("Requesting authentication...");
     final client = await getAuthenticatedClient(context);
     if (client == null) {
-      NotificationUtil.showError(context, "❌ Failed to authenticate.");
+      if (context.mounted) {
+        NotificationUtil.showError(context, "❌ Failed to authenticate.");
+      }
       return null;
     }
 
     final formsApi = form.FormsApi(client);
-    final createdForm = await _createGoogleForm(formsApi, orgName);
+    final createdForm = await _createGoogleForm(context, formsApi, orgName);
     if (createdForm == null) {
-      NotificationUtil.showError(context, "❌ Google Form creation failed.");
+      if (context.mounted) {
+        NotificationUtil.showError(context, "❌ Failed to create Google Form.");
+      }
       return null;
     }
 
     await _addFormQuestions(formsApi, createdForm.formId!);
     return createdForm.formId;
   } catch (e) {
-    NotificationUtil.showError(context, "❌ Error creating Google Form: $e");
+    miPrint("❌ Error creating Google Form: $e");
+    if (context.mounted) {
+      NotificationUtil.showError(context, "❌ Error creating Google Form: $e");
+    }
     return null;
   }
 }
 
 Future<auth.AuthClient?> getAuthenticatedClient(BuildContext context) async {
   try {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) {
-      NotificationUtil.showError(context, "❌ Google Sign-In canceled.");
-      return null;
-    }
+await _gAuth.initialize(serverClientId: dotenv.env['GOOGLE_CLIENT_ID']!);
+final GoogleSignInAccount googleUser = await _gAuth.authenticate(scopeHint: scopes);
+
+    // if (googleUser == null) {
+    //   if (context.mounted) {
+    //     NotificationUtil.showError(context, "❌ Google Sign-In canceled.");
+    //   }
+    //   return null;
+    // }
+    final authe = googleUser.authentication;
+    miPrint('ID Token : ${authe.idToken}');
 
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    if (googleAuth.accessToken == null) {
-      NotificationUtil.showError(context, "❌ Something went wrong.");
+        googleUser.authentication;
+    if (googleAuth.idToken == null) {
+      if (context.mounted) {
+        NotificationUtil.showError(context, "❌ Something went wrong.");
+      }
       return null;
     }
 
     final auth.AccessCredentials credentials = auth.AccessCredentials(
       auth.AccessToken(
         'Bearer',
-        googleAuth.accessToken!,
+        googleAuth.idToken!,
         DateTime.now().add(const Duration(hours: 1)).toUtc(), // Expiry
       ),
       googleAuth.idToken, // Refresh token (null for now)
@@ -75,13 +102,16 @@ Future<auth.AuthClient?> getAuthenticatedClient(BuildContext context) async {
 
     return auth.authenticatedClient(http.Client(), credentials);
   } catch (e) {
-    NotificationUtil.showError(context, "❌ Google Authentication Error: $e");
+    if (context.mounted) {
+      NotificationUtil.showError(context, "❌ Google Authentication Error: $e");
+      miPrint("❌ Google Authentication Error: $e");
+    }
     return null;
   }
 }
 
 Future<form.Form?> _createGoogleForm(
-    form.FormsApi formsApi, String orgName) async {
+    context, form.FormsApi formsApi, String orgName) async {
   final newForm = form.Form.fromJson({
     "info": {"title": "$orgName - Member Registration"}
   });
@@ -93,6 +123,9 @@ Future<form.Form?> _createGoogleForm(
     return createdForm;
   } catch (e) {
     miPrint("❌ Error creating Google Form: $e");
+    if (context.mounted) {
+      NotificationUtil.showError(context, "❌ Error creating Google Form: $e");
+    }
     return null;
   }
 }
@@ -111,8 +144,8 @@ Future<void> _addFormQuestions(form.FormsApi formsApi, String formId) async {
 }
 
 Future<String?> generateAndShareGoogleForm(BuildContext context) async {
-  String orgName = await context.read<AuthController>().getOrgName() ??
-      'Organization name here';
+  String orgName =
+      await context.read<AuthController>().getOrgName() ?? "Shepherd App";
   var createdFormId = await createOrganizationGoogleForm(context, orgName);
 
   return "https://docs.google.com/forms/d/$createdFormId/edit";

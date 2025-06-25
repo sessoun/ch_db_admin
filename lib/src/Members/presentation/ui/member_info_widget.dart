@@ -1,4 +1,3 @@
-import 'package:ch_db_admin/src/Members/presentation/ui/member_status_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 

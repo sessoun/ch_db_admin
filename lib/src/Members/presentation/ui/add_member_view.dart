@@ -336,7 +336,7 @@ class _AddMemberViewState extends State<AddMemberView> {
                           ? 'New'
                           : status == MemberStatus.active
                               ? 'Active'
-                              : 'Lukewarm',
+                              : 'Inactive',
                     ),
                   );
                 }).toList(),
@@ -349,6 +349,8 @@ class _AddMemberViewState extends State<AddMemberView> {
                   'Married',
                   'Widowed',
                   'Divorced',
+                  'Separated',
+                  'Engaged',
                 ].map((status) {
                   return DropdownMenuItem(
                     value: status,

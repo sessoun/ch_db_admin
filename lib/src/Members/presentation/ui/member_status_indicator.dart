@@ -17,7 +17,7 @@ Widget memberStatusIndicator(MemberStatus status) {
       break;
     case MemberStatus.inactive:
       color = Colors.orange;
-      label = 'Lukewarm';
+      label = 'Inactive';
       break;
   }
 

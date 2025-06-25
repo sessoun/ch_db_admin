@@ -14,7 +14,6 @@ class Member {
   String? role;
   final MemberStatus status;
 
-
   Member({
     this.id,
     required this.fullName,
@@ -32,4 +31,5 @@ class Member {
     this.status = MemberStatus.newMember,
   });
 }
-enum MemberStatus { newMember, active, inactive}
+
+enum MemberStatus { newMember, active, inactive }

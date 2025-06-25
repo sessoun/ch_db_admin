@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/shared/chached_network_image.dart';
-import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/create_google_form.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
@@ -58,127 +57,129 @@ class _MembersViewState extends State<MembersView>
         .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Members'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(isGridView ? Icons.list : Icons.grid_view),
-            onPressed: () {
-              setState(() {
-                isGridView = !isGridView;
-              });
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search Members...',
-                prefixIcon: Icon(Icons.search, color: theme.primaryColor),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onChanged: (value) {
+        appBar: AppBar(
+          title: const Text('Members'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(isGridView ? Icons.list : Icons.grid_view),
+              onPressed: () {
                 setState(() {
-                  searchText = value;
+                  isGridView = !isGridView;
                 });
               },
             ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: membersController.isLoading
-                  ? Center(
-                      child: SpinKitChasingDots(
-                        color: theme.primaryColor,
-                      ),
-                    )
-                  : membersController.members.isEmpty
-                      ? const Center(
-                          child: Text('No member added yet'),
-                        )
-                      : isGridView
-                          ? _buildGridView(filteredMembers)
-                          : _buildListView(filteredMembers),
-            ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Directly navigate to AddMemberView for now
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddMemberView(),
-            ),
-          );
-        },
-        child: const Icon(Icons.person_add),
-      ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search Members...',
+                  prefixIcon: Icon(Icons.search, color: theme.primaryColor),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16.0),
+              Expanded(
+                child: membersController.isLoading
+                    ? Center(
+                        child: SpinKitChasingDots(
+                          color: theme.primaryColor,
+                        ),
+                      )
+                    : membersController.members.isEmpty
+                        ? const Center(
+                            child: Text('No member added yet'),
+                          )
+                        : isGridView
+                            ? _buildGridView(filteredMembers)
+                            : _buildListView(filteredMembers),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          // onPressed: () {
+          //   // Directly navigate to AddMemberView for now
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => const AddMemberView(),
+          //     ),
+          //   );
+          // },
+          child: const Icon(Icons.person_add),
+          // ),
 
-      // --- Commented out dialog for adding member ---
-      // onPressed: () {
-      //   showDialog(
-      //     barrierDismissible: false,
-      //     context: context,
-      //     builder: (context) => AlertDialog(
-      //       title: const Text("Add Member"),
-      //       content: const Text("How would you like to add a member?"),
-      //       actionsAlignment: MainAxisAlignment.start,
-      //       actionsOverflowAlignment: OverflowBarAlignment.start,
-      //       actions: [
-      //         // ✅ Fill Form Manually
-      //         TextButton(
-      //           onPressed: () {
-      //             Navigator.pop(context); // Close dialog
-      //             Navigator.push(
-      //               context,
-      //               MaterialPageRoute(
-      //                   builder: (context) => const AddMemberView()),
-      //             );
-      //           },
-      //           child: const Text("Fill Form Manually"),
-      //         ),
-      //
-      //         // ✅ Upload Excel File
-      //         TextButton(
-      //           onPressed: () async {
-      //             await pickAndProcessExcel(
-      //                 context); // Call function to handle Excel upload
-      //             Navigator.pop(context); // Close dialog
-      //           },
-      //           child: const Text("Upload Excel File"),
-      //         ).loadingIndicator(
-      //             context, context.watch<MemberController>().isLoading),
-      //
-      //         // ✅ Share Google Form
-      //         TextButton(
-      //           onPressed: () async {
-      //             membersController.setCreatingGoogleForm(true);
-      //             var formLink = await generateAndShareGoogleForm(context);
-      //             membersController.setCreatingGoogleForm(false);
-      //
-      //             if (context.mounted) Navigator.pop(context); // Close dialog
-      //             if(!formLink!.contains('null')) {
-      //               if (context.mounted) {
-      //                 showFormBottomSheet(context, formLink);
-      //               }
-      //             }
-      //           },
-      //           child: const Text("Share Google Form Link"),
-      //         ).loadingIndicator(context,
-      //             context.watch<MemberController>().isCreatingGoogleForm),
-      //       ],
-      //     ),
-      //   );
-      // },
-    );
+          // --- Commented out dialog for adding member ---
+          onPressed: () {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Add Member"),
+                content: const Text("How would you like to add a member?"),
+                actionsAlignment: MainAxisAlignment.start,
+                actionsOverflowAlignment: OverflowBarAlignment.start,
+                actions: [
+                  // ✅ Fill Form Manually
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close dialog
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddMemberView()),
+                      );
+                    },
+                    child: const Text("1. Fill Form Manually"),
+                  ),
+
+                  // ✅ Upload Excel File
+                  TextButton(
+                    onPressed: () async {
+                      await pickAndProcessExcel(
+                          context); // Call function to handle Excel upload
+                      Navigator.pop(context); // Close dialog
+                    },
+                    child: const Text(
+                        "2. Upload Excel File\n(First generate form if you haven't. Select 'Share Google Form Link' below)"),
+                  ).loadingIndicator(
+                      context, context.watch<MemberController>().isLoading),
+
+                  // ✅ Share Google Form
+                  TextButton(
+                    onPressed: () async {
+                      membersController.setCreatingGoogleForm(true);
+                      var formLink = await generateAndShareGoogleForm(context);
+                      membersController.setCreatingGoogleForm(false);
+
+                      if (context.mounted){
+                        Navigator.pop(context);} // Close dialog
+                      if (!formLink!.contains('null')) {
+                        if (context.mounted) {
+                          showFormBottomSheet(context, formLink);
+                        }
+                      }
+                    },
+                    child: const Text("3. Share Google Form Link"),
+                  ).loadingIndicator(context,
+                      context.watch<MemberController>().isCreatingGoogleForm),
+                ],
+              ),
+            );
+          },
+        ));
   }
 
   Widget _buildListView(List<Member> members) {
