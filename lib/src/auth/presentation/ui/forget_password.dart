@@ -27,8 +27,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           NotificationUtil.showError(context, "Error: ${failure.message}");
         },
         (success) {
-          NotificationUtil.showSuccess(
-              context, success);
+          NotificationUtil.showSuccess(context, success);
           _emailController.clear();
         },
       );

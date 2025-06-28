@@ -25,12 +25,12 @@ class EventController extends ChangeNotifier {
     required this.deleteEventUseCase,
   });
 
-  List<Event> filterEvents(String searchText){
+  List<Event> filterEvents(String searchText) {
     final filteredEvents = _events
         .where((event) =>
             event.title.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
-        return filteredEvents;
+    return filteredEvents;
   }
 
   // Fetch all events

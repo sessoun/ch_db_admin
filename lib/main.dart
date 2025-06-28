@@ -73,7 +73,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => locator.get<AttendanceController>(),
         ),
-       
       ],
       builder: (context, _) {
         // Access the ThemeProvider instance

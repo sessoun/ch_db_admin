@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/shared/chached_network_image.dart';
-import 'package:ch_db_admin/shared/utils/create_google_form.dart';
+import 'package:ch_db_admin/src/Members/presentation/ui/create_google_form.dart';
 import 'package:ch_db_admin/shared/utils/extensions.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
@@ -164,8 +164,9 @@ class _MembersViewState extends State<MembersView>
                       var formLink = await generateAndShareGoogleForm(context);
                       membersController.setCreatingGoogleForm(false);
 
-                      if (context.mounted){
-                        Navigator.pop(context);} // Close dialog
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      } // Close dialog
                       if (!formLink!.contains('null')) {
                         if (context.mounted) {
                           showFormBottomSheet(context, formLink);

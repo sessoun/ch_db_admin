@@ -1,4 +1,5 @@
 import 'package:ch_db_admin/shared/notification_util.dart';
+import 'package:ch_db_admin/src/Members/presentation/controller/member._controller.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
 import 'package:ch_db_admin/src/auth/presentation/ui/login.dart';
@@ -86,8 +87,10 @@ class _SideMenuViewState extends State<SideMenuView> {
                         (result) => result.fold(
                           (l) => NotificationUtil.showError(context, l.message),
                           (r) {
+                            context.read<MemberController>().clearState();
+
                             controller.toggleMenuOpened();
-                            
+
                             NotificationUtil.showSuccess(context, r);
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(

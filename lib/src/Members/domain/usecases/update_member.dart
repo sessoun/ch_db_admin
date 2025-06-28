@@ -10,9 +10,8 @@ class UpdateMember extends UseCase<String, Params<String, Member, void>> {
   UpdateMember(this.repo);
 
   @override
-  Future<Either<Failure, String>> call(Params<String, Member, void> params) async {
-    
-
-    return await repo.updateMember(params.data,params.data2!);
+  Future<Either<Failure, String>> call(
+      Params<String, Member, void> params) async {
+    return await repo.updateMember(params.data, params.data2!);
   }
 }

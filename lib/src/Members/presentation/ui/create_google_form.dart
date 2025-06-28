@@ -1,6 +1,7 @@
 import 'package:ch_db_admin/shared/notification_util.dart';
 import 'package:ch_db_admin/shared/utils/request_form.dart';
 import 'package:ch_db_admin/src/auth/presentation/controller/auth_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'custom_print.dart';
+import '../../../../shared/utils/custom_print.dart';
 
 // Google Sign-In instance
 // final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -22,21 +23,11 @@ import 'custom_print.dart';
 //   ],
 // );
 
-// Google Authentication instance
-final _gAuth = GoogleSignIn.instance;
-
-final scopes = [
-    form.FormsApi.formsBodyScope,
-    "https://www.googleapis.com/auth/drive.file",
-  ];
-
-
-
-
-
 //returns the formId for the user to have edit access
 Future<String?> createOrganizationGoogleForm(
-    BuildContext context, String orgName) async {
+  BuildContext context,
+  String orgName,
+) async {
   try {
     miPrint("Requesting authentication...");
     final client = await getAuthenticatedClient(context);
@@ -68,43 +59,59 @@ Future<String?> createOrganizationGoogleForm(
 }
 
 Future<auth.AuthClient?> getAuthenticatedClient(BuildContext context) async {
+  // Google Authentication instance
+  final gAuth = GoogleSignIn.standard(
+    scopes: [
+      form.FormsApi.formsBodyScope,
+      "https://www.googleapis.com/auth/drive.file",
+    ],
+  );
+
   try {
-await _gAuth.initialize(serverClientId: dotenv.env['GOOGLE_CLIENT_ID']!);
-final GoogleSignInAccount googleUser = await _gAuth.authenticate(scopeHint: scopes);
+    // Sign in and get authentication
+    miPrint("Attempting Google Sign-In...");
+    final GoogleSignInAccount? googleUser = await gAuth.signIn();
 
-    // if (googleUser == null) {
-    //   if (context.mounted) {
-    //     NotificationUtil.showError(context, "❌ Google Sign-In canceled.");
-    //   }
-    //   return null;
-    // }
-    final authe = googleUser.authentication;
-    miPrint('ID Token : ${authe.idToken}');
-
-    final GoogleSignInAuthentication googleAuth =
-        googleUser.authentication;
-    if (googleAuth.idToken == null) {
+    if (googleUser == null) {
       if (context.mounted) {
-        NotificationUtil.showError(context, "❌ Something went wrong.");
+        NotificationUtil.showError(context, "❌ Google Sign-In canceled.");
       }
       return null;
     }
 
+    miPrint("Signed in as: ${googleUser.email}");
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    if (googleAuth.accessToken == null) {
+      miPrint("❌ No access token received");
+      if (context.mounted) {
+        NotificationUtil.showError(context, "❌ Failed to get access token.");
+      }
+      return null;
+    }
+
+    // Create credentials for the authenticated client
     final auth.AccessCredentials credentials = auth.AccessCredentials(
       auth.AccessToken(
         'Bearer',
-        googleAuth.idToken!,
-        DateTime.now().add(const Duration(hours: 1)).toUtc(), // Expiry
+        googleAuth.accessToken!,
+        DateTime.now().toUtc().add(const Duration(hours: 1)),
       ),
-      googleAuth.idToken, // Refresh token (null for now)
-      ['https://www.googleapis.com/auth/forms.body'],
+      null, // No refresh token needed for this use case
+      [
+        form.FormsApi.formsBodyScope,
+        "https://www.googleapis.com/auth/drive.file",
+      ],
     );
 
+    miPrint("✅ Authentication successful");
     return auth.authenticatedClient(http.Client(), credentials);
   } catch (e) {
+    miPrint("❌ Google Authentication Error: $e");
     if (context.mounted) {
       NotificationUtil.showError(context, "❌ Google Authentication Error: $e");
-      miPrint("❌ Google Authentication Error: $e");
     }
     return null;
   }

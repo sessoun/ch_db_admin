@@ -28,7 +28,7 @@ class EventModel extends Event {
       id: doc['id'],
       title: doc['title'],
       description: doc['description'],
-      date:  (doc['date'] as Timestamp).toDate(),
+      date: (doc['date'] as Timestamp).toDate(),
       location: doc['location'],
       organizerId: doc['organizerId'],
       imageUrl: doc['imageUrl'],

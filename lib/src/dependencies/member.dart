@@ -10,7 +10,6 @@ import 'package:ch_db_admin/src/Members/domain/usecases/update_member.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
 import 'package:ch_db_admin/src/Members/data/data_source/remote_db.dart';
 
-
 void initMemberDep() {
   // Data source
   locator.registerLazySingleton<MembersRemoteDb>(() => MembersRemoteDb());
@@ -21,11 +20,16 @@ void initMemberDep() {
 
   // Use cases
   locator.registerLazySingleton(() => AddMember(locator<MemberRepository>()));
-  locator.registerLazySingleton(() => GetAllMembers(locator<MemberRepository>()));
-  locator.registerLazySingleton(() => GetMemberById(locator<MemberRepository>()));
-  locator.registerLazySingleton(() => UpdateMember(locator<MemberRepository>()));
-  locator.registerLazySingleton(() => DeleteMember(locator<MemberRepository>()));
-  locator.registerLazySingleton(() => GetMembersByName(locator<MemberRepository>()));
+  locator
+      .registerLazySingleton(() => GetAllMembers(locator<MemberRepository>()));
+  locator
+      .registerLazySingleton(() => GetMemberById(locator<MemberRepository>()));
+  locator
+      .registerLazySingleton(() => UpdateMember(locator<MemberRepository>()));
+  locator
+      .registerLazySingleton(() => DeleteMember(locator<MemberRepository>()));
+  locator.registerLazySingleton(
+      () => GetMembersByName(locator<MemberRepository>()));
 
   // Controller
   locator.registerLazySingleton(() => MemberController(
@@ -37,4 +41,3 @@ void initMemberDep() {
         locator<GetMembersByName>(),
       ));
 }
-

@@ -57,7 +57,7 @@ dependencies:
   path_provider: ^2.1.5
   googleapis: ^14.0.0
   googleapis_auth: ^2.0.0
-  google_sign_in: ^7.0.0
+  google_sign_in: ^6.1.5
   google_mobile_ads: ^6.0.0
   cloud_functions: ^5.5.0
 

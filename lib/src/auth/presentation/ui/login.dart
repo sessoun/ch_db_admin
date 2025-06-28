@@ -89,8 +89,7 @@ class _LoginViewState extends State<LoginView> {
                   keyboardType: TextInputType.visiblePassword,
                   suffixIcon: GestureDetector(
                       child: Icon(
-                        obscureText ? Icons.visibility :
-                         Icons.visibility_off,
+                        obscureText ? Icons.visibility : Icons.visibility_off,
                         color: themeProvider.theme.primaryColor,
                       ),
                       onTap: () {

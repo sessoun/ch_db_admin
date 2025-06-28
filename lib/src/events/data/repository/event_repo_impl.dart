@@ -7,6 +7,7 @@ import 'package:ch_db_admin/src/events/domain/entities/event.dart';
 import 'package:ch_db_admin/src/events/domain/repository/event_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+
 class EventRepoImpl implements EventRepo {
   final EventRemoteDb eventRemoteDb;
 
@@ -24,7 +25,7 @@ class EventRepoImpl implements EventRepo {
       imageUrl: event.imageUrl,
     );
     try {
-     final result = await eventRemoteDb.createEvent(eventModel);
+      final result = await eventRemoteDb.createEvent(eventModel);
       return Right(result);
     } on FirebaseException catch (e) {
       return Left(Failure(e.message ?? 'Error adding member',
@@ -48,9 +49,9 @@ class EventRepoImpl implements EventRepo {
       imageUrl: event.imageUrl,
     );
     try {
-    final result =  await eventRemoteDb.updateEvent(eventModel);
+      final result = await eventRemoteDb.updateEvent(eventModel);
       return Right(result);
-    }on FirebaseException catch (e) {
+    } on FirebaseException catch (e) {
       return Left(Failure(e.message ?? 'Error adding member',
           code: e.code)); // Firebase failure
     } on SocketException catch (_) {
@@ -79,7 +80,7 @@ class EventRepoImpl implements EventRepo {
   @override
   Future<Either<Failure, String>> deleteEvent(Event event) async {
     try {
-     final result = await eventRemoteDb.deleteEvent(event.id);
+      final result = await eventRemoteDb.deleteEvent(event.id);
       return Right(result);
     } on FirebaseException catch (e) {
       return Left(Failure(e.message ?? 'Error updating event',

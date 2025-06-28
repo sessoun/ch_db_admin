@@ -27,7 +27,7 @@ class AuthController extends ChangeNotifier {
         _resetPassword = resetPassword;
 
   bool _isLoading = false;
-  get isLoading => _isLoading;
+ bool get isLoading => _isLoading;
 
   Future<String?> getOrgName() async {
     // Retrieve the stored organization ID from SharedPreferences
@@ -40,7 +40,7 @@ class AuthController extends ChangeNotifier {
 
     // Reference to the Firestore document for the organization
     final db =
-        FirebaseFirestore.instance.collection('organisations').doc(orgId);
+        FirebaseFirestore.instance.collection(kDebugMode?'test_org':'organisations').doc(orgId);
 
     try {
       // Get the document from Firestore
@@ -102,6 +102,7 @@ class AuthController extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     final result = await _signOut(NoParams());
+
     return result.fold((failure) {
       _isLoading = false;
       notifyListeners();
@@ -127,4 +128,4 @@ class AuthController extends ChangeNotifier {
       return right(success);
     });
   }
-  }
+}

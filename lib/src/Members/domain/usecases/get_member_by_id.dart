@@ -10,9 +10,8 @@ class GetMemberById extends UseCase<Member?, Params<String, void, void>> {
   GetMemberById(this.repo);
 
   @override
-  Future<Either<Failure, Member?>> call(Params<String, void, void> params) async {
-    
-
+  Future<Either<Failure, Member?>> call(
+      Params<String, void, void> params) async {
     return await repo.getMemberById(params.data);
   }
 }

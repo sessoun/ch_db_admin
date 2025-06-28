@@ -1,4 +1,3 @@
-
 import 'package:ch_db_admin/src/notifications/domain/entities/notification.dart';
 
 class NotificationModel extends Notification {

@@ -6,21 +6,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../shared/utils/custom_print.dart';
 
 class MemberModel extends Member {
-  MemberModel(
-      {super.id,
-      required super.fullName,
-      required super.location,
-      required super.contact,
-      required super.marriageStatus,
-      super.spouseName,
-      super.children,
-      super.relativeContact,
-      super.additionalImage,
-      super.profilePic,
-      required super.dateOfBirth,
-      super.groupAffiliate,
-      super.role,
-      super.status,});
+  MemberModel({
+    super.id,
+    required super.fullName,
+    required super.location,
+    required super.contact,
+    required super.marriageStatus,
+    super.spouseName,
+    super.children,
+    super.relativeContact,
+    super.additionalImage,
+    super.profilePic,
+    required super.dateOfBirth,
+    super.groupAffiliate,
+    super.role,
+    super.status,
+  });
 
   // Factory method for creating a MemberModel from JSON
   factory MemberModel.fromFirebase(DocumentSnapshot doc) {
@@ -44,10 +45,10 @@ class MemberModel extends Member {
       groupAffiliate: data['groupAffiliate'] != null
           ? List<String>.from(data['groupAffiliate'])
           : [],
-          status: MemberStatus.values.firstWhere(
-            (e) => e.name == (data['status'] ?? 'newMember'),
-            orElse: () => MemberStatus.newMember,
-          ),
+      status: MemberStatus.values.firstWhere(
+        (e) => e.name == (data['status'] ?? 'newMember'),
+        orElse: () => MemberStatus.newMember,
+      ),
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
     );
   }

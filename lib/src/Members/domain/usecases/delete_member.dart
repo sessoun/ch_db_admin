@@ -9,9 +9,8 @@ class DeleteMember extends UseCase<String, Params<String, void, void>> {
   DeleteMember(this.repo);
 
   @override
-  Future<Either<Failure, String>> call(Params<String, void, void> params) async {
-    
-
+  Future<Either<Failure, String>> call(
+      Params<String, void, void> params) async {
     return await repo.deleteMember(params.data);
   }
 }

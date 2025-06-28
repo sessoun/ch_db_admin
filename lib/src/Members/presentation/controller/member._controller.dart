@@ -186,4 +186,14 @@ class MemberController extends ChangeNotifier {
     _statusMessage = '';
     notifyListeners();
   }
+
+  //clear state
+  void clearState() {
+    _members = [];
+    _selectedMember = null;
+    _statusMessage = '';
+    _isLoading = false;
+    _isCreatingGoogleForm = false;
+    notifyListeners();
+  }
 }

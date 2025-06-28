@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthRepo {
-  Future<Either<Failure,User?>> signIn(UserLoginCredentialsModel data);
-  Future<Either<Failure,String>> logOut();
-  Future<Either<Failure,String>> resetPassword(String email);
+  Future<Either<Failure, User?>> signIn(UserLoginCredentialsModel data);
+  Future<Either<Failure, String>> logOut();
+  Future<Either<Failure, String>> resetPassword(String email);
 }
