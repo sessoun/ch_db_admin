@@ -1,4 +1,5 @@
 import 'package:ch_db_admin/shared/failure.dart';
+import 'package:ch_db_admin/shared/firestore_instance.dart';
 import 'package:ch_db_admin/shared/usecase.dart';
 import 'package:ch_db_admin/src/auth/domain/usecase/reset_password.dart';
 import 'package:ch_db_admin/src/dependencies/auth.dart';
@@ -72,7 +73,7 @@ class AuthController extends ChangeNotifier {
 
     // Reference to the Firestore document for the organization
     final db =
-        FirebaseFirestore.instance.collection('organisations').doc(orgId);
+        firestoreCollection().doc(orgId);
 
     try {
       // Set or update the `orgName` field in Firestore
