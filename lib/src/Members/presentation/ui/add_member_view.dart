@@ -327,6 +327,8 @@ class _AddMemberViewState extends State<AddMemberView> {
                   setState(() {
                     _selectedStatus = newValue!;
                   });
+                  miPrint(_selectedStatus.name);
+                  miPrint(newValue);
                 },
                 items: MemberStatus.values.map((status) {
                   return DropdownMenuItem(

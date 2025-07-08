@@ -28,7 +28,7 @@ class Member {
     required this.dateOfBirth,
     this.groupAffiliate,
     this.role,
-    this.status = MemberStatus.newMember,
+    required this.status,
   });
 }
 

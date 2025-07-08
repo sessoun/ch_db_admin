@@ -26,6 +26,7 @@ class MemberRepositoryImpl implements MemberRepository {
         marriageStatus: memberModel.marriageStatus,
         spouseName: memberModel.spouseName,
         children: memberModel.children,
+        status: memberModel.status,
         relativeContact: memberModel.relativeContact,
         additionalImage: memberModel.additionalImage,
         profilePic: memberModel.profilePic,
@@ -50,6 +51,7 @@ class MemberRepositoryImpl implements MemberRepository {
         profilePic: member.profilePic,
         groupAffiliate: member.groupAffiliate,
         dateOfBirth: member.dateOfBirth,
+        status: member.status,
         role: member.role,
       );
       final result = await remoteDb.addMember(memberModel);
@@ -110,6 +112,7 @@ class MemberRepositoryImpl implements MemberRepository {
         contact: member.contact,
         marriageStatus: member.marriageStatus,
         spouseName: member.spouseName,
+        status: member.status,
         children: member.children,
         relativeContact: member.relativeContact,
         additionalImage: member.additionalImage,

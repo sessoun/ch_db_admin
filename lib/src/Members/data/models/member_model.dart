@@ -20,7 +20,7 @@ class MemberModel extends Member {
     required super.dateOfBirth,
     super.groupAffiliate,
     super.role,
-    super.status,
+    required super.status,
   });
 
   // Factory method for creating a MemberModel from JSON

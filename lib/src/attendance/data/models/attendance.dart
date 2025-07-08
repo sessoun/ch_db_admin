@@ -13,8 +13,7 @@ class AttendanceModel extends Attendance {
     required super.event,
   });
 
-  // Example of method to convert AttendanceModel to JSON
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toFirebase() {
     return {
       'members': members.map(
         (member) {
@@ -23,6 +22,7 @@ class AttendanceModel extends Attendance {
             fullName: member.fullName,
             location: member.location,
             contact: member.contact,
+            status: member.status,
             marriageStatus: member.marriageStatus,
             dateOfBirth: member.dateOfBirth,
             additionalImage: member.additionalImage,
@@ -57,6 +57,10 @@ class AttendanceModel extends Attendance {
                 fullName: memberData['fullName'],
                 location: memberData['location'],
                 contact: memberData['contact'],
+                status: MemberStatus.values.firstWhere(
+                  (e) => e.name == (memberData['status'] ?? 'newMember'),
+                  orElse: () => MemberStatus.newMember,
+                ),
                 marriageStatus: memberData['marriageStatus'],
                 dateOfBirth: (memberData['dateOfBirth'] as Timestamp).toDate(),
                 additionalImage: memberData['additionalImage'],

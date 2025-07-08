@@ -48,25 +48,22 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
     NotificationUtil.showError(context, "Error reading file");
     return;
   }
-  try {
-    var excel = Excel.decodeBytes(bytes);
-    miPrint("✅ Excel file loaded successfully.");
-  } catch (e) {
-    miPrint("❌ Error decoding Excel file: $e");
-    NotificationUtil.showError(context, "Error reading file: $e");
-
-    return;
-  }
+  
 
   var excel = Excel.decodeBytes(bytes);
   List<Member> members = [];
 
+  // Process each sheet in the Excel file
+  // it start from the second row
+  // and skip the first column which is usually an index or ID
   for (var table in excel.tables.keys) {
     {
       var sheet = excel.tables[table]!;
+      // Skip the first row (header)
       for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
-        var row = sheet.rows[rowIndex];
 
+        var row = sheet.rows[rowIndex];
+        
         if (row.length > 1) {
           var filteredRow = row.sublist(1);
           String fullName = filteredRow[0]!.value!.toString();
@@ -88,10 +85,11 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
           List<String>? groupAffiliate =
               filteredRow[10]?.value?.toString().split(",");
           String? role = row[11]?.value?.toString();
+          MemberStatus status = MemberStatus.newMember;
 
           if (fullName.isEmpty ||
               location.isEmpty ||
-              contact.isEmpty ||
+              contact.isEmpty  ||
               marriageStatus.isEmpty) {
             // Skip invalid rows
             continue;
@@ -109,6 +107,7 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
             profilePic: profilePic,
             dateOfBirth: dateOfBirth,
             groupAffiliate: groupAffiliate,
+            status: MemberStatus.newMember,
             role: role,
           ));
         }

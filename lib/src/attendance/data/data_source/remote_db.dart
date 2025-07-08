@@ -23,7 +23,7 @@ class AttendanceDB {
   Future<String> createAttendance(AttendanceModel attendanceData) async {
     try {
       final docRef = db.doc();
-      await docRef.set(attendanceData.toJson());
+      await docRef.set(attendanceData.toFirebase());
       return 'Attendance record added successfully';
     } on FirebaseException catch (e) {
       throw DatabaseException(
