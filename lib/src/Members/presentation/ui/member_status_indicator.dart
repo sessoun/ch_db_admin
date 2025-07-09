@@ -8,16 +8,20 @@ Widget memberStatusIndicator(MemberStatus status) {
 
   switch (status) {
     case MemberStatus.newMember:
-      color = Colors.blue;
+      color = Colors.green;
       label = 'New';
       break;
     case MemberStatus.active:
-      color = Colors.green;
+      color = Colors.blue;
       label = 'Active';
       break;
     case MemberStatus.inactive:
-      color = Colors.orange;
+      color = Colors.red;
       label = 'Inactive';
+      break;
+    case MemberStatus.visitor:
+      color = Colors.orange;
+      label = 'Visitor';
       break;
   }
 

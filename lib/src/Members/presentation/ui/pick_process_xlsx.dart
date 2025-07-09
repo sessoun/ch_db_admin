@@ -48,7 +48,6 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
     NotificationUtil.showError(context, "Error reading file");
     return;
   }
-  
 
   var excel = Excel.decodeBytes(bytes);
   List<Member> members = [];
@@ -61,35 +60,49 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
       var sheet = excel.tables[table]!;
       // Skip the first row (header)
       for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
-
         var row = sheet.rows[rowIndex];
-        
+
         if (row.length > 1) {
           var filteredRow = row.sublist(1);
+
           String fullName = filteredRow[0]!.value!.toString();
+
           String location = filteredRow[1]?.value?.toString() ?? '';
+
           String contact = filteredRow[2]?.value?.toString() ?? '';
-          String marriageStatus = filteredRow[3]?.value?.toString() ?? '';
-          String? spouseName = filteredRow[4]?.value?.toString();
-          List<String>? children = filteredRow[5]?.value?.toString().split(",");
-          String? relativeContact = filteredRow[6]?.value?.toString();
+
+          MemberStatus? memberStatus = MemberStatus.values.firstWhere(
+            (e) => e.name == (filteredRow[3]?.value?.toString() ?? 'newMember'),
+            orElse: () => MemberStatus.newMember,
+          );
+          String marriageStatus = filteredRow[4]?.value?.toString() ?? '';
+
+          String? spouseName = filteredRow[5]?.value?.toString();
+
+          List<String>? children = filteredRow[6]?.value?.toString().split(",");
+
+          String? relativeContact = filteredRow[7]?.value?.toString();
+
           String? profilePic = await uploadImageFromDrive(
-              context, filteredRow[7]!.value!.toString(), 'profilePics');
-          String? additionalImage = filteredRow[8]?.value != null
+              context, filteredRow[8]!.value!.toString(), 'profilePics');
+
+          String? additionalImage = filteredRow[9]?.value != null
               ? await uploadImageFromDrive(
-                  context, filteredRow[8]!.value!.toString(), 'otherImages')
+                  context, filteredRow[9]!.value!.toString(), 'otherImages')
               : null;
+
           DateTime dateOfBirth =
-              DateTime.tryParse(filteredRow[9]!.value!.toString()) ??
+              DateTime.tryParse(filteredRow[10]!.value!.toString()) ??
                   DateTime.now();
+
           List<String>? groupAffiliate =
-              filteredRow[10]?.value?.toString().split(",");
-          String? role = row[11]?.value?.toString();
-          MemberStatus status = MemberStatus.newMember;
+              filteredRow[11]?.value?.toString().split(",");
+
+          String? role = row[12]?.value?.toString();
 
           if (fullName.isEmpty ||
               location.isEmpty ||
-              contact.isEmpty  ||
+              contact.isEmpty ||
               marriageStatus.isEmpty) {
             // Skip invalid rows
             continue;
@@ -107,7 +120,7 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
             profilePic: profilePic,
             dateOfBirth: dateOfBirth,
             groupAffiliate: groupAffiliate,
-            status: MemberStatus.newMember,
+            status: memberStatus,
             role: role,
           ));
         }

@@ -32,4 +32,4 @@ class Member {
   });
 }
 
-enum MemberStatus { newMember, active, inactive }
+enum MemberStatus { newMember, active, inactive, visitor }

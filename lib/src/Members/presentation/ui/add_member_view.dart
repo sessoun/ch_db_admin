@@ -25,8 +25,11 @@ class _AddMemberViewState extends State<AddMemberView> {
   MemberStatus _selectedStatus = MemberStatus.newMember;
 
   final _formKey = GlobalKey<FormState>();
-  File? profilePic;
-  File? additionalImage;
+  // For local file OR network URL handling
+  File? profilePicFile;
+  String? profilePicUrl;
+  File? additionalImageFile;
+  String? additionalImageUrl;
   String marriageStatus = 'Single';
   DateTime dateOfBirth = DateTime.now();
 
@@ -51,9 +54,11 @@ class _AddMemberViewState extends State<AddMemberView> {
     if (pickedFile != null) {
       setState(() {
         if (type == 'profile') {
-          profilePic = File(pickedFile.path);
+          profilePicFile = File(pickedFile.path);
+          profilePicUrl = null; // Clear URL when new file selected
         } else {
-          additionalImage = File(pickedFile.path);
+          additionalImageFile = File(pickedFile.path);
+          additionalImageUrl = null; // Clear URL when new file selected
         }
       });
     }
@@ -64,6 +69,8 @@ class _AddMemberViewState extends State<AddMemberView> {
     'Youth Ministry',
     'Women Ministry',
     'Men Ministry',
+    'Children\'s Ministry',
+    'Evangelism',
   ];
   List<String> selectedAffiliations = [];
   String selectedRole = 'None';
@@ -81,29 +88,30 @@ class _AddMemberViewState extends State<AddMemberView> {
   Future<void> submitForm() async {
     final provider = context.read<MemberController>();
 
-    if (_formKey.currentState!.validate() && profilePic != null) {
-      String profileImage = profilePic?.path ?? '';
-      String otherImage = additionalImage?.path ?? '';
+    if (_formKey.currentState!.validate() && profilePicFile != null ||
+        profilePicUrl != null) {
+      String profileImage = profilePicUrl ?? profilePicFile?.path ?? '';
+      String otherImage = additionalImageUrl ?? additionalImageFile?.path ?? '';
 
       try {
         provider.setLoading(true);
-        if (profilePic != null || additionalImage != null) {
+        if (profilePicFile != null || additionalImageFile != null) {
           //if not in editting mode
           if (!profileImage.contains('https://')) {
             profileImage = await imageStore(
               context,
               fileFolder: 'profilePics',
               imageUrl: profileImage,
-              selectedImage: profilePic!,
+              selectedImage: profilePicFile!,
             );
           }
-          if (!otherImage.contains('https://') && additionalImage != null) {
+          if (!otherImage.contains('https://') && additionalImageFile != null) {
             otherImage = await imageStore(
               // ignore: use_build_context_synchronously
               context,
               fileFolder: 'otherImages',
               imageUrl: otherImage,
-              selectedImage: additionalImage!,
+              selectedImage: additionalImageFile!,
             );
           }
         }
@@ -156,7 +164,7 @@ class _AddMemberViewState extends State<AddMemberView> {
           },
         );
       }
-    } else if (_formKey.currentState!.validate() && profilePic == null) {
+    } else if (_formKey.currentState!.validate() && profilePicFile == null) {
       NotificationUtil.showError(context, "Profile picture must be provided");
     } else {
       NotificationUtil.showError(
@@ -168,8 +176,25 @@ class _AddMemberViewState extends State<AddMemberView> {
   void initState() {
     super.initState();
     if (widget.member != null) {
-      profilePic = File(widget.member?.profilePic ?? '');
-      additionalImage = File(widget.member?.additionalImage ?? '');
+      // Handle existing member data
+      if (widget.member?.profilePic != null) {
+        String path = widget.member!.profilePic!;
+        if (path.startsWith('http')) {
+          profilePicUrl = path; // Store as URL
+        } else {
+          profilePicFile = File(path); // Store as File
+        }
+      }
+
+      if (widget.member?.additionalImage != null) {
+        String path = widget.member!.additionalImage!;
+        if (path.startsWith('http')) {
+          additionalImageUrl = path; // Store as URL
+        } else {
+          additionalImageFile = File(path); // Store as File
+        }
+      }
+
       selectedRole = widget.member?.role ?? selectedRole;
       selectedAffiliations =
           widget.member?.groupAffiliate ?? selectedAffiliations;
@@ -227,18 +252,17 @@ class _AddMemberViewState extends State<AddMemberView> {
                         child: const Text('Pick Profile Picture'),
                       ),
                       const SizedBox(width: 16),
-                      if (profilePic != null &&
-                          !profilePic!.path.contains('https://'))
+                      // Display profile image (file or URL)
+                      if (profilePicFile != null)
                         Image.file(
-                          profilePic!,
+                          profilePicFile!,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
-                        ),
-                      if (profilePic != null &&
-                          profilePic!.path.contains('https://'))
+                        )
+                      else if (profilePicUrl != null)
                         Image.network(
-                          profilePic!.path,
+                          profilePicUrl!,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -272,18 +296,19 @@ class _AddMemberViewState extends State<AddMemberView> {
                         child: const Text('Pick Additional Image'),
                       ),
                       const SizedBox(width: 16),
-                      if (additionalImage != null &&
-                          !additionalImage!.path.contains('https://'))
+                      if (additionalImageFile != null &&
+                          additionalImageFile!.path.isNotEmpty &&
+                          !additionalImageFile!.path.contains('https://'))
                         Image.file(
-                          additionalImage!,
+                          additionalImageFile!,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
                         ),
-                      if (additionalImage != null &&
-                          additionalImage!.path.contains('https://'))
+                      if (additionalImageFile != null &&
+                          additionalImageFile!.path.contains('https://'))
                         Image.network(
-                          additionalImage!.path,
+                          additionalImageFile!.path,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -338,7 +363,11 @@ class _AddMemberViewState extends State<AddMemberView> {
                           ? 'New'
                           : status == MemberStatus.active
                               ? 'Active'
-                              : 'Inactive',
+                              : status == MemberStatus.visitor
+                                  ? 'Visitor'
+                                  : status == MemberStatus.inactive
+                                      ? 'Inactive'
+                                      : 'Unknown',
                     ),
                   );
                 }).toList(),
