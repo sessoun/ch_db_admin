@@ -21,7 +21,7 @@ class MembersRemoteDb {
     try {
       final docRef = db.doc();
       await docRef.set(data.toFirebase());
-      return 'Member details added with id ${docRef.id}';
+      return 'Member added successfully';
     } on FirebaseException catch (e) {
       throw DatabaseException(e.message ?? 'Error adding member\'s details',
           code: e.code);

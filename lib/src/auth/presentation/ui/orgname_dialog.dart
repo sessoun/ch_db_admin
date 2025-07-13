@@ -49,7 +49,7 @@ Future<String?> orgNameFormField(BuildContext context) {
   );
 }
 
-checkOnOrgName(BuildContext context) async {
+Future<void> checkOnOrgName(BuildContext context) async {
   // Retrieve the organization name
   var orgName = await context.read<AuthController>().getOrgName();
 

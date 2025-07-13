@@ -54,8 +54,8 @@ class _AddEventViewState extends State<AddEventView> {
       // Handle image upload
       if (eventImage != null && !eventImage!.path.contains('https://')) {
         // Upload image logic (placeholder for your implementation)
-        imageUrl = await imageStore(context,
-            selectedImage: eventImage!, fileFolder: 'events');
+        imageUrl = await processImageToStore(context,
+            selectedImage: eventImage!, isEvent: true);
       }
 
       // Create or update the event

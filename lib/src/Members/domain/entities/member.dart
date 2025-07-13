@@ -7,7 +7,6 @@ class Member {
   final String? spouseName;
   final List<String>? children;
   final String? relativeContact;
-  final String? additionalImage;
   final String? profilePic;
   final DateTime dateOfBirth;
   final List<String>? groupAffiliate;
@@ -23,7 +22,6 @@ class Member {
     this.spouseName,
     this.children,
     this.relativeContact,
-    this.additionalImage,
     this.profilePic,
     required this.dateOfBirth,
     this.groupAffiliate,

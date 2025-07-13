@@ -15,7 +15,6 @@ class MemberModel extends Member {
     super.spouseName,
     super.children,
     super.relativeContact,
-    super.additionalImage,
     super.profilePic,
     required super.dateOfBirth,
     super.groupAffiliate,
@@ -39,7 +38,7 @@ class MemberModel extends Member {
           data['children'] != null ? List<String>.from(data['children']) : [],
       relativeContact:
           data['relativeContact'] == '' ? 'N/A' : data['relativeContact'],
-      additionalImage: data['additionalImageUrl'],
+      
       profilePic: data['profilePicUrl'],
       role: data['role'] ?? 'None',
       groupAffiliate: data['groupAffiliate'] != null
@@ -63,7 +62,6 @@ class MemberModel extends Member {
       'spouseName': spouseName,
       'children': children,
       'relativeContact': relativeContact,
-      'additionalImageUrl': additionalImage,
       'profilePicUrl': profilePic,
       'groupAffiliate': groupAffiliate,
       'role': role,
@@ -83,7 +81,6 @@ class MemberModel extends Member {
       spouseName: spouseName,
       children: children,
       relativeContact: relativeContact,
-      additionalImage: additionalImage,
       profilePic: profilePic,
       dateOfBirth: dateOfBirth,
       groupAffiliate: groupAffiliate,

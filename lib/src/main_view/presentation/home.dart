@@ -110,7 +110,8 @@ class _HomeViewState extends State<HomeView>
             ),
             if (banner != null &&
                 watchController.isMenuOpened != true &&
-                !isKeyboardVisible(context))
+                !isKeyboardVisible(context) &&
+                context.mounted)
               Container(
                 color: Colors.white,
                 width: screenWidth,

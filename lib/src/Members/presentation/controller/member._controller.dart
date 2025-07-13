@@ -10,7 +10,6 @@ import 'package:flutter/foundation.dart';
 import 'package:ch_db_admin/src/Members/domain/entities/member.dart';
 import 'package:ch_db_admin/shared/failure.dart';
 import 'package:ch_db_admin/shared/usecase.dart';
-
 import '../../../../shared/utils/custom_print.dart';
 
 class MemberController extends ChangeNotifier {

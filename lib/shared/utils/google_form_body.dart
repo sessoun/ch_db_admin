@@ -109,20 +109,10 @@ Map<String, dynamic> requestFormJson = {
     {
       "createItem": {
         "item": {
-          "title": "Profile Picture (Google Drive Link). After uploading, click 'Share' in Google Drive and set visibility to 'Anyone with the link'",
+          "title":
+              "Profile Picture (Google Drive Link). After uploading, click 'Share' in Google Drive and set visibility to 'Anyone with the link'",
           "questionItem": {
             "required": false,
-            "question": {"textQuestion": {}}
-          }
-        }
-      }
-    },
-    {
-      "createItem": {
-        "item": {
-          "title":
-              "Additional Image (Google Drive Link). After uploading, click 'Share' in Google Drive and set visibility to 'Anyone with the link'",
-          "questionItem": {
             "question": {"textQuestion": {}}
           }
         }

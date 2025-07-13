@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ch_db_admin/auth_state.dart';
 import 'package:ch_db_admin/firebase_options.dart';
 import 'package:ch_db_admin/shared/ads/ad_state.dart';
@@ -38,6 +39,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: '.env');
+
+  await CachedNetworkImage.evictFromCache('');
 
   runApp(Provider<AdState>.value(
     value: adState,

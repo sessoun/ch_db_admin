@@ -8,6 +8,7 @@ import 'package:ch_db_admin/src/Members/presentation/controller/member._controll
 import 'package:ch_db_admin/widgets/textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -28,8 +29,6 @@ class _AddMemberViewState extends State<AddMemberView> {
   // For local file OR network URL handling
   File? profilePicFile;
   String? profilePicUrl;
-  File? additionalImageFile;
-  String? additionalImageUrl;
   String marriageStatus = 'Single';
   DateTime dateOfBirth = DateTime.now();
 
@@ -42,25 +41,43 @@ class _AddMemberViewState extends State<AddMemberView> {
   late TextEditingController relativeContactController;
   late TextEditingController dateOfBirthController;
 
-  final ImagePicker _picker = ImagePicker();
-
   /// Method to pick an image from camera or gallery
-  Future<void> _pickImage(String type) async {
-    final pickedFile = await _picker.pickImage(
-      source: type == 'profile' ? ImageSource.camera : ImageSource.gallery,
-      imageQuality: 80,
+
+  Future<void> pickAndCropImage() async {
+    // Step 1: Pick image
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 90,
+      requestFullMetadata: false,
+      preferredCameraDevice: CameraDevice.rear,
+      maxWidth: 800,
+      maxHeight: 800,
     );
 
     if (pickedFile != null) {
-      setState(() {
-        if (type == 'profile') {
-          profilePicFile = File(pickedFile.path);
-          profilePicUrl = null; // Clear URL when new file selected
-        } else {
-          additionalImageFile = File(pickedFile.path);
-          additionalImageUrl = null; // Clear URL when new file selected
-        }
-      });
+      // Step 2: Crop image
+      final CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Profile Picture',
+            toolbarColor: Theme.of(context).primaryColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+          ),
+          IOSUiSettings(
+            title: 'Crop Profile Picture',
+            aspectRatioLockEnabled: true,
+            resetAspectRatioEnabled: false,
+          ),
+        ],
+      );
+      miPrint('Cropped file path: ${croppedFile?.path}');
+      setState(() =>
+          profilePicFile = croppedFile != null ? File(croppedFile.path) : null);
     }
   }
 
@@ -69,8 +86,19 @@ class _AddMemberViewState extends State<AddMemberView> {
     'Youth Ministry',
     'Women Ministry',
     'Men Ministry',
-    'Children\'s Ministry',
-    'Evangelism',
+    'Children Ministry',
+    'Evangelism Ministry',
+    'Hospitality',
+    'Prayer Team',
+    'Media Team',
+    'Bible Study Group',
+    'Outreach Program',
+    'Community Service',
+    'Counseling',
+    'Finance Team',
+    'Maintenance Team',
+    'Missionary Work',
+    'Other',
   ];
   List<String> selectedAffiliations = [];
   String selectedRole = 'None';
@@ -90,30 +118,16 @@ class _AddMemberViewState extends State<AddMemberView> {
 
     if (_formKey.currentState!.validate() && profilePicFile != null ||
         profilePicUrl != null) {
-      String profileImage = profilePicUrl ?? profilePicFile?.path ?? '';
-      String otherImage = additionalImageUrl ?? additionalImageFile?.path ?? '';
+      String profileImage = profilePicUrl ?? '';
 
       try {
         provider.setLoading(true);
-        if (profilePicFile != null || additionalImageFile != null) {
-          //if not in editting mode
-          if (!profileImage.contains('https://')) {
-            profileImage = await imageStore(
-              context,
-              fileFolder: 'profilePics',
-              imageUrl: profileImage,
-              selectedImage: profilePicFile!,
-            );
-          }
-          if (!otherImage.contains('https://') && additionalImageFile != null) {
-            otherImage = await imageStore(
-              // ignore: use_build_context_synchronously
-              context,
-              fileFolder: 'otherImages',
-              imageUrl: otherImage,
-              selectedImage: additionalImageFile!,
-            );
-          }
+        if (profilePicFile != null) {
+          // Process the local file
+          profileImage = await processImageToStore(
+            context,
+            selectedImage: profilePicFile!,
+          );
         }
       } on FirebaseException catch (_) {
         provider.setLoading(false);
@@ -137,7 +151,6 @@ class _AddMemberViewState extends State<AddMemberView> {
             .map((child) => child.trim())
             .toList(),
         relativeContact: relativeContactController.text,
-        additionalImage: otherImage,
         groupAffiliate: selectedAffiliations,
         role: selectedRole,
         dateOfBirth: DateTime.parse(dateOfBirthController.text.trim()),
@@ -179,25 +192,19 @@ class _AddMemberViewState extends State<AddMemberView> {
       // Handle existing member data
       if (widget.member?.profilePic != null) {
         String path = widget.member!.profilePic!;
+        miPrint(path);
         if (path.startsWith('http')) {
           profilePicUrl = path; // Store as URL
-        } else {
-          profilePicFile = File(path); // Store as File
-        }
-      }
-
-      if (widget.member?.additionalImage != null) {
-        String path = widget.member!.additionalImage!;
-        if (path.startsWith('http')) {
-          additionalImageUrl = path; // Store as URL
-        } else {
-          additionalImageFile = File(path); // Store as File
         }
       }
 
       selectedRole = widget.member?.role ?? selectedRole;
       selectedAffiliations =
           widget.member?.groupAffiliate ?? selectedAffiliations;
+    }
+
+    if (widget.member?.status != null) {
+      _selectedStatus = widget.member!.status;
     }
 
     fullNameController = TextEditingController(text: widget.member?.fullName);
@@ -248,7 +255,7 @@ class _AddMemberViewState extends State<AddMemberView> {
                   Row(
                     children: [
                       ElevatedButton(
-                        onPressed: () => _pickImage('profile'),
+                        onPressed: () => pickAndCropImage(),
                         child: const Text('Pick Profile Picture'),
                       ),
                       const SizedBox(width: 16),
@@ -282,40 +289,6 @@ class _AddMemberViewState extends State<AddMemberView> {
                   }
                   return null;
                 },
-              ),
-              const SizedBox(height: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Additional Image:'),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () => _pickImage('additional'),
-                        child: const Text('Pick Additional Image'),
-                      ),
-                      const SizedBox(width: 16),
-                      if (additionalImageFile != null &&
-                          additionalImageFile!.path.isNotEmpty &&
-                          !additionalImageFile!.path.contains('https://'))
-                        Image.file(
-                          additionalImageFile!,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      if (additionalImageFile != null &&
-                          additionalImageFile!.path.contains('https://'))
-                        Image.network(
-                          additionalImageFile!.path,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                    ],
-                  ),
-                ],
               ),
               const SizedBox(height: 16),
               CustomTextFormField(

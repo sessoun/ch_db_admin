@@ -129,6 +129,6 @@ List<Map<String, dynamic>> navItems = [
   // },
   {
     'icon': Icons.notifications,
-    'title': 'Notifications',
+    'title': 'Birthdays',
   },
 ];

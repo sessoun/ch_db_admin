@@ -318,20 +318,15 @@ class _MembersViewState extends State<MembersView>
               Card(
                 elevation: 3,
                 child: Container(
-                  decoration: member.profilePic != null ||
-                          member.additionalImage != null
+                  decoration: member.profilePic != null
                       ? BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                  member.additionalImage == null ||
-                                          member.additionalImage!.isEmpty
-                                      ? member.profilePic!
-                                      : member.additionalImage!),
+                                   member.profilePic!),
                               fit: BoxFit.cover))
                       : null,
-                  child: member.profilePic == null &&
-                          member.additionalImage == null
+                  child: member.profilePic == null
                       ? Center(
                           child: Image.asset(
                           'images/img.png',

@@ -84,21 +84,18 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
           String? relativeContact = filteredRow[7]?.value?.toString();
 
           String? profilePic = await uploadImageFromDrive(
-              context, filteredRow[8]!.value!.toString(), 'profilePics');
-
-          String? additionalImage = filteredRow[9]?.value != null
-              ? await uploadImageFromDrive(
-                  context, filteredRow[9]!.value!.toString(), 'otherImages')
-              : null;
+            context,
+            filteredRow[8]!.value!.toString(),
+          );
 
           DateTime dateOfBirth =
-              DateTime.tryParse(filteredRow[10]!.value!.toString()) ??
+              DateTime.tryParse(filteredRow[9]!.value!.toString()) ??
                   DateTime.now();
 
           List<String>? groupAffiliate =
-              filteredRow[11]?.value?.toString().split(",");
+              filteredRow[10]?.value?.toString().split(",");
 
-          String? role = row[12]?.value?.toString();
+          String? role = row[11]?.value?.toString();
 
           if (fullName.isEmpty ||
               location.isEmpty ||
@@ -116,7 +113,6 @@ Future<void> pickAndProcessExcel(BuildContext context) async {
             spouseName: spouseName,
             children: children,
             relativeContact: relativeContact,
-            additionalImage: additionalImage,
             profilePic: profilePic,
             dateOfBirth: dateOfBirth,
             groupAffiliate: groupAffiliate,
@@ -155,7 +151,6 @@ Future<void> _saveToFirebase(List<Member> members, MemberController provider,
 Future<String?> uploadImageFromDrive(
   BuildContext context,
   String driveLink,
-  String fileFolder,
 ) async {
   try {
     // Extract File ID from Google Drive link
@@ -179,8 +174,8 @@ Future<String?> uploadImageFromDrive(
     // Write the image to file
     await file.writeAsBytes(response.bodyBytes);
 
-    return await imageStore(context,
-        fileFolder: fileFolder, selectedImage: file); // Return Firebase URL
+    return await processImageToStore(context,
+        selectedImage: file); // Return Firebase URL
   } catch (e) {
     miPrint("Error uploading image: $e");
     return null;
